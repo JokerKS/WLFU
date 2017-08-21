@@ -1,0 +1,163 @@
+﻿@model WLFU.Models.CreateProductViewModel
+@{
+    ViewBag.Title = "Create Product";
+}
+<link href="~/Content/Styles.css" rel="stylesheet" />
+
+<style>
+    .dropzone {
+        height: 200px;
+        border: 2px dashed #ccc;
+        color: #ccc;
+        line-height: 200px;
+        text-align: center;
+    }
+
+        .dropzone .dragover {
+            border-color: #000;
+            color: #000;
+        }
+</style>
+
+<h2>Create Product</h2>
+
+<form id="ProductForm" class="form-horizontal">
+
+    @Html.AntiForgeryToken()
+
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", required = true } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", required = true } })
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Images, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div id="dropzone" class="dropzone col-md-10">
+            Drop files here to upload
+        </div>
+    </div>
+
+    <div id="image-preview" class="form-group">
+        
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10" style="text-align:center">
+            <input type="button" value="Create" class="btn btn-default" onclick="SendProduct()" />
+        </div>
+    </div>
+</form>
+
+<script src="~/scripts/jquery-1.10.2.min.js"></script>
+<script>
+    var filesToUpload = [];
+
+    (function () {
+        var dropzone = document.getElementById('dropzone');
+
+        dropzone.ondrop = function (e) {
+            e.preventDefault();
+            this.className = 'dropzone';
+
+            for (var i = 0; i < e.dataTransfer.files.length; i++) {
+                filesToUpload.push(e.dataTransfer.files[i]);
+
+                var reader = new FileReader();
+
+                reader.onload = function (file) {
+                    var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
+                    var imgCount = $('input[type=button][id="deleteImg"]');
+                    if (imgCount.length == 0) 
+                        isMainRadioBtn += " checked";
+                    isMainRadioBtn += "/>Is Main Image</label></div>";
+                    document.getElementById('image-preview')
+                        .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
+                }
+
+                reader.readAsDataURL(e.dataTransfer.files[i]);
+            }
+        };
+
+        dropzone.ondragover = function () {
+            if (this.className == 'dropzone')
+                this.className += ' dragover';
+            return false;
+        };
+
+        dropzone.ondragleave = function () {
+            this.className = 'dropzone';
+            return false;
+        };
+    }());
+
+    var DeleteImg = function (e) {
+        var delInputs = $('input[type=button][id="deleteImg"]');
+        if(delInputs.length == filesToUpload.length)
+            for (var i = 0; i < delInputs.length; i++) {
+                if (delInputs[i] == e){
+                    filesToUpload.splice(i, 1);
+                    $(e).parent().parent().remove();
+                    return;
+                }
+            }
+    }
+
+    var SendProduct = function () {
+        var form = document.getElementById('ProductForm');
+
+        var formdata = new FormData(form);
+
+        for (var i = 0; i < filesToUpload.length; i++) {
+            formdata.append('Images[' + i + '].Source', filesToUpload[i]);
+            formdata.append('image' + i, filesToUpload[i]);
+        }
+
+        var titles = $('.img-wrap #image-title :input');
+        for (var i = 0; i < titles.length; i++) {
+            console.log(titles[i].value);
+            formdata.append('Images[' + i + '].Title', titles[i].value);
+        }
+
+        var isMain = $('input[name=IsMain]');
+        for (var i = 0; i < isMain.length; i++) {
+            if (isMain[i].checked) {
+                formdata.append('MainImageIndex', i);
+                break;
+            }
+        }
+
+        $.ajax({
+            url: '/Product/Create',
+            type: "POST",
+            contentType: false,
+            processData: false,
+            data: formdata,
+            dataType: 'json',
+            encode: true,
+            async: false,
+            beforeSend: function () {
+
+            },
+            success: function (result) {
+                alert(result);
+            },
+            error: function (err) {
+                alert(err.statusText);
+            }
+        });
+    };
+</script>

@@ -1,0 +1,40 @@
+﻿@model WLFU.Models.LoginModel
+
+@{
+    ViewBag.Title = "Login";
+}
+
+<h2>Login</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <h4>Регистрация пользователя</h4>
+        <hr />
+        @Html.ValidationSummary(false)
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+
+        <div>
+            E-mail or user name
+            <div>
+                @Html.EditorFor(model => model.EmailOrUserName)
+            </div>
+        </div>
+
+        <div>
+            Password
+            <div>
+                @Html.EditorFor(model => model.Password)
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <input type="submit" value="Login" />
+            </div>
+        </div>
+
+    </div>
+}

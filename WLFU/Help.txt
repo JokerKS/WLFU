@@ -1,0 +1,12 @@
+﻿1. Microsoft.AspNet.Identity - 
+	содержит ряд ключевых интерфейсов ASP.NET Identity.
+
+2. Microsoft.AspNet.Identity.EntityFramework - 
+	содержит классы Entity Framework, применяющие ASP.NET Identity и осуществляющие связь с SQL Serveroм
+
+3. Microsoft.AspNet.Authentication.Cookies
+
+4. Microsoft.AspNet.Identity.Owin -
+	привносит в приложение ASP.NET MVC аутентификацию OWIN с помощью ASP.NET Identity
+
+5. Microsoft.Owin.Host.SystemWeb

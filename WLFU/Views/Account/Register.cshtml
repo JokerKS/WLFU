@@ -1,0 +1,72 @@
+﻿@model WLFU.Models.RegisterModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>Register</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div>
+        <h4>Регистрация пользователя</h4>
+        <hr />
+        @Html.ValidationSummary(false)
+
+        <div>
+            Name
+            <div>
+                @Html.EditorFor(model => model.Name)
+            </div>
+        </div>
+
+        <div>
+            Lastname
+            <div>
+                @Html.EditorFor(model => model.Lastname)
+            </div>
+        </div>
+
+        <div>
+            @Html.LabelFor(model => model.BirthDate)
+            <div>
+                @Html.EditorFor(model => model.BirthDate)
+            </div>
+        </div>
+
+        <div>
+            UserName
+            <div>
+                @Html.EditorFor(model => model.UserName)
+            </div>
+        </div>
+
+        <div>
+            E-mail
+            <div>
+                @Html.EditorFor(model => model.Email)
+            </div>
+        </div>
+
+        <div>
+            Password
+            <div>
+                @Html.EditorFor(model => model.Password)
+            </div>
+        </div>
+
+        <div>
+            Confirm Password
+            <div>
+                @Html.EditorFor(model => model.ConfirmPassword)
+            </div>
+        </div>
+
+        <div>
+            <div>
+                <input type="submit" value="Register" />
+            </div>
+        </div>
+    </div>
+}
