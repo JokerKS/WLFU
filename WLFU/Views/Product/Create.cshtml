@@ -6,17 +6,33 @@
 
 <style>
     .dropzone {
-        height: 200px;
-        border: 2px dashed #ccc;
+        height: 180px;
+        border: 3px dashed #ccc;
+        font-size: 20px;
         color: #ccc;
-        line-height: 200px;
+        /*line-height: 180px;*/
         text-align: center;
+        border-radius: 5px;
     }
 
-        .dropzone .dragover {
-            border-color: #000;
-            color: #000;
-        }
+    .dropzone .dragover {
+        border-color: #000;
+        color: #000;
+    }
+
+    .dropzone:before {
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        height: 100%;
+    }
+
+    .v-center{
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+
 </style>
 
 <h2>Create Product</h2>
@@ -46,8 +62,17 @@
 
     <div class="form-group">
         @Html.LabelFor(model => model.Images, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div id="dropzone" class="dropzone col-md-10">
-            Drop files here to upload
+        <div  class="col-md-10">
+            <div id="dropzone" class="dropzone">
+                <div class="v-center">
+                    <span>Drop files here to upload</span><br>
+                    <span>or</span><br>
+                    <div style="display:inline-block">
+                        <input type="file" id="selectedFiles" style="display: none;" multiple accept="image/png,image/gif,image/jpeg" />
+                        <input type="button" class="btn btn-info" value="Choose image/images" onclick="document.getElementById('selectedFiles').click();" />
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -66,30 +91,17 @@
 <script>
     var filesToUpload = [];
 
+    $("#selectedFiles").change(function () {
+        FilesChosen($("#selectedFiles")[0].files);
+    });
+
     (function () {
         var dropzone = document.getElementById('dropzone');
-
         dropzone.ondrop = function (e) {
             e.preventDefault();
             this.className = 'dropzone';
 
-            for (var i = 0; i < e.dataTransfer.files.length; i++) {
-                filesToUpload.push(e.dataTransfer.files[i]);
-
-                var reader = new FileReader();
-
-                reader.onload = function (file) {
-                    var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
-                    var imgCount = $('input[type=button][id="deleteImg"]');
-                    if (imgCount.length == 0) 
-                        isMainRadioBtn += " checked";
-                    isMainRadioBtn += "/>Is Main Image</label></div>";
-                    document.getElementById('image-preview')
-                        .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
-                }
-
-                reader.readAsDataURL(e.dataTransfer.files[i]);
-            }
+            FilesChosen(e.dataTransfer.files);
         };
 
         dropzone.ondragover = function () {
@@ -103,6 +115,26 @@
             return false;
         };
     }());
+
+    function FilesChosen(files) {
+        if (files.length > 0) {
+            for (var i = 0; i < files.length; i++) {
+                filesToUpload.push(files[i]);
+
+                var reader = new FileReader();
+                reader.onload = function (file) {
+                    var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
+                    var imgCount = $('input[type=button][id="deleteImg"]');
+                    if (imgCount.length == 0)
+                        isMainRadioBtn += " checked";
+                    isMainRadioBtn += "/>Is Main Image</label></div>";
+                    document.getElementById('image-preview')
+                        .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        }
+    }
 
     var DeleteImg = function (e) {
         var delInputs = $('input[type=button][id="deleteImg"]');
