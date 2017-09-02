@@ -123,21 +123,33 @@
         if (window.FormData && window.FileReader && window.FileList) {
             if (files.length > 0) {
                 for (var i = 0; i < files.length; i++) {
-                    filesToUpload.push(files[i]);
 
-                    var reader = new FileReader();
-                    reader.onload = function (file) {
-                        var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
-                        var imgCount = $('input[type=button][id="deleteImg"]');
-                        if (imgCount.length == 0)
-                            isMainRadioBtn += " checked";
-                        isMainRadioBtn += "/>Is Main Image</label></div>";
-                        document.getElementById('image-preview')
-                            .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
-                    };
-                    reader.readAsDataURL(files[i]);
+                    supportedFormats = ['jpeg', 'gif', 'png'];
+                    var correctFormat = false;
+                    supportedFormats.forEach(function (extension) {
+                        if (files[i].type.match('image/' + extension)) {
+                            correctFormat = true;
+                        }
+                    })
+
+                    if (correctFormat) {
+                        filesToUpload.push(files[i]);
+
+                        var reader = new FileReader();
+                        reader.onload = function (file) {
+                            var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
+                            var imgCount = $('input[type=button][id="deleteImg"]');
+                            if (imgCount.length == 0)
+                                isMainRadioBtn += " checked";
+                            isMainRadioBtn += "/>Is Main Image</label></div>";
+                            document.getElementById('image-preview')
+                                .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
+                        };
+                        reader.readAsDataURL(files[i]);
+                    }
                 }
             }
+            $("#ProductForm").validate();
         } else alert("This browser doesn't support HTML5 file uploads!");
     }
 
