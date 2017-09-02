@@ -68,11 +68,12 @@
                     <span>Drop files here to upload</span><br>
                     <span>or</span><br>
                     <div style="display:inline-block">
-                        <input type="file" id="selectedFiles" style="display: none;" multiple accept="image/png,image/gif,image/jpeg" />
+                        <input type="file" id="selectedFiles" name="Images" style="display: none;" multiple accept="image/png,image/gif,image/jpeg"/>
                         <input type="button" class="btn btn-info" value="Choose image/images" onclick="document.getElementById('selectedFiles').click();" />
                     </div>
                 </div>
             </div>
+            @Html.ValidationMessageFor(model => model.Images, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -88,6 +89,8 @@
 </form>
 
 <script src="~/scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script>
     var filesToUpload = [];
 
@@ -117,23 +120,25 @@
     }());
 
     function FilesChosen(files) {
-        if (files.length > 0) {
-            for (var i = 0; i < files.length; i++) {
-                filesToUpload.push(files[i]);
+        if (window.FormData && window.FileReader && window.FileList) {
+            if (files.length > 0) {
+                for (var i = 0; i < files.length; i++) {
+                    filesToUpload.push(files[i]);
 
-                var reader = new FileReader();
-                reader.onload = function (file) {
-                    var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
-                    var imgCount = $('input[type=button][id="deleteImg"]');
-                    if (imgCount.length == 0)
-                        isMainRadioBtn += " checked";
-                    isMainRadioBtn += "/>Is Main Image</label></div>";
-                    document.getElementById('image-preview')
-                        .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
-                };
-                reader.readAsDataURL(files[i]);
+                    var reader = new FileReader();
+                    reader.onload = function (file) {
+                        var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
+                        var imgCount = $('input[type=button][id="deleteImg"]');
+                        if (imgCount.length == 0)
+                            isMainRadioBtn += " checked";
+                        isMainRadioBtn += "/>Is Main Image</label></div>";
+                        document.getElementById('image-preview')
+                            .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
+                    };
+                    reader.readAsDataURL(files[i]);
+                }
             }
-        }
+        } else alert("This browser doesn't support HTML5 file uploads!");
     }
 
     var DeleteImg = function (e) {
@@ -148,48 +153,68 @@
             }
     }
 
+    $(document).ready(function () {
+        $.validator.addMethod('greaterThanZero', function (value, element) {
+            if (filesToUpload.length > 0) return true;
+            return false;
+        }, 'At least one picture is required');
+        
+        $('#selectedFiles').rules("add", {
+            greaterThanZero: true
+        });
+    });
+
+
     var SendProduct = function () {
         var form = document.getElementById('ProductForm');
 
         var formdata = new FormData(form);
 
-        for (var i = 0; i < filesToUpload.length; i++) {
-            formdata.append('Images[' + i + '].Source', filesToUpload[i]);
-            formdata.append('image' + i, filesToUpload[i]);
-        }
-
-        var titles = $('.img-wrap #image-title :input');
-        for (var i = 0; i < titles.length; i++) {
-            console.log(titles[i].value);
-            formdata.append('Images[' + i + '].Title', titles[i].value);
-        }
-
-        var isMain = $('input[name=IsMain]');
-        for (var i = 0; i < isMain.length; i++) {
-            if (isMain[i].checked) {
-                formdata.append('MainImageIndex', i);
-                break;
+        if (filesToUpload.length > 0) {
+            for (var i = 0; i < filesToUpload.length; i++) {
+                formdata.append('Images[' + i + '].Source', filesToUpload[i]);
+                formdata.append('image' + i, filesToUpload[i]);
             }
-        }
 
-        $.ajax({
-            url: '/Product/Create',
-            type: "POST",
-            contentType: false,
-            processData: false,
-            data: formdata,
-            dataType: 'json',
-            encode: true,
-            async: false,
-            beforeSend: function () {
-
-            },
-            success: function (result) {
-                alert(result);
-            },
-            error: function (err) {
-                alert(err.statusText);
+            var titles = $('.img-wrap #image-title :input');
+            for (var i = 0; i < titles.length; i++) {
+                console.log(titles[i].value);
+                formdata.append('Images[' + i + '].Title', titles[i].value);
             }
-        });
+
+            var isMain = $('input[name=IsMain]');
+            for (var i = 0; i < isMain.length; i++) {
+                if (isMain[i].checked) {
+                    formdata.append('MainImageIndex', i);
+                    break;
+                }
+            }
+        } else {
+
+        }
+        
+        $("#ProductForm").validate();
+        if ($("#ProductForm").valid()) {
+            $.ajax({
+                url: '/Product/Create',
+                type: "POST",
+                contentType: false,
+                processData: false,
+                data: formdata,
+                dataType: 'json',
+                encode: true,
+                async: false,
+                beforeSend: function () {
+                    $("#ProductForm").validate();
+                    if (!$("#ProductForm").valid) return;
+                },
+                success: function (result) {
+                    alert(result);
+                },
+                error: function (err) {
+                    alert(err.statusText);
+                }
+            });
+        }
     };
 </script>
