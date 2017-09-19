@@ -3,6 +3,8 @@
     ViewBag.Title = "Create Product";
 }
 <link href="~/Content/Styles.css" rel="stylesheet" />
+<link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
+<link href="~/Content/bootstrap-tagsinput-typeahead.css" rel="stylesheet" />
 
 <style>
     .dropzone {
@@ -32,7 +34,9 @@
         vertical-align: middle;
     }
 
-
+    .bootstrap-tagsinput{
+        min-width:350px !important;
+    }
 </style>
 
 <h2>Create Product</h2>
@@ -57,6 +61,15 @@
         <div class="col-md-10">
             @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", required = true } })
             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => Model.TagsString, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input class="form-control tags-input" type="text" autocomplete="off" name="TagsString" value="@Model.TagsString" data-role="tagsinput" />
+            <div class="clear"></div>
+            @Html.ValidationMessageFor(model => Model.TagsString, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -149,7 +162,6 @@
                     }
                 }
             }
-            $("#ProductForm").validate();
         } else alert("This browser doesn't support HTML5 file uploads!");
     }
 
@@ -229,4 +241,81 @@
             });
         }
     };
+</script>
+
+<script src="~/Scripts/bootstrap-tagsinput.min.js"></script>
+<script src="~/Scripts/bootstrap3-typeahead.min.js"></script>
+<script>
+    //Tags input initialization
+    $('.tags-input').tagsinput({
+        maxChars: 25,
+        typeahead: {
+            source: @Html.Raw(Json.Encode(Model.AllTagsString)),
+            afterSelect: function () {
+                this.$element[0].value = '';
+            }
+        }
+    })
+
+    //Add tag on focusout
+    $('.tags-input').focusout(function() {
+        $('.tags-input').add($('.tags-input').input.val());
+        $('.tags-input').input.typeahead('val', '');
+    });
+</script>
+
+<script src="~/Scripts/bootstrapValidator.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#ProductForm')
+            .find('[name="TagsString"]')
+                .change(function (e) {
+                    $('#ProductForm').bootstrapValidator('revalidateField', 'TagsString');
+                })
+                .end()
+            .bootstrapValidator({
+                framework: 'bootstrap',
+                excluded: ':disabled',
+                icon: {
+                    valid: 'glyphicon glyphicon-ok',
+                    invalid: 'glyphicon glyphicon-remove',
+                    validating: 'glyphicon glyphicon-refresh'
+                },
+                fields: {
+                    TagsString: {
+                        validators: {
+                            notEmpty: {
+                                message: 'Please enter at least one tag'
+                            }
+                        }
+                    }
+                }
+            });
+    });
+</script>
+
+<script src="~/Scripts/tinymce/tinymce.min.js"></script>
+<script>
+    $(function () {
+        tinyMCE.init({
+            mode: "textareas",
+            height: 300,
+            theme: "modern",
+            menubar: false,
+
+            plugins: [
+                'lists textcolor',
+            ],
+
+            setup: function (editor) {
+                editor.on('change', function () {
+                    tinyMCE.triggerSave();
+                    var content = tinyMCE.activeEditor.getContent();
+                    $('#Product_Description').valid();
+                });
+            },
+
+            toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+        });
+    });
 </script>
