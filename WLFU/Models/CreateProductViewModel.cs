@@ -18,6 +18,7 @@ namespace WLFU.Models
         public string Name { get; set; }
         [Required]
         [AllowHtml]
+        [DataType(DataType.MultilineText)]
         public string Description { get; set; }
         [Required]
         public string MainImageIndex { get; set; }
@@ -28,6 +29,12 @@ namespace WLFU.Models
         [Required]
         [DisplayName("Product Tags")]
         public string TagsString { get; set; }
+
+        [Required]
+        [DisplayFormat(ApplyFormatInEditMode = true)]
+        public decimal Price { get; set; }
+        [DefaultValue(1)]
+        public short Amount { get; set; }
     }
 
     public class ImageUploadModel
