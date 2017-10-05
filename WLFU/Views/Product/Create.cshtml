@@ -41,7 +41,7 @@
 
 <h2>Create Product</h2>
 
-<form id="ProductForm" class="form-horizontal">
+<form id="ProductForm" class="form-horizontal" enctype="multipart/form-data" method="post">
 
     @Html.AntiForgeryToken()
 
@@ -90,7 +90,7 @@
     </div>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.Images, htmlAttributes: new { @class = "control-label col-md-2" })
+        <label for="Images" class="control-label col-md-2">Images:</label>
         <div  class="col-md-10">
             <div id="dropzone" class="dropzone">
                 <div class="v-center">
@@ -102,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            @Html.ValidationMessageFor(model => model.Images, "", new { @class = "text-danger" })
+            <span class="field-validation-valid text-danger" data-valmsg-for="Images" data-valmsg-replace="true"></span>
         </div>
     </div>
 
@@ -206,20 +206,13 @@
 
 
     var SendProduct = function () {
-        var form = document.getElementById('ProductForm');
-
-        var formdata = new FormData(form);
+        var formdata = new FormData(document.getElementById("ProductForm"));
 
         if (filesToUpload.length > 0) {
-            for (var i = 0; i < filesToUpload.length; i++) {
-                formdata.append('Images[' + i + '].Source', filesToUpload[i]);
-                formdata.append('image' + i, filesToUpload[i]);
-            }
-
             var titles = $('.img-wrap #image-title :input');
-            for (var i = 0; i < titles.length; i++) {
-                console.log(titles[i].value);
-                formdata.append('Images[' + i + '].Title', titles[i].value);
+            for (var i = 0; i < filesToUpload.length; i++) {
+                formdata.append('files', filesToUpload[i]);
+                formdata.append('titles', titles[i].value);
             }
 
             var isMain = $('input[name=IsMain]');

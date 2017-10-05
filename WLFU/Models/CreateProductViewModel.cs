@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
@@ -9,21 +10,15 @@ namespace WLFU.Models
 {
     public class CreateProductViewModel
     {
-        public CreateProductViewModel()
-        {
-            Images = new List<ImageUploadModel>();
-        }
-
         [Required]
         public string Name { get; set; }
         [Required]
         [AllowHtml]
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
+
         [Required]
         public string MainImageIndex { get; set; }
-
-        public IEnumerable<ImageUploadModel> Images { get; set; }
 
         public IEnumerable<string> AllTagsString { get; set; }
         [Required]
@@ -36,7 +31,7 @@ namespace WLFU.Models
         [DefaultValue(1)]
         public short Amount { get; set; }
     }
-
+    
     public class ImageUploadModel
     {
         [Required]
