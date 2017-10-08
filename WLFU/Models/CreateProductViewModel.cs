@@ -10,6 +10,8 @@ namespace WLFU.Models
 {
     public class CreateProductViewModel
     {
+        public string RequestId { get; set; }
+
         [Required]
         public string Name { get; set; }
         [Required]
@@ -30,12 +32,5 @@ namespace WLFU.Models
         public decimal Price { get; set; }
         [DefaultValue(1)]
         public short Amount { get; set; }
-    }
-    
-    public class ImageUploadModel
-    {
-        [Required]
-        public HttpPostedFileBase Source { get; set; }
-        public string Title { get; set; }
     }
 }

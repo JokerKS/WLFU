@@ -46,7 +46,10 @@
     @Html.AntiForgeryToken()
 
     <hr />
+    
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+    @Html.HiddenFor(model => model.RequestId)
 
     <div class="form-group">
         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -102,7 +105,7 @@
                     </div>
                 </div>
             </div>
-            <span class="field-validation-valid text-danger" data-valmsg-for="Images" data-valmsg-replace="true"></span>
+            @Html.ValidationMessage("Images", new { @class = "text-danger" });
         </div>
     </div>
 
@@ -117,7 +120,32 @@
     </div>
 </form>
 
-<script src="~/scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery-1.9.0.min.js"></script>
+
+<script src="~/Scripts/tinymce/tinymce.min.js"></script>
+<script>
+    $(document).ready(function(){
+        tinyMCE.init({
+            mode: "textareas",
+            height: 300,
+            theme: "modern",
+            menubar: false,
+
+            plugins: [
+                'lists textcolor',
+            ],
+            setup: function (editor) {
+                editor.on('change', function () {
+                    tinyMCE.triggerSave();
+                    var content = tinyMCE.activeEditor.getContent();
+                    $("#" + editor.id).valid();
+                });
+            },
+            toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+        });
+    });
+</script>
+
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script>
@@ -200,6 +228,9 @@
         }, 'At least one picture is required');
         
         $('#selectedFiles').rules("add", {
+            greaterThanZero: true
+        });
+        $('#dropzone').rules("add", {
             greaterThanZero: true
         });
     });
@@ -300,29 +331,5 @@
                     }
                 }
             });
-    });
-</script>
-
-<script src="~/Scripts/tinymce/tinymce.min.js"></script>
-<script>
-    $(function () {
-        tinyMCE.init({
-            mode: "textareas",
-            height: 300,
-            theme: "modern",
-            menubar: false,
-
-            plugins: [
-                'lists textcolor',
-            ],
-            setup: function (editor) {
-                editor.on('change', function () {
-                    tinyMCE.triggerSave();
-                    var content = tinyMCE.activeEditor.getContent();
-                    $("#" + editor.id).valid();
-                });
-            },
-            toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
-        });
     });
 </script>

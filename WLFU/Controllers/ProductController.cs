@@ -33,7 +33,7 @@ namespace WLFU.Controllers
         public ActionResult Create(CreateProductViewModel model, IEnumerable<HttpPostedFileBase> files, IEnumerable<string> titles)
         {
             #region Get tags from string
-            string[] tags;
+            string[] tags = null;
             if (!string.IsNullOrEmpty(model.TagsString))
             {
                 tags = model.TagsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
@@ -51,6 +51,10 @@ namespace WLFU.Controllers
                 ModelState.AddModelError("MainImageIndex", "It should be noted the main image");
             #endregion
 
+            #region Save images and retrieve path
+
+            #endregion
+
             if (!ModelState.IsValid)
             {
                 using (var db = new AppContext())
@@ -60,6 +64,81 @@ namespace WLFU.Controllers
 
                 return View(model);
             }
+
+            Product prod = new Product() {
+                Name = model.Name,
+                Price = model.Price,
+                Description = model.Description,
+                Amount = model.Amount,
+                DesignerId = User.Identity.GetUserId(),
+            };
+
+            using (var db = new AppContext())
+            {
+                //work with images
+
+                //get request id of product creation
+                ProductCreationRequest req;
+                if (model.RequestId == null)
+                {
+                    req = new ProductCreationRequest() { ProductId = null };
+                    db.ProductCreationRequests.Add(req);
+                    db.SaveChanges();
+                }
+                else
+                    req = db.ProductCreationRequests.Find(model.RequestId);
+
+                List<Image> images = new List<Image>();
+                string path = Server.MapPath("~/Images/Products/") + req.RequestId + '/';
+                try
+                {
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+
+                    //save images and get paths
+                    foreach (var file in files.Select((value, index) => new { index, value }))
+                    {
+                        string fileName = Path.GetFileName(file.value.FileName);
+                        file.value.SaveAs(path + fileName);
+
+                        images.Add(new Image()
+                        {
+                            Path = req.RequestId + "/" + fileName,
+                            Title = titles.ElementAt(file.index)
+                        });
+                    }
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+                prod.Images = images.Select(x => new ProductImage() { Image = x }).ToList();
+
+                foreach (var tag in tags)
+                {
+                    var existTag = db.Tags.FirstOrDefault(x => x.Name == tag);
+                    if (existTag == null)
+                        prod.Tags.Add(new ProductTag() { Tag = new Tag() { Name = tag } });
+                    else
+                        prod.Tags.Add(new ProductTag() { Tag = existTag });
+                }
+
+                db.Products.Add(prod);
+                db.SaveChanges();
+
+                using (var dbCtx = new AppContext())
+                {
+                    req.ProductId = prod.ProductId;
+                    dbCtx.Entry(req).State = System.Data.Entity.EntityState.Modified;
+                    dbCtx.SaveChanges();
+                }
+
+
+            }
+
+
+
 
             return View();
         }
