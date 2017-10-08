@@ -32,14 +32,17 @@ namespace WLFU.Entities
 
         [Required]
         public string DesignerId { get; set; }
-
-
         [ForeignKey("DesignerId")]
         public AppUser Designer { get; set; }
 
         [Required]
         public IList<ProductTag> Tags { get; set; }
         public IList<ProductImage> Images { get; set; }
+
+        [Required]
+        public int MainImageId { get; set; }
+        [ForeignKey("MainImageId")]
+        public Image MainImage { get; set; }
 
         /*
         [Required]

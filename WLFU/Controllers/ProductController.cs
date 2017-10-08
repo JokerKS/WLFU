@@ -51,10 +51,6 @@ namespace WLFU.Controllers
                 ModelState.AddModelError("MainImageIndex", "It should be noted the main image");
             #endregion
 
-            #region Save images and retrieve path
-
-            #endregion
-
             if (!ModelState.IsValid)
             {
                 using (var db = new AppContext())
@@ -75,8 +71,6 @@ namespace WLFU.Controllers
 
             using (var db = new AppContext())
             {
-                //work with images
-
                 //get request id of product creation
                 ProductCreationRequest req;
                 if (model.RequestId == null)
@@ -88,6 +82,7 @@ namespace WLFU.Controllers
                 else
                     req = db.ProductCreationRequests.Find(model.RequestId);
 
+                //work with images
                 List<Image> images = new List<Image>();
                 string path = Server.MapPath("~/Images/Products/") + req.RequestId + '/';
                 try
@@ -101,11 +96,22 @@ namespace WLFU.Controllers
                         string fileName = Path.GetFileName(file.value.FileName);
                         file.value.SaveAs(path + fileName);
 
-                        images.Add(new Image()
+                        if (file.index == Convert.ToInt32(model.MainImageIndex))
                         {
-                            Path = req.RequestId + "/" + fileName,
-                            Title = titles.ElementAt(file.index)
-                        });
+                            prod.MainImage = new Image()
+                            {
+                                Path = req.RequestId + "/" + fileName,
+                                Title = titles.ElementAt(file.index)
+                            };
+                        }
+                        else
+                        {
+                            images.Add(new Image()
+                            {
+                                Path = req.RequestId + "/" + fileName,
+                                Title = titles.ElementAt(file.index)
+                            });
+                        }
                     }
                 }
                 catch (Exception)
@@ -134,13 +140,8 @@ namespace WLFU.Controllers
                     dbCtx.SaveChanges();
                 }
 
-
+                return View("Success", req.RequestId);
             }
-
-
-
-
-            return View();
         }
     }
 }

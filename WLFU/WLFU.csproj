@@ -399,6 +399,10 @@
     <Compile Include="Migrations\201710081436251_UpdateRequestsTable.Designer.cs">
       <DependentUpon>201710081436251_UpdateRequestsTable.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710081948213_AddMainImageToProd.cs" />
+    <Compile Include="Migrations\201710081948213_AddMainImageToProd.Designer.cs">
+      <DependentUpon>201710081948213_AddMainImageToProd.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\CreateProductViewModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
@@ -427,6 +431,7 @@
     <Content Include="Scripts\tinymce\skins\lightgray\fonts\tinymce-small.eot" />
     <Content Include="Scripts\tinymce\langs\readme.md" />
     <Content Include="Views\Product\Create.cshtml" />
+    <Content Include="Views\Product\Success.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -456,6 +461,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710081436251_UpdateRequestsTable.resx">
       <DependentUpon>201710081436251_UpdateRequestsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710081948213_AddMainImageToProd.resx">
+      <DependentUpon>201710081948213_AddMainImageToProd.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
