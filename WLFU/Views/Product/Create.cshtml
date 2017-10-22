@@ -12,7 +12,6 @@
         border: 3px dashed #ccc;
         font-size: 20px;
         color: #ccc;
-        /*line-height: 180px;*/
         text-align: center;
         border-radius: 5px;
     }
@@ -95,7 +94,7 @@
     <div class="form-group">
         <label for="Images" class="control-label col-md-2">Images:</label>
         <div  class="col-md-10">
-            <div id="dropzone" class="dropzone">
+            <div id="dropzone" class="dropzone" name="dropzone">
                 <div class="v-center">
                     <span>Drop files here to upload</span><br>
                     <span>or</span><br>
@@ -105,8 +104,8 @@
                     </div>
                 </div>
             </div>
-            @Html.ValidationMessage("Images", new { @class = "text-danger" });
         </div>
+        @Html.ValidationMessage("selectedFiles", new { @class = "text-danger" })
     </div>
 
     <div id="image-preview" class="form-group">
@@ -124,6 +123,7 @@
 
 <script src="~/Scripts/tinymce/tinymce.min.js"></script>
 <script>
+    /*
     $(document).ready(function(){
         tinyMCE.init({
             mode: "textareas",
@@ -144,15 +144,17 @@
             toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
         });
     });
+    */
 </script>
 
 <script src="~/Scripts/jquery.validate.min.js"></script>
-<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+
 <script>
     var filesToUpload = [];
 
     $("#selectedFiles").change(function () {
         FilesChosen($("#selectedFiles")[0].files);
+        $("#selectedFiles").val('');
     });
 
     (function () {
@@ -204,6 +206,8 @@
                         };
                         reader.readAsDataURL(files[i]);
                     }
+
+                    RevalidateDropzone();
                 }
             }
         } else alert("This browser doesn't support HTML5 file uploads!");
@@ -216,23 +220,34 @@
                 if (delInputs[i] == e){
                     filesToUpload.splice(i, 1);
                     $(e).parent().parent().remove();
+                    if(filesToUpload.length == 0) 
+                        RevalidateDropzone();
                     return;
                 }
             }
     }
 
-    $(document).ready(function () {
-        $.validator.addMethod('greaterThanZero', function (value, element) {
-            if (filesToUpload.length > 0) return true;
-            return false;
+    //dropzone revalidation 
+    function RevalidateDropzone(){
+        var validator = $("#ProductForm").validate();
+        validator.element("#selectedFiles");
+    }
+
+    $().ready(function () {
+        $("#ProductForm").validate({
+            ignore: "",
+            rules: {
+                Images: {
+                    accept: false,
+                    greaterThanZero: true
+                }
+            }
+        });
+
+        $.validator.addMethod("greaterThanZero", function (value, element) {
+            console.log('Img count = '+ filesToUpload.length);
+            return filesToUpload.length > 0 ? true : false;
         }, 'At least one picture is required');
-        
-        $('#selectedFiles').rules("add", {
-            greaterThanZero: true
-        });
-        $('#dropzone').rules("add", {
-            greaterThanZero: true
-        });
     });
 
 
@@ -257,7 +272,6 @@
 
         }
         
-        $("#ProductForm").validate();
         if ($("#ProductForm").valid()) {
             $.ajax({
                 url: '/Product/Create',
@@ -269,7 +283,6 @@
                 encode: true,
                 async: false,
                 beforeSend: function () {
-                    $("#ProductForm").validate();
                     if (!$("#ProductForm").valid) return;
                 },
                 success: function (result) {
@@ -306,6 +319,7 @@
 
 <script src="~/Scripts/bootstrapValidator.min.js"></script>
 <script>
+    /*
     $(document).ready(function () {
         $('#ProductForm')
             .find('[name="TagsString"]')
@@ -332,4 +346,5 @@
                 }
             });
     });
+    */
 </script>
