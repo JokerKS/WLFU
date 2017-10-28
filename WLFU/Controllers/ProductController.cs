@@ -14,11 +14,6 @@ namespace WLFU.Controllers
     [Authorize]
     public class ProductController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
         public ActionResult Create()
         {

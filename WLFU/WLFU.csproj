@@ -191,6 +191,7 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Help.txt" />
+    <Content Include="Images\WLFU_logo.jpg" />
     <Content Include="Scripts\bootstrap-tagsinput-angular.js" />
     <Content Include="Scripts\bootstrap-tagsinput-angular.min.js" />
     <Content Include="Scripts\bootstrap-tagsinput.js" />

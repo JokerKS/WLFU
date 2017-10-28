@@ -54,8 +54,8 @@
         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", autocomplete = "off"} })
-            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
         </div>
+        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
     </div>
 
     <div class="form-group">
@@ -77,7 +77,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off", required = true } })
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off"} })
             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -98,14 +98,12 @@
                 <div class="v-center">
                     <span>Drop files here to upload</span><br>
                     <span>or</span><br>
-                    <div style="display:inline-block">
-                        <input type="file" id="selectedFiles" name="Images" style="display: none;" multiple accept="image/png,image/gif,image/jpeg"/>
-                        <input type="button" class="btn btn-info" value="Choose image/images" onclick="document.getElementById('selectedFiles').click();" />
-                    </div>
+                    <input type="button" class="btn btn-info" value="Choose image/images" onclick="document.getElementById('selectedFiles').click();" />
+                    <input type="file" id="selectedFiles" name="Images" style="display: none;" multiple accept="image/png,image/gif,image/jpeg" />
                 </div>
             </div>
+            @Html.ValidationMessage("selectedFiles", new { @class = "text-danger" })
         </div>
-        @Html.ValidationMessage("selectedFiles", new { @class = "text-danger" })
     </div>
 
     <div id="image-preview" class="form-group">
@@ -119,11 +117,8 @@
     </div>
 </form>
 
-<script src="~/Scripts/jquery-1.9.0.min.js"></script>
-
 <script src="~/Scripts/tinymce/tinymce.min.js"></script>
 <script>
-    /*
     $(document).ready(function(){
         tinyMCE.init({
             mode: "textareas",
@@ -144,18 +139,11 @@
             toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
         });
     });
-    */
 </script>
 
 <script src="~/Scripts/jquery.validate.min.js"></script>
-
 <script>
     var filesToUpload = [];
-
-    $("#selectedFiles").change(function () {
-        FilesChosen($("#selectedFiles")[0].files);
-        $("#selectedFiles").val('');
-    });
 
     (function () {
         var dropzone = document.getElementById('dropzone');
@@ -177,6 +165,11 @@
             return false;
         };
     }());
+
+    $("#selectedFiles").change(function () {
+        FilesChosen($("#selectedFiles")[0].files);
+        $("#selectedFiles").val('');
+    });
 
     function FilesChosen(files) {
         if (window.FormData && window.FileReader && window.FileList) {
@@ -236,25 +229,34 @@
     $().ready(function () {
         $("#ProductForm").validate({
             ignore: "",
+            errorClass: "text-danger",
             rules: {
+                Name: {
+                    required: true,
+                    minlength: 6,
+                    maxlength: 50
+                },
+                Description: {
+                    required: true,
+                    minlength: 50
+                },
                 Images: {
                     accept: false,
                     greaterThanZero: true
                 }
             }
         });
-
+        
         $.validator.addMethod("greaterThanZero", function (value, element) {
-            console.log('Img count = '+ filesToUpload.length);
             return filesToUpload.length > 0 ? true : false;
         }, 'At least one picture is required');
     });
 
 
     var SendProduct = function () {
-        var formdata = new FormData(document.getElementById("ProductForm"));
+        if ($("#ProductForm").valid()) {
+            var formdata = new FormData(document.getElementById("ProductForm"));
 
-        if (filesToUpload.length > 0) {
             var titles = $('.img-wrap #image-title :input');
             for (var i = 0; i < filesToUpload.length; i++) {
                 formdata.append('files', filesToUpload[i]);
@@ -268,11 +270,7 @@
                     break;
                 }
             }
-        } else {
-
-        }
         
-        if ($("#ProductForm").valid()) {
             $.ajax({
                 url: '/Product/Create',
                 type: "POST",
