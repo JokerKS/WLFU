@@ -1,38 +1,37 @@
-﻿@model WLFU.Models.LoginModel
+﻿@model JokerKS.WLFU.Models.LoginModel
 
 @{
     ViewBag.Title = "Login";
 }
 
 <h2>Login</h2>
+<hr />
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div>
-        <h4>Регистрация пользователя</h4>
-        <hr />
         @Html.ValidationSummary(false)
         <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
 
         <div>
-            E-mail or user name
+            @Html.LabelFor(model => model.EmailOrUserName)
             <div>
-                @Html.EditorFor(model => model.EmailOrUserName)
+                @Html.TextBoxFor(model => model.EmailOrUserName, new { @class = "form-control" })
             </div>
         </div>
 
         <div>
-            Password
+            @Html.LabelFor(model => model.Password)
             <div>
-                @Html.EditorFor(model => model.Password)
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
             </div>
         </div>
 
         <div>
             <div>
-                <input type="submit" value="Login" />
+                <input type="submit" value="Login" class="btn btn-default" />
             </div>
         </div>
 

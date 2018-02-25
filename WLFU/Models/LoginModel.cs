@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WLFU.Models
+namespace JokerKS.WLFU.Models
 {
     public class LoginModel
     {

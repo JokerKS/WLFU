@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
-namespace WLFU.Entities
+namespace JokerKS.WLFU.Entities
 {
     /// <summary>
     /// Describes the required settings for the rating

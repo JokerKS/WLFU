@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace WLFU.Entities
+namespace JokerKS.WLFU.Entities
 {
     public class AppRole: IdentityRole
     {

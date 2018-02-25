@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace WLFU.Controllers
+namespace JokeKS.WLFU.Controllers
 {
     public class HomeController : Controller
     {

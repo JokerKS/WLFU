@@ -1,10 +1,12 @@
-﻿@model WLFU.Models.CreateProductViewModel
+﻿@model JokerKS.WLFU.Models.CreateProductViewModel
 @{
     ViewBag.Title = "Create Product";
 }
 <link href="~/Content/Styles.css" rel="stylesheet" />
 <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
 <link href="~/Content/bootstrap-tagsinput-typeahead.css" rel="stylesheet" />
+
+<script src="~/Scripts/jquery-1.9.0.min.js"></script>
 
 <style>
     .dropzone {
@@ -213,14 +215,14 @@
                 if (delInputs[i] == e){
                     filesToUpload.splice(i, 1);
                     $(e).parent().parent().remove();
-                    if(filesToUpload.length == 0) 
+                    if(filesToUpload.length == 0)
                         RevalidateDropzone();
                     return;
                 }
             }
     }
 
-    //dropzone revalidation 
+    //dropzone revalidation
     function RevalidateDropzone(){
         var validator = $("#ProductForm").validate();
         validator.element("#selectedFiles");
@@ -246,7 +248,7 @@
                 }
             }
         });
-        
+
         $.validator.addMethod("greaterThanZero", function (value, element) {
             return filesToUpload.length > 0 ? true : false;
         }, 'At least one picture is required');
@@ -270,9 +272,11 @@
                     break;
                 }
             }
-        
+
+           var baseUrl = @Html.Raw(HttpUtility.JavaScriptStringEncode(Url.Content("~/"), true));
+
             $.ajax({
-                url: '/Product/Create',
+                url: baseUrl + 'Product/Create',
                 type: "POST",
                 contentType: false,
                 processData: false,

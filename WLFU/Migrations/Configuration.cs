@@ -1,19 +1,18 @@
-namespace WLFU.Migrations
+namespace JokerKS.WLFU.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<WLFU.AppContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<JokerKS.WLFU.AppContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "WLFU.AppContext";
         }
 
-        protected override void Seed(WLFU.AppContext context)
+        protected override void Seed(JokerKS.WLFU.AppContext context)
         {
             //  This method will be called after migrating to the latest version.
 

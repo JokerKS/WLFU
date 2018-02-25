@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
 using System.ComponentModel.DataAnnotations;
 
-namespace WLFU.Entities
+namespace JokerKS.WLFU.Entities
 {
     public class AppUser : IdentityUser
     {
         [Required]
         [StringLength(50)]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
         [Required]
         [StringLength(100)]
         public string Lastname { get; set; }

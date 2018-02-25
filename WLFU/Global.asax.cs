@@ -4,7 +4,7 @@ using System.Threading;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace WLFU
+namespace JokerKS.WLFU
 {
     public class MvcApplication : System.Web.HttpApplication
     {

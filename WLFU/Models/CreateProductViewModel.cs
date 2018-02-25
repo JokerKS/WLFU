@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Web;
 using System.Web.Mvc;
-using WLFU.Entities;
 
-namespace WLFU.Models
+namespace JokerKS.WLFU.Models
 {
     public class CreateProductViewModel
     {

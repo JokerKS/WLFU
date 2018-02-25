@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using JokerKS.WLFU.Entities;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using System.Data.Entity;
-using WLFU.Entities;
 
-namespace WLFU
+namespace JokerKS.WLFU
 {
     public class AppContext : IdentityDbContext<AppUser>
     {
@@ -21,7 +21,14 @@ namespace WLFU
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().Property(x => x.Price).HasPrecision(16,2);
+            modelBuilder.Entity<Product>()
+                .HasMany(u => u.Images)
+                .WithRequired(a => a.Product)
+                .WillCascadeOnDelete(false);
+
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<AppUser>().ToTable("Users", "dbo");
         }
 
         public static AppContext Create()
@@ -41,10 +48,10 @@ namespace WLFU
 
             AppUser admin = new AppUser()
             {
-                Name = "Viktor",
+                FirstName = "Viktor",
                 Lastname = "Kozenko",
-                UserName = "JokerKS",
-                Email = "kozenko@test.com",
+                UserName = "jokerks",
+                Email = "kozenkovsktor102@gmail.com",
                 BirthDate = new System.DateTime(1994, 12, 6)
             };
 

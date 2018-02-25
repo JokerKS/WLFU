@@ -1,71 +1,70 @@
-﻿@model WLFU.Models.RegisterModel
+﻿@model JokerKS.WLFU.Models.RegisterModel
 @{
     ViewBag.Title = "Register";
 }
 
-<h2>Register</h2>
+<h2>Регистрация пользователя</h2>
+<hr />
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
 
     <div>
-        <h4>Регистрация пользователя</h4>
-        <hr />
         @Html.ValidationSummary(false)
 
         <div>
-            Name
+            @Html.LabelFor(model => model.FirstName)
             <div>
-                @Html.EditorFor(model => model.Name)
+                @Html.TextBoxFor(model => model.FirstName, new { @class = "form-control" })
             </div>
         </div>
 
         <div>
-            Lastname
+            @Html.LabelFor(model => model.Lastname)
             <div>
-                @Html.EditorFor(model => model.Lastname)
+                @Html.TextBoxFor(model => model.Lastname, new { @class = "form-control" })
             </div>
         </div>
 
         <div>
             @Html.LabelFor(model => model.BirthDate)
             <div>
-                @Html.EditorFor(model => model.BirthDate)
+                @Html.EditorFor(model => model.BirthDate, new { htmlAttributes = new { @class = "form-control" } })
             </div>
         </div>
 
         <div>
-            UserName
+            @Html.LabelFor(model => model.UserName)
             <div>
-                @Html.EditorFor(model => model.UserName)
+                @Html.TextBoxFor(model => model.UserName, new { @class = "form-control" })
             </div>
         </div>
 
         <div>
-            E-mail
+            @Html.LabelFor(model => model.Email)
             <div>
-                @Html.EditorFor(model => model.Email)
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
             </div>
         </div>
 
         <div>
-            Password
+            @Html.LabelFor(model => model.Password)
             <div>
-                @Html.EditorFor(model => model.Password)
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
             </div>
         </div>
 
         <div>
-            Confirm Password
+            @Html.LabelFor(model => model.ConfirmPassword)
             <div>
-                @Html.EditorFor(model => model.ConfirmPassword)
+                @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm Password" })
             </div>
         </div>
 
         <div>
             <div>
-                <input type="submit" value="Register" />
+                <input type="submit" value="Register" class="btn btn-default" />
             </div>
         </div>
     </div>

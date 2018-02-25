@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using JokerKS.WLFU;
+using JokerKS.WLFU.Entities;
+using JokerKS.WLFU.Models;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
-using WLFU.Entities;
-using WLFU.Models;
 
-namespace WLFU.Controllers
+namespace JokeKS.WLFU.Controllers
 {
     public class AccountController : Controller
     {
@@ -38,7 +39,15 @@ namespace WLFU.Controllers
         {
             if (ModelState.IsValid)
             {
-                AppUser user = new AppUser { Name = model.Name, Lastname = model.Lastname, BirthDate = model.BirthDate, UserName = model.UserName, Email = model.Email};
+                AppUser user = new AppUser
+                {
+                    FirstName = model.FirstName,
+                    Lastname = model.Lastname,
+                    BirthDate = model.BirthDate,
+                    UserName = model.UserName,
+                    Email = model.Email
+                };
+
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

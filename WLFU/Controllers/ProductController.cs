@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNet.Identity;
 using System.Web.Mvc;
 using System.Linq;
-using WLFU.Entities;
-using WLFU.Models;
 using System.Web;
 using System.IO;
 using System;
-using System.Net;
 using System.Collections.Generic;
+using JokerKS.WLFU.Models;
+using JokerKS.WLFU.Entities;
+using JokerKS.WLFU;
 
-namespace WLFU.Controllers
+namespace JokeKS.WLFU.Controllers
 {
     [Authorize]
     public class ProductController : Controller
@@ -46,6 +46,7 @@ namespace WLFU.Controllers
                 ModelState.AddModelError("MainImageIndex", "It should be noted the main image");
             #endregion
 
+            #region Return view if Form not valid
             if (!ModelState.IsValid)
             {
                 using (var db = new AppContext())
@@ -55,87 +56,97 @@ namespace WLFU.Controllers
 
                 return View(model);
             }
+            #endregion
 
-            Product prod = new Product() {
-                Name = model.Name,
-                Price = model.Price,
-                Description = model.Description,
-                Amount = model.Amount,
-                DesignerId = User.Identity.GetUserId(),
-            };
-
-            using (var db = new AppContext())
+            try
             {
-                //get request id of product creation
-                ProductCreationRequest req;
-                if (model.RequestId == null)
+                Product prod = new Product()
                 {
-                    req = new ProductCreationRequest() { ProductId = null };
-                    db.ProductCreationRequests.Add(req);
-                    db.SaveChanges();
-                }
-                else
-                    req = db.ProductCreationRequests.Find(model.RequestId);
+                    Name = model.Name,
+                    Price = model.Price,
+                    Description = model.Description,
+                    Amount = model.Amount,
+                    DesignerId = User.Identity.GetUserId(),
+                };
 
-                //work with images
-                List<Image> images = new List<Image>();
-                string path = Server.MapPath("~/Images/Products/") + req.RequestId + '/';
-                try
+                using (var db = new AppContext())
                 {
-                    if (!Directory.Exists(path))
-                        Directory.CreateDirectory(path);
-
-                    //save images and get paths
-                    foreach (var file in files.Select((value, index) => new { index, value }))
+                    //get request id of product creation
+                    ProductCreationRequest req;
+                    if (model.RequestId == null)
                     {
-                        string fileName = Path.GetFileName(file.value.FileName);
-                        file.value.SaveAs(path + fileName);
+                        req = new ProductCreationRequest() { ProductId = null };
+                        db.ProductCreationRequests.Add(req);
+                        db.SaveChanges();
+                    }
+                    else
+                        req = db.ProductCreationRequests.Find(model.RequestId);
 
-                        if (file.index == Convert.ToInt32(model.MainImageIndex))
+                    //work with images
+                    List<Image> images = new List<Image>();
+                    string path = Server.MapPath("~/Images/Products/") + req.RequestId + '/';
+                    try
+                    {
+                        if (!Directory.Exists(path))
+                            Directory.CreateDirectory(path);
+
+                        //save images and get paths
+                        foreach (var file in files.Select((value, index) => new { index, value }))
                         {
-                            prod.MainImage = new Image()
+                            string fileName = Path.GetFileName(file.value.FileName);
+                            file.value.SaveAs(path + fileName);
+
+                            if (file.index == Convert.ToInt32(model.MainImageIndex))
                             {
-                                Path = req.RequestId + "/" + fileName,
-                                Title = titles.ElementAt(file.index)
-                            };
-                        }
-                        else
-                        {
-                            images.Add(new Image()
+                                prod.MainImage = new Image()
+                                {
+                                    Path = req.RequestId + "/" + fileName,
+                                    Title = titles.ElementAt(file.index)
+                                };
+                            }
+                            else
                             {
-                                Path = req.RequestId + "/" + fileName,
-                                Title = titles.ElementAt(file.index)
-                            });
+                                prod.Images.Add(new ProductImage
+                                {
+                                    Image = new Image
+                                    {
+                                        Path = req.RequestId + "/" + fileName,
+                                        Title = titles.ElementAt(file.index)
+                                    }
+                                });
+                            }
                         }
                     }
+                    catch (Exception)
+                    {
+                        throw;
+                    }
+
+                    foreach (var tag in tags)
+                    {
+                        var existTag = db.Tags.FirstOrDefault(x => x.Name == tag);
+                        if (existTag == null)
+                            prod.Tags.Add(new ProductTag() { Tag = new Tag() { Name = tag } });
+                        else
+                            prod.Tags.Add(new ProductTag() { TagId = existTag.TagID });
+                    }
+
+                    db.Products.Add(prod);
+                    db.SaveChanges();
+
+                    using (var dbCtx = new AppContext())
+                    {
+                        req.ProductId = prod.ProductId;
+                        dbCtx.Entry(req).State = System.Data.Entity.EntityState.Modified;
+                        dbCtx.SaveChanges();
+                    }
+
+                    return View("Success", req.RequestId);
                 }
-                catch (Exception)
-                {
-                    throw;
-                }
-
-                prod.Images = images.Select(x => new ProductImage() { Image = x }).ToList();
-
-                foreach (var tag in tags)
-                {
-                    var existTag = db.Tags.FirstOrDefault(x => x.Name == tag);
-                    if (existTag == null)
-                        prod.Tags.Add(new ProductTag() { Tag = new Tag() { Name = tag } });
-                    else
-                        prod.Tags.Add(new ProductTag() { Tag = existTag });
-                }
-
-                db.Products.Add(prod);
-                db.SaveChanges();
-
-                using (var dbCtx = new AppContext())
-                {
-                    req.ProductId = prod.ProductId;
-                    dbCtx.Entry(req).State = System.Data.Entity.EntityState.Modified;
-                    dbCtx.SaveChanges();
-                }
-
-                return View("Success", req.RequestId);
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }

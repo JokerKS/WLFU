@@ -3,9 +3,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Owin;
 
-[assembly: OwinStartup(typeof(WLFU.App_Start.Startup))]
+[assembly: OwinStartup(typeof(JokerKS.WLFU.App_Start.Startup))]
 
-namespace WLFU.App_Start
+namespace JokerKS.WLFU.App_Start
 {
     public class Startup
     {

@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace WLFU.Entities
+namespace JokerKS.WLFU.Entities
 {
     public class Tag
     {
