@@ -39,8 +39,7 @@ namespace JokerKS.WLFU.Entities
         public IList<ProductTag> Tags { get; set; }
         public IList<ProductImage> Images { get; set; }
 
-        [Required]
-        public int MainImageId { get; set; }
+        public int? MainImageId { get; set; }
         [ForeignKey("MainImageId")]
         public Image MainImage { get; set; }
 

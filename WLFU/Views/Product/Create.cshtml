@@ -1,4 +1,4 @@
-﻿@model JokerKS.WLFU.Models.CreateProductViewModel
+﻿@model JokerKS.WLFU.Models.CreateProductModel
 @{
     ViewBag.Title = "Create Product";
 }
@@ -41,12 +41,9 @@
 </style>
 
 <h2>Create Product</h2>
+<hr />
 
 <form id="ProductForm" class="form-horizontal" enctype="multipart/form-data" method="post">
-
-    @Html.AntiForgeryToken()
-
-    <hr />
     
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -110,6 +107,9 @@
 
     <div id="image-preview" class="form-group">
         
+    </div>
+    <div id="image-info" style="display:none">
+
     </div>
 
     <div class="form-group">
@@ -256,27 +256,57 @@
 
 
     var SendProduct = function () {
-        if ($("#ProductForm").valid()) {
-            var formdata = new FormData(document.getElementById("ProductForm"));
+        var form = $("#ProductForm");
 
-            var titles = $('.img-wrap #image-title :input');
+        if (form.valid()) {
+
+            var data = new FormData();
             for (var i = 0; i < filesToUpload.length; i++) {
-                formdata.append('files', filesToUpload[i]);
-                formdata.append('titles', titles[i].value);
+                data.append('images', filesToUpload[i]);
             }
-
-            var isMain = $('input[name=IsMain]');
-            for (var i = 0; i < isMain.length; i++) {
-                if (isMain[i].checked) {
-                    formdata.append('MainImageIndex', i);
-                    break;
-                }
-            }
-
-           var baseUrl = @Html.Raw(HttpUtility.JavaScriptStringEncode(Url.Content("~/"), true));
 
             $.ajax({
-                url: baseUrl + 'Product/Create',
+                url: "@Url.Action("SaveImages")",
+                type:"POST",
+                processData: false,
+                contentType: false,
+                data: data,
+                success: function (response) {
+                    if (response){
+                        $("#RequestId").val(response.requestId);
+
+                        var formdata = new FormData(form);
+                        
+                        $("#image-info").empty();
+
+                        $.each(response.pathes, function(key, value){
+                            $("#image-info").append("<input name='filePathes' type='hidden' value='"+value+"'/>");
+                        });
+
+                        var titles = $('.img-wrap #image-title :input');
+                        for (var i = 0; i < filesToUpload.length; i++) {
+                            $("#image-info").append("<input name='titles' type='hidden' value='"+titles[i].value+"'/>");
+                        }
+
+                        var isMain = $('input[name=IsMain]');
+                        for (var i = 0; i < isMain.length; i++) {
+                            if (isMain[i].checked) {
+                                $("#image-info").append("<input name='MainImageIndex' type='hidden' value='"+i+"'/>");
+                                break;
+                            }
+                        }
+
+                        form.submit();
+                    }
+                },
+                error: function (er) {
+                    alert(er);
+                }
+
+            });
+
+            @*$.ajax({
+                url: "@Url.Action("Create")",
                 type: "POST",
                 contentType: false,
                 processData: false,
@@ -288,12 +318,13 @@
                     if (!$("#ProductForm").valid) return;
                 },
                 success: function (result) {
-                    alert(result);
+                    if (!$("#ProductForm").valid) return;
+                    window.location.href = result.newUrl;
                 },
                 error: function (err) {
                     alert(err.statusText);
                 }
-            });
+            });*@
         }
     };
 </script>

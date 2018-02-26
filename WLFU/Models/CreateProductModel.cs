@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace JokerKS.WLFU.Models
 {
-    public class CreateProductViewModel
+    public class CreateProductModel
     {
         public string RequestId { get; set; }
 

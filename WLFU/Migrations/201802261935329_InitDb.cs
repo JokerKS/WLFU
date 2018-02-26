@@ -8,17 +8,6 @@ namespace JokerKS.WLFU.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.ProductCreationRequests",
-                c => new
-                    {
-                        RequestId = c.Guid(nullable: false, identity: true),
-                        ProductId = c.Int(),
-                    })
-                .PrimaryKey(t => t.RequestId)
-                .ForeignKey("dbo.Products", t => t.ProductId)
-                .Index(t => t.ProductId);
-            
-            CreateTable(
                 "dbo.Products",
                 c => new
                     {
@@ -160,7 +149,6 @@ namespace JokerKS.WLFU.Migrations
         public override void Down()
         {
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
-            DropForeignKey("dbo.ProductCreationRequests", "ProductId", "dbo.Products");
             DropForeignKey("dbo.ProductTags", "TagId", "dbo.Tags");
             DropForeignKey("dbo.ProductTags", "ProductId", "dbo.Products");
             DropForeignKey("dbo.Products", "MainImageId", "dbo.Images");
@@ -182,7 +170,6 @@ namespace JokerKS.WLFU.Migrations
             DropIndex("dbo.Users", "UserNameIndex");
             DropIndex("dbo.Products", new[] { "MainImageId" });
             DropIndex("dbo.Products", new[] { "DesignerId" });
-            DropIndex("dbo.ProductCreationRequests", new[] { "ProductId" });
             DropTable("dbo.AspNetRoles");
             DropTable("dbo.Tags");
             DropTable("dbo.ProductTags");
@@ -193,7 +180,6 @@ namespace JokerKS.WLFU.Migrations
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Users");
             DropTable("dbo.Products");
-            DropTable("dbo.ProductCreationRequests");
         }
     }
 }

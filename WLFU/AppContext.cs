@@ -9,7 +9,6 @@ namespace JokerKS.WLFU
 {
     public class AppContext : IdentityDbContext<AppUser>
     {
-        public DbSet<ProductCreationRequest> ProductCreationRequests { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<Tag> Tags { get; set; }

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using JokerKS.WLFU.Models;
 using JokerKS.WLFU.Entities;
 using JokerKS.WLFU;
+using System.Data.Entity;
 
 namespace JokeKS.WLFU.Controllers
 {
@@ -17,7 +18,7 @@ namespace JokeKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            CreateProductViewModel createmodel = new CreateProductViewModel();
+            CreateProductModel createmodel = new CreateProductModel();
             using (var db = new AppContext())
                 createmodel.AllTagsString = db.ProductTags.Select(x => x.Tag.Name).ToList();
 
@@ -25,7 +26,7 @@ namespace JokeKS.WLFU.Controllers
         }
 
         [HttpPost]
-        public ActionResult Create(CreateProductViewModel model, IEnumerable<HttpPostedFileBase> files, IEnumerable<string> titles)
+        public ActionResult Create(CreateProductModel model, IEnumerable<string> filePathes, IEnumerable<string> titles)
         {
             #region Get tags from string
             string[] tags = null;
@@ -40,11 +41,20 @@ namespace JokeKS.WLFU.Controllers
             #endregion
 
             #region Images check
-            if (files == null || files.Count() == 0)
+            if (filePathes == null || filePathes.Count() < 1)
+            {
                 ModelState.AddModelError("Images", "Required at least one image");
+            }
             if (model.MainImageIndex == null)
+            {
                 ModelState.AddModelError("MainImageIndex", "It should be noted the main image");
+            }
             #endregion
+
+            if (model.RequestId == null)
+            {
+                ModelState.AddModelError("RequestId", "RequestId can't be null");
+            }
 
             #region Return view if Form not valid
             if (!ModelState.IsValid)
@@ -71,57 +81,6 @@ namespace JokeKS.WLFU.Controllers
 
                 using (var db = new AppContext())
                 {
-                    //get request id of product creation
-                    ProductCreationRequest req;
-                    if (model.RequestId == null)
-                    {
-                        req = new ProductCreationRequest() { ProductId = null };
-                        db.ProductCreationRequests.Add(req);
-                        db.SaveChanges();
-                    }
-                    else
-                        req = db.ProductCreationRequests.Find(model.RequestId);
-
-                    //work with images
-                    List<Image> images = new List<Image>();
-                    string path = Server.MapPath("~/Images/Products/") + req.RequestId + '/';
-                    try
-                    {
-                        if (!Directory.Exists(path))
-                            Directory.CreateDirectory(path);
-
-                        //save images and get paths
-                        foreach (var file in files.Select((value, index) => new { index, value }))
-                        {
-                            string fileName = Path.GetFileName(file.value.FileName);
-                            file.value.SaveAs(path + fileName);
-
-                            if (file.index == Convert.ToInt32(model.MainImageIndex))
-                            {
-                                prod.MainImage = new Image()
-                                {
-                                    Path = req.RequestId + "/" + fileName,
-                                    Title = titles.ElementAt(file.index)
-                                };
-                            }
-                            else
-                            {
-                                prod.Images.Add(new ProductImage
-                                {
-                                    Image = new Image
-                                    {
-                                        Path = req.RequestId + "/" + fileName,
-                                        Title = titles.ElementAt(file.index)
-                                    }
-                                });
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-
                     foreach (var tag in tags)
                     {
                         var existTag = db.Tags.FirstOrDefault(x => x.Name == tag);
@@ -134,19 +93,104 @@ namespace JokeKS.WLFU.Controllers
                     db.Products.Add(prod);
                     db.SaveChanges();
 
-                    using (var dbCtx = new AppContext())
+                    //work with images
+                    List<Image> images = new List<Image>();
+                    string path = Server.MapPath("~/Images/Temp/Products/") + model.RequestId + '\\';
+                    string pathToMove = Server.MapPath("~/Images/Products/") + prod.ProductId + '\\';
+
+                    if (!Directory.Exists(pathToMove))
+                        Directory.CreateDirectory(pathToMove);
+
+                    //save images and get paths
+                    foreach (var file in filePathes.Select((value, index) => new { index, value }))
                     {
-                        req.ProductId = prod.ProductId;
-                        dbCtx.Entry(req).State = System.Data.Entity.EntityState.Modified;
-                        dbCtx.SaveChanges();
+                        string fileName = file.value;
+                        if(System.IO.File.Exists(path+fileName))
+                        {
+                            System.IO.File.Move(path + fileName, pathToMove + fileName);
+
+                            if (file.index == Convert.ToInt32(model.MainImageIndex))
+                            {
+                                prod.MainImage = new Image()
+                                {
+                                    Path = prod.ProductId + '/' + fileName,
+                                    Title = titles.ElementAt(file.index)
+                                };
+                            }
+                            else
+                            {
+                                prod.Images.Add(new ProductImage
+                                {
+                                    Image = new Image
+                                    {
+                                        Path = prod.ProductId + "/" + fileName,
+                                        Title = titles.ElementAt(file.index)
+                                    }
+                                });
+                            }
+                        }
                     }
 
-                    return View("Success", req.RequestId);
+                    if (Directory.Exists(path))
+                    {
+                        Directory.Delete(path, true);
+                    }
+
+                    db.Entry<Product>(prod).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    var successModel = new SuccessCreateProductModel()
+                    {
+                        ProductName = prod.Name
+                    };
+                    return View("Success", successModel);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 throw;
+            }
+        }
+
+        [HttpGet]
+        private ViewResult Success(SuccessCreateProductModel model)
+        {
+            return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult SaveImages(IEnumerable<HttpPostedFileBase> images, string requestId)
+        {
+            try
+            {
+                Guid guid = Guid.NewGuid();
+                if(!string.IsNullOrEmpty(requestId))
+                {
+                    guid = new Guid(requestId);
+                }
+
+                string basePath = Server.MapPath("~/Images/Temp/Products/") + guid + "\\";
+                if(Directory.Exists(basePath))
+                {
+                    Directory.Delete(basePath, true);
+                }
+                Directory.CreateDirectory(basePath);
+
+                //save images and get paths
+                var pathes = new List<string>();
+                string fileName = string.Empty;
+                foreach (var image in images.Select((value, index) => new { index, value }))
+                {
+                    fileName = Path.GetFileName(image.value.FileName);
+                    pathes.Add(fileName);
+                    image.value.SaveAs($"{basePath}{fileName}");
+                }
+
+                return Json(new { message = "Uploaded successfully", requestId = guid.ToString(), pathes = pathes });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { message = "Uploaded error" });
             }
         }
     }

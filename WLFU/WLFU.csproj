@@ -371,19 +371,23 @@
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product.cs" />
     <Compile Include="Entities\Rating.cs" />
-    <Compile Include="Entities\Requests.cs" />
     <Compile Include="Entities\Tag.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201802251909447_InitDb.cs" />
-    <Compile Include="Migrations\201802251909447_InitDb.Designer.cs">
-      <DependentUpon>201802251909447_InitDb.cs</DependentUpon>
+    <Compile Include="Migrations\201802261935329_InitDb.cs" />
+    <Compile Include="Migrations\201802261935329_InitDb.Designer.cs">
+      <DependentUpon>201802261935329_InitDb.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201802262133131_InitDb_1.cs" />
+    <Compile Include="Migrations\201802262133131_InitDb_1.Designer.cs">
+      <DependentUpon>201802262133131_InitDb_1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\CreateProductViewModel.cs" />
+    <Compile Include="Models\CreateProductModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
+    <Compile Include="Models\SuccessCreateProductModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -419,10 +423,14 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Images\Products\" />
+    <Folder Include="Images\Temp\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201802251909447_InitDb.resx">
-      <DependentUpon>201802251909447_InitDb.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201802261935329_InitDb.resx">
+      <DependentUpon>201802261935329_InitDb.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201802262133131_InitDb_1.resx">
+      <DependentUpon>201802262133131_InitDb_1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
