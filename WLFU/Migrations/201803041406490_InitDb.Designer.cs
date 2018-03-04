@@ -13,7 +13,7 @@ namespace JokerKS.WLFU.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201802261935329_InitDb"; }
+            get { return "201803041406490_InitDb"; }
         }
         
         string IMigrationMetadata.Source

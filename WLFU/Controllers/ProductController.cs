@@ -9,12 +9,15 @@ using JokerKS.WLFU.Models;
 using JokerKS.WLFU.Entities;
 using JokerKS.WLFU;
 using System.Data.Entity;
+using JokerKS.WLFU.Entities.Product;
+using System.Net;
 
 namespace JokeKS.WLFU.Controllers
 {
     [Authorize]
     public class ProductController : Controller
     {
+        #region Create() Get
         [HttpGet]
         public ActionResult Create()
         {
@@ -24,7 +27,9 @@ namespace JokeKS.WLFU.Controllers
 
             return View(createmodel);
         }
+        #endregion
 
+        #region Create() Post
         [HttpPost]
         public ActionResult Create(CreateProductModel model, IEnumerable<string> filePathes, IEnumerable<string> titles)
         {
@@ -33,7 +38,7 @@ namespace JokeKS.WLFU.Controllers
             if (!string.IsNullOrEmpty(model.TagsString))
             {
                 tags = model.TagsString.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                if(tags.Length == 0)
+                if (tags.Length == 0)
                     ModelState.AddModelError("TagsString", "Product Tags are required");
             }
             else
@@ -87,7 +92,7 @@ namespace JokeKS.WLFU.Controllers
                         if (existTag == null)
                             prod.Tags.Add(new ProductTag() { Tag = new Tag() { Name = tag } });
                         else
-                            prod.Tags.Add(new ProductTag() { TagId = existTag.TagID });
+                            prod.Tags.Add(new ProductTag() { TagId = existTag.Id });
                     }
 
                     db.Products.Add(prod);
@@ -96,7 +101,7 @@ namespace JokeKS.WLFU.Controllers
                     //work with images
                     List<Image> images = new List<Image>();
                     string path = Server.MapPath("~/Images/Temp/Products/") + model.RequestId + '\\';
-                    string pathToMove = Server.MapPath("~/Images/Products/") + prod.ProductId + '\\';
+                    string pathToMove = Server.MapPath("~/Images/Products/") + prod.Id + '\\';
 
                     if (!Directory.Exists(pathToMove))
                         Directory.CreateDirectory(pathToMove);
@@ -105,7 +110,7 @@ namespace JokeKS.WLFU.Controllers
                     foreach (var file in filePathes.Select((value, index) => new { index, value }))
                     {
                         string fileName = file.value;
-                        if(System.IO.File.Exists(path+fileName))
+                        if (System.IO.File.Exists(path + fileName))
                         {
                             System.IO.File.Move(path + fileName, pathToMove + fileName);
 
@@ -113,7 +118,7 @@ namespace JokeKS.WLFU.Controllers
                             {
                                 prod.MainImage = new Image()
                                 {
-                                    Path = prod.ProductId + '/' + fileName,
+                                    Path = prod.Id + '/' + fileName,
                                     Title = titles.ElementAt(file.index)
                                 };
                             }
@@ -123,7 +128,7 @@ namespace JokeKS.WLFU.Controllers
                                 {
                                     Image = new Image
                                     {
-                                        Path = prod.ProductId + "/" + fileName,
+                                        Path = prod.Id + "/" + fileName,
                                         Title = titles.ElementAt(file.index)
                                     }
                                 });
@@ -151,26 +156,30 @@ namespace JokeKS.WLFU.Controllers
                 throw;
             }
         }
+        #endregion
 
+        #region Success() Get
         [HttpGet]
         private ViewResult Success(SuccessCreateProductModel model)
         {
             return View(model);
         }
+        #endregion
 
+        #region SaveImages() Post
         [HttpPost]
         public JsonResult SaveImages(IEnumerable<HttpPostedFileBase> images, string requestId)
         {
             try
             {
                 Guid guid = Guid.NewGuid();
-                if(!string.IsNullOrEmpty(requestId))
+                if (!string.IsNullOrEmpty(requestId))
                 {
                     guid = new Guid(requestId);
                 }
 
                 string basePath = Server.MapPath("~/Images/Temp/Products/") + guid + "\\";
-                if(Directory.Exists(basePath))
+                if (Directory.Exists(basePath))
                 {
                     Directory.Delete(basePath, true);
                 }
@@ -193,5 +202,97 @@ namespace JokeKS.WLFU.Controllers
                 return Json(new { message = "Uploaded error" });
             }
         }
+        #endregion
+
+
+        #region Categories() Get
+        [HttpGet]
+        public ActionResult Categories(ProductCategoryListModel model = null)
+        {
+            if (model == null)
+            {
+                var pager = new Pager();
+
+                model = new ProductCategoryListModel()
+                {
+                    Pager = pager
+                };
+            }
+            model.Categories = ProductCategoryManager.GetList(model.Pager);
+
+            return View(model);
+        }
+        #endregion
+
+        #region CategoryAdd() Get
+        [HttpGet]
+        public ActionResult CategoryAdd(string categoryId)
+        {
+            var id = Convert.ToInt32(categoryId);
+            var model = new ProductCategoryAddModel();
+            if (id > 0)
+            {
+                var category = ProductCategoryManager.GetById(id);
+                if(category != null)
+                {
+                    model.CategoryId = category.Id;
+                    model.Name = category.Name;
+                    model.Description = category.Description;
+                }
+            }
+
+            return PartialView(model);
+        }
+        #endregion
+
+        #region CategoryAdd() Post
+        [HttpPost]
+        public ActionResult CategoryAdd(ProductCategoryAddModel model)
+        {
+            if(model != null)
+            {
+                var category = new ProductCategory();
+                category.Name = model.Name;
+                category.Description = model.Description;
+
+                if(model.CategoryId > 0)
+                {
+                    category.Id = model.CategoryId;
+                    ProductCategoryManager.Update(category);
+                }
+                else
+                {
+                    ProductCategoryManager.Add(category);
+                }
+                return RedirectToAction("Categories");
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
+        #endregion
+
+        #region CategoryDelete() Get
+        [HttpGet]
+        public ActionResult CategoryDelete(int? id)
+        {
+            if (!id.HasValue || id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProductCategoryManager.Delete(id.Value);
+            return RedirectToAction("Categories");
+        }
+        #endregion
+
+
+        #region List() Get
+        [HttpGet]
+        public ActionResult List()
+        {
+            return View();
+        }
+        #endregion
     }
 }

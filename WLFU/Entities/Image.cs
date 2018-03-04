@@ -3,25 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JokerKS.WLFU.Entities
 {
-    public class Image
+    public class Image : IIdentity
     {
         [Key]
-        public int ImageID { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Path { get; set; }
         public string Title { get; set; }
-    }
-
-    public class ProductImage
-    {
-        [Key, Column(Order = 0)]
-        public int ProductId { get; set; }
-        [Key, Column(Order = 1)]
-        public int ImageId { get; set; }
-
-        [ForeignKey("ProductId")]
-        public Product Product { get; set; }
-        [ForeignKey("ImageId")]
-        public Image Image { get; set; }
     }
 }

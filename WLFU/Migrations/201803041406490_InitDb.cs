@@ -8,22 +8,35 @@ namespace JokerKS.WLFU.Migrations
         public override void Up()
         {
             CreateTable(
+                "dbo.ProductCategories",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false, maxLength: 100),
+                        Description = c.String(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
                 "dbo.Products",
                 c => new
                     {
-                        ProductId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false),
                         Price = c.Decimal(nullable: false, precision: 16, scale: 2),
                         Description = c.String(nullable: false),
                         Amount = c.Short(nullable: false),
                         DesignerId = c.String(nullable: false, maxLength: 128),
-                        MainImageId = c.Int(nullable: false),
+                        MainImageId = c.Int(),
+                        CategoryId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.ProductId)
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.ProductCategories", t => t.CategoryId, cascadeDelete: true)
                 .ForeignKey("dbo.Users", t => t.DesignerId, cascadeDelete: true)
-                .ForeignKey("dbo.Images", t => t.MainImageId, cascadeDelete: true)
+                .ForeignKey("dbo.Images", t => t.MainImageId)
                 .Index(t => t.DesignerId)
-                .Index(t => t.MainImageId);
+                .Index(t => t.MainImageId)
+                .Index(t => t.CategoryId);
             
             CreateTable(
                 "dbo.Users",
@@ -103,11 +116,11 @@ namespace JokerKS.WLFU.Migrations
                 "dbo.Images",
                 c => new
                     {
-                        ImageID = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Path = c.String(nullable: false),
                         Title = c.String(),
                     })
-                .PrimaryKey(t => t.ImageID);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.ProductTags",
@@ -126,11 +139,10 @@ namespace JokerKS.WLFU.Migrations
                 "dbo.Tags",
                 c => new
                     {
-                        TagID = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         Name = c.String(nullable: false, maxLength: 25),
-                        Description = c.String(),
                     })
-                .PrimaryKey(t => t.TagID);
+                .PrimaryKey(t => t.Id);
             
             CreateTable(
                 "dbo.AspNetRoles",
@@ -158,6 +170,7 @@ namespace JokerKS.WLFU.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "UserId", "dbo.Users");
             DropForeignKey("dbo.AspNetUserLogins", "UserId", "dbo.Users");
             DropForeignKey("dbo.AspNetUserClaims", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Products", "CategoryId", "dbo.ProductCategories");
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.ProductTags", new[] { "TagId" });
             DropIndex("dbo.ProductTags", new[] { "ProductId" });
@@ -168,6 +181,7 @@ namespace JokerKS.WLFU.Migrations
             DropIndex("dbo.AspNetUserLogins", new[] { "UserId" });
             DropIndex("dbo.AspNetUserClaims", new[] { "UserId" });
             DropIndex("dbo.Users", "UserNameIndex");
+            DropIndex("dbo.Products", new[] { "CategoryId" });
             DropIndex("dbo.Products", new[] { "MainImageId" });
             DropIndex("dbo.Products", new[] { "DesignerId" });
             DropTable("dbo.AspNetRoles");
@@ -180,6 +194,7 @@ namespace JokerKS.WLFU.Migrations
             DropTable("dbo.AspNetUserClaims");
             DropTable("dbo.Users");
             DropTable("dbo.Products");
+            DropTable("dbo.ProductCategories");
         }
     }
 }

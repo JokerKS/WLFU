@@ -191,6 +191,8 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Help.txt" />
+    <Content Include="Images\Mini\delete.png" />
+    <Content Include="Images\Mini\edit.ico" />
     <Content Include="Images\WLFU_logo.jpg" />
     <Content Include="Scripts\bootstrap-tagsinput-angular.js" />
     <Content Include="Scripts\bootstrap-tagsinput-angular.min.js" />
@@ -368,22 +370,25 @@
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Entities\AppRole.cs" />
     <Compile Include="Entities\AppUser.cs" />
+    <Compile Include="Entities\DbInterface\Identity.cs" />
+    <Compile Include="Entities\Helpers\Pager.cs" />
+    <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
-    <Compile Include="Entities\Product.cs" />
-    <Compile Include="Entities\Rating.cs" />
+    <Compile Include="Entities\Product\Product.cs" />
+    <Compile Include="Entities\Product\ProductCategoryManager.cs" />
+    <Compile Include="Entities\Product\ProductImage.cs" />
+    <Compile Include="Entities\Product\ProductTag.cs" />
     <Compile Include="Entities\Tag.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201802261935329_InitDb.cs" />
-    <Compile Include="Migrations\201802261935329_InitDb.Designer.cs">
-      <DependentUpon>201802261935329_InitDb.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201802262133131_InitDb_1.cs" />
-    <Compile Include="Migrations\201802262133131_InitDb_1.Designer.cs">
-      <DependentUpon>201802262133131_InitDb_1.cs</DependentUpon>
+    <Compile Include="Migrations\201803041406490_InitDb.cs" />
+    <Compile Include="Migrations\201803041406490_InitDb.Designer.cs">
+      <DependentUpon>201803041406490_InitDb.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ProductCategoryAddModel.cs" />
+    <Compile Include="Models\ProductCategoryListModel.cs" />
     <Compile Include="Models\CreateProductModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
@@ -413,6 +418,8 @@
     <Content Include="Scripts\tinymce\langs\readme.md" />
     <Content Include="Views\Product\Create.cshtml" />
     <Content Include="Views\Product\Success.cshtml" />
+    <Content Include="Views\Product\Categories.cshtml" />
+    <Content Include="Views\Product\CategoryAdd.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -426,11 +433,8 @@
     <Folder Include="Images\Temp\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201802261935329_InitDb.resx">
-      <DependentUpon>201802261935329_InitDb.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201802262133131_InitDb_1.resx">
-      <DependentUpon>201802262133131_InitDb_1.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201803041406490_InitDb.resx">
+      <DependentUpon>201803041406490_InitDb.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

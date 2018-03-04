@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using System.Web.Mvc;
 
-namespace JokerKS.WLFU.Entities
+namespace JokerKS.WLFU.Entities.Product
 {
-    public class Product
+    public class Product : IIdentity
     {
         public Product()
         {
@@ -17,7 +15,7 @@ namespace JokerKS.WLFU.Entities
         }
 
         [Key]
-        public int ProductId { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]
@@ -35,33 +33,23 @@ namespace JokerKS.WLFU.Entities
         [ForeignKey("DesignerId")]
         public AppUser Designer { get; set; }
 
+        #region Tags and Images
         [Required]
         public IList<ProductTag> Tags { get; set; }
-        public IList<ProductImage> Images { get; set; }
+        public IList<ProductImage> Images { get; set; } 
+        #endregion
 
+        #region MainImage
         public int? MainImageId { get; set; }
         [ForeignKey("MainImageId")]
-        public Image MainImage { get; set; }
+        public Image MainImage { get; set; } 
+        #endregion
 
-        /*
+        #region Category
         [Required]
         public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
-        */
-    }
-
-    public class Category
-    {
-        [Key]
-        public int CategoryID { get; set; }
-    }
-
-    public class Comment
-    {
-        [Key]
-        public int CommentID { get; set; }
-        [Required]
-        public string CommentText { get; set; }
+        public ProductCategory Category { get; set; } 
+        #endregion
     }
 }

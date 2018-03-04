@@ -1,0 +1,81 @@
+﻿@model JokerKS.WLFU.Models.ProductCategoryListModel
+
+@{
+    ViewBag.Title = "Categories";
+}
+
+<h2>Categories</h2>
+
+<p>
+    <a href="#" onclick="ShowCategoryAddPV(0)">Create New</a>
+</p>
+<div class="category-create-container">
+
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayText("Name")
+            </th>
+            <th>
+                @Html.DisplayText("Description")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+@if (Model.Categories.Any())
+{
+    foreach (var item in Model.Categories)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <button title="Edit product category" onclick="ShowCategoryAddPV(@item.Id)">
+                    <img class="btn-icon" src="~/Images/Mini/edit.ico" />
+                </button>
+                <button title="Delete product category" onclick="location.href='@Url.Action("CategoryDelete", new { item.Id })'">
+                    <img class="btn-icon" src="~/Images/Mini/delete.png" />
+                </button>
+                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+    }
+}
+
+</table>
+
+@if (!Model.Categories.Any())
+{
+<div>
+    <span>Categories not founded</span>
+</div>
+}
+
+<style type="text/css">
+    .btn-icon{
+        max-height: 40px;
+    }
+</style>
+
+<script type="text/javascript">
+    function ShowCategoryAddPV(catId) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("CategoryAdd")',
+            data: { 'categoryId': catId },
+            contentType: "application/json; charset=utf-8",
+            dataType: "html",
+            success: function (result) {
+                $('.category-create-container').html(result);
+            }
+        });
+    };
+
+</script>
