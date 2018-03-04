@@ -29,5 +29,9 @@ namespace JokerKS.WLFU.Models
         public decimal Price { get; set; }
         [DefaultValue(1)]
         public short Amount { get; set; }
+
+        public IEnumerable<SelectListItem> Categories { get; set; }
+        [Required(ErrorMessage = "Please select category")]
+        public int CategoryId { get; set; }
     }
 }

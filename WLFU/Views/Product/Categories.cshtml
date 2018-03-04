@@ -43,7 +43,6 @@
                 <button title="Delete product category" onclick="location.href='@Url.Action("CategoryDelete", new { item.Id })'">
                     <img class="btn-icon" src="~/Images/Mini/delete.png" />
                 </button>
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
             </td>
         </tr>
     }
@@ -64,6 +63,7 @@
     }
 </style>
 
+<script src="~/Scripts/jquery-1.9.0.min.js"></script>
 <script type="text/javascript">
     function ShowCategoryAddPV(catId) {
         $.ajax({

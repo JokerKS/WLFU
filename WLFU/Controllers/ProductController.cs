@@ -21,11 +21,20 @@ namespace JokeKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            CreateProductModel createmodel = new CreateProductModel();
-            using (var db = new AppContext())
-                createmodel.AllTagsString = db.ProductTags.Select(x => x.Tag.Name).ToList();
+            CreateProductModel model = new CreateProductModel();
+            model.Categories = ProductCategoryManager.GetList()
+                .Select(x => new SelectListItem()
+                {
+                    Value = x.Id.ToString(),
+                    Text = x.Name
+                });
 
-            return View(createmodel);
+            using (var db = new AppContext())
+            {
+                model.AllTagsString = db.ProductTags.Select(x => x.Tag.Name).ToList();
+            }
+
+            return View(model);
         }
         #endregion
 
@@ -82,6 +91,7 @@ namespace JokeKS.WLFU.Controllers
                     Description = model.Description,
                     Amount = model.Amount,
                     DesignerId = User.Identity.GetUserId(),
+                    CategoryId = model.CategoryId
                 };
 
                 using (var db = new AppContext())
