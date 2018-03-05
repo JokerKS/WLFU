@@ -299,9 +299,40 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
-        public ActionResult List()
+        public ActionResult List(int? categoryId)
         {
-            return View();
+            var pager = new Pager();
+
+            var model = new ProductListModel()
+            {
+                Pager = pager,
+                Products = ProductManager.GetList(pager),
+                Categories = ProductCategoryManager.GetList()
+            };
+
+            if(categoryId.HasValue && categoryId > 0)
+            {
+                model.Products = ProductManager.GetListByCategory(categoryId.Value, pager);
+            }
+            else
+            {
+                model.Products = ProductManager.GetList(pager);
+            }
+
+            return View(model);
+        }
+        #endregion
+
+        #region Details() Get
+        [HttpGet]
+        public ActionResult Details(int productId)
+        {
+            var product = ProductManager.GetById(productId);
+            if(product != null)
+            {
+                return View(product);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
         #endregion
     }

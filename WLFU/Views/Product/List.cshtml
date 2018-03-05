@@ -1,0 +1,45 @@
+﻿@model JokerKS.WLFU.Models.ProductListModel
+@{
+    ViewBag.Title = "List";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="categories-container col-md-2">
+            <h3>Categories</h3>
+            @foreach (var category in Model.Categories)
+            {
+                @Html.ActionLink(category.Name, "List", new { categoryId = category.Id })
+                <br/>
+            }
+        </div>
+
+        <div class="products-container col-md-10">
+            <h3>Products</h3>
+            @if (Model.Products.Any())
+            {
+                foreach (var product in Model.Products)
+                {
+                <div class="col-md-4">
+                    <img src="~/Images/Mini/edit.ico" />
+                </div>
+                <div class="col-md-8">
+                    @Html.ActionLink(product.Name, "Details", new { productId = product.Id })
+                    <div class="product-description">
+                        @Html.Raw(product.Description)
+                    </div>
+                </div>
+                }
+            }
+            else
+            {
+                <div>
+                    <span>Products not founded</span>
+                </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+

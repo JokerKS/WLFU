@@ -375,6 +375,7 @@
     <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product\Product.cs" />
+    <Compile Include="Entities\Product\ProductManager.cs" />
     <Compile Include="Entities\Product\ProductCategoryManager.cs" />
     <Compile Include="Entities\Product\ProductImage.cs" />
     <Compile Include="Entities\Product\ProductTag.cs" />
@@ -388,6 +389,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
+    <Compile Include="Models\ProductListModel.cs" />
     <Compile Include="Models\ProductCategoryListModel.cs" />
     <Compile Include="Models\CreateProductModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
@@ -420,6 +422,8 @@
     <Content Include="Views\Product\Success.cshtml" />
     <Content Include="Views\Product\Categories.cshtml" />
     <Content Include="Views\Product\CategoryAdd.cshtml" />
+    <Content Include="Views\Product\List.cshtml" />
+    <Content Include="Views\Product\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
