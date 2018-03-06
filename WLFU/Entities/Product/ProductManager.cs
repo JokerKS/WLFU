@@ -8,13 +8,18 @@ namespace JokerKS.WLFU.Entities.Product
     public static class ProductManager
     {
         #region GetList()
-        public static List<Product> GetList(Pager pager = null)
+        public static List<Product> GetList(Pager pager = null, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
                     var query = db.Products.AsQueryable();
+
+                    if (includeImages)
+                    {
+                        query = query.Include(x => x.MainImage);
+                    }
 
                     if (pager != null)
                     {
@@ -38,13 +43,18 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region GetListByCategory()
-        public static List<Product> GetListByCategory(int categoryId, Pager pager = null)
+        public static List<Product> GetListByCategory(int categoryId, Pager pager = null, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
                     var query = db.Products.Where(x => x.CategoryId == categoryId).AsQueryable();
+
+                    if(includeImages)
+                    {
+                        query = query.Include(x => x.MainImage);
+                    }
 
                     if (pager != null)
                     {
@@ -68,13 +78,24 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region GetById()
-        public static Product GetById(int id)
+        public static Product GetById(int id, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    return db.Products.Find(id);
+                    if (includeImages)
+                    {
+                        return db.Products
+                            .Where(x => x.Id == id)
+                            .Include(x => x.MainImage)
+                            .Include(x => x.Images)
+                            .FirstOrDefault();
+                    }
+                    else
+                    {
+                        return db.Products.Find(id);
+                    }
                 }
             }
             catch (Exception)

@@ -389,6 +389,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
+    <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductListModel.cs" />
     <Compile Include="Models\ProductCategoryListModel.cs" />
     <Compile Include="Models\CreateProductModel.cs" />

@@ -14,6 +14,7 @@ namespace JokerKS.WLFU
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<Image> Images { get; set; }
         public AppContext(): base("WLFUdb")
         {
             Database.SetInitializer(new DbInitial());

@@ -1,4 +1,4 @@
-﻿@model JokerKS.WLFU.Entities.Product.Product
+﻿@model JokerKS.WLFU.Models.ProductModel
 
 @{
     ViewBag.Title = "Details";
@@ -6,41 +6,46 @@
 
 <h2>Details</h2>
 
-<div>
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
+<div class="product-details form-group">
+    <div class="col-md-6">
+        <img class="product-img-main" src="@Url.Content("~/Images/Products/" + Model.Product.MainImage.Path)" alt="@Model.Product.Name"/>
+        @foreach (var image in Model.Images)
+        {
+            <img class="img-mini" src="@Url.Content("~/Images/Products/" + image.Path)" alt="@Model.Product.Name" />
+        }
+    </div>
+    <div class="col-md-6">
+        <h3>
+            @Html.DisplayFor(model => model.Product.Name)
+        </h3>
 
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
+        <div>
+            @Html.DisplayNameFor(model => model.Product.Price)
+            @Html.DisplayFor(model => model.Product.Price)
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
+            @Html.DisplayNameFor(model => model.Product.Amount)
+            @Html.DisplayFor(model => model.Product.Amount)
+        </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Amount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Amount)
-        </dd>
-    </dl>
+        <div>
+            <button class="btn btn-success">Add to backet</button>
+        </div>
+    </div>
+    <div>
+        @Html.DisplayNameFor(model => model.Product.Description)
+        @Html.Raw(Model.Product.Description)
+    </div>
 </div>
 <p>
     @Html.ActionLink("Back to List", "List")
 </p>
+
+
+<style>
+    .product-img-main{
+        max-height: 150px;
+    }
+    .img-mini{
+        max-height: 50px;
+    }
+</style>

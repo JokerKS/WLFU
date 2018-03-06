@@ -20,15 +20,18 @@
             {
                 foreach (var product in Model.Products)
                 {
-                <div class="col-md-4">
-                    <img src="~/Images/Mini/edit.ico" />
-                </div>
-                <div class="col-md-8">
-                    @Html.ActionLink(product.Name, "Details", new { productId = product.Id })
-                    <div class="product-description">
-                        @Html.Raw(product.Description)
+                    <div class="product-container row">
+                        <div class="img-container col-md-4">
+                            <img src="@Url.Content("~/Images/Products/" + product.MainImage.Path)" alt="@product.Name" />
+                        </div>
+                        <div class="col-md-6">
+                            @Html.ActionLink(product.Name, "Details", new { productId = product.Id })
+                            <div class="product-description">
+                                @Html.Raw(product.Description)
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
-                </div>
                 }
             }
             else
@@ -43,3 +46,15 @@
 </div>
 
 
+<style>
+    .img-container img {
+        width: 100%;
+        height: 100%;
+    }
+    .products-container{
+        background-color: lightblue;
+    }
+    .product-container{
+        margin-bottom: 15px;
+    }
+</style>

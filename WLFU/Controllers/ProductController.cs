@@ -128,7 +128,7 @@ namespace JokeKS.WLFU.Controllers
                             {
                                 prod.MainImage = new Image()
                                 {
-                                    Path = prod.Id + '/' + fileName,
+                                    Path = prod.Id + "/" + fileName,
                                     Title = titles.ElementAt(file.index)
                                 };
                             }
@@ -306,17 +306,16 @@ namespace JokeKS.WLFU.Controllers
             var model = new ProductListModel()
             {
                 Pager = pager,
-                Products = ProductManager.GetList(pager),
                 Categories = ProductCategoryManager.GetList()
             };
 
             if(categoryId.HasValue && categoryId > 0)
             {
-                model.Products = ProductManager.GetListByCategory(categoryId.Value, pager);
+                model.Products = ProductManager.GetListByCategory(categoryId.Value, pager, true);
             }
             else
             {
-                model.Products = ProductManager.GetList(pager);
+                model.Products = ProductManager.GetList(pager, true);
             }
 
             return View(model);
@@ -327,10 +326,22 @@ namespace JokeKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Details(int productId)
         {
-            var product = ProductManager.GetById(productId);
+            ProductModel model = new ProductModel();
+
+            var product = ProductManager.GetById(productId, true);
+
             if(product != null)
             {
-                return View(product);
+                model.Product = product;
+
+                var imageIds = product.Images.Select(x => x.ImageId).ToList();
+
+                using (var db = new AppContext())
+                {
+                    model.Images = db.Images.Where(x => imageIds.Contains(x.Id)).ToList();
+                }
+
+                return View(model);
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
