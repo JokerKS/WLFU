@@ -15,6 +15,7 @@ namespace JokerKS.WLFU
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Image> Images { get; set; }
+        public DbSet<BasketProduct> BasketProducts { get; set; }
         public AppContext(): base("WLFUdb")
         {
             Database.SetInitializer(new DbInitial());
@@ -23,9 +24,15 @@ namespace JokerKS.WLFU
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Product>().Property(x => x.Price).HasPrecision(16,2);
+
             modelBuilder.Entity<Product>()
                 .HasMany(u => u.Images)
                 .WithRequired(a => a.Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<AppUser>()
+                .HasMany(u => u.BasketProducts)
+                .WithRequired(a => a.User)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

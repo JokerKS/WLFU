@@ -1,0 +1,49 @@
+﻿@model JokerKS.WLFU.Models.BasketListModel
+
+@{
+    ViewBag.Title = "Basket";
+}
+
+<h2>Basket</h2>
+
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="message-info @(Model.Status ? "alert-success" : "alert-danger" )">
+        @Model.Message
+    </div>
+}
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayName("Name")
+        </th>
+        <th>
+            @Html.DisplayName("Amount")
+        </th>
+        <th>
+            @Html.DisplayName("Date created")
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model.ProductsInBasket) {
+    <tr>
+        <td>
+            @Html.DisplayFor(model => item.Product.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Amount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DateCreated)
+        </td>
+        <td>
+            @Html.ActionLink("Delete", "DeleteFromBasket", new { productId = item.ProductId })
+        </td>
+    </tr>
+}
+
+</table>

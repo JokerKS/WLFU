@@ -40,6 +40,21 @@ namespace JokerKS.WLFU.Entities.Product
                 return new List<Product>();
             }
         }
+
+        public static List<Product> GetList(IEnumerable<int> ids)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.Products.Where(x => ids.Contains(x.Id)).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
         #endregion
 
         #region GetListByCategory()

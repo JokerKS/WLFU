@@ -7,12 +7,26 @@
 <h2>Details</h2>
 
 <div class="product-details form-group">
+    <div class="message-info" style="display:none">
+
+    </div>
     <div class="col-md-6">
-        <img class="product-img-main" src="@Url.Content("~/Images/Products/" + Model.Product.MainImage.Path)" alt="@Model.Product.Name"/>
-        @foreach (var image in Model.Images)
-        {
-            <img class="img-mini" src="@Url.Content("~/Images/Products/" + image.Path)" alt="@Model.Product.Name" />
-        }
+        <a class="product-main-img" href="#">
+            <div class="polaroid">
+                <p>@Model.Product.MainImage.Title</p>
+                <img src="@Url.Content("~/Images/Products/" + Model.Product.MainImage.Path)" />
+            </div>
+        </a>
+
+        <div id="product-images">
+            @foreach (var image in Model.Images)
+            {
+                <div>
+                    <img class="img-mini img-thumbnail" src="@Url.Content("~/Images/Products/" + image.Path)" alt="@Model.Product.Name" />
+                </div>
+            }
+        </div>
+        <div class="clearfix"></div>
     </div>
     <div class="col-md-6">
         <h3>
@@ -21,31 +35,122 @@
 
         <div>
             @Html.DisplayNameFor(model => model.Product.Price)
-            @Html.DisplayFor(model => model.Product.Price)
+            @Html.DisplayFor(model => model.Product.Price) zł
 
             @Html.DisplayNameFor(model => model.Product.Amount)
             @Html.DisplayFor(model => model.Product.Amount)
         </div>
 
         <div>
-            <button class="btn btn-success">Add to backet</button>
+            <button type="button" class="btn btn-success btn-add-to" onclick="AddToBasket(@Model.Product.Id)">Add to basket</button>
         </div>
     </div>
-    <div>
-        @Html.DisplayNameFor(model => model.Product.Description)
-        @Html.Raw(Model.Product.Description)
-    </div>
+    <div class="clearfix"></div>
+</div>
+<div>
+    @Html.DisplayNameFor(model => model.Product.Description)
+    @Html.Raw(Model.Product.Description)
 </div>
 <p>
     @Html.ActionLink("Back to List", "List")
 </p>
 
-
 <style>
-    .product-img-main{
-        max-height: 150px;
+    .product-main-img{
+        float: left;
+        width: 70%;
+        margin-right: 8px;
     }
-    .img-mini{
-        max-height: 50px;
+    .polaroid {
+        position: relative;
+    }
+
+    .polaroid img {
+        width: 100%;
+        border: 10px solid #fff;
+        border-bottom: 45px solid #fff;
+        -webkit-box-shadow: 3px 3px 3px 3px #777;
+        -moz-box-shadow: 3px 3px 3px 3px #777;
+        box-shadow: 3px 3px 3px 3px #777;
+    }
+ 
+    .polaroid p {
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        bottom: 0px;
+        font: 400 16px/1 'Kaushan Script', cursive;
+        color: #888;
+    }
+
+    .product-images{
+        position:relative;
+        float: left;
+        width: 30%;
+    }
+
+    .product-details {
+        font-size: 14px;
+        font-family: Tahoma, Arial;
+    }
+
+    .img-mini {
+        max-width: 120px;
+        max-height: 120px;
     }
 </style>
+
+<script src="~/Scripts/jquery-1.9.0.min.js"></script>
+<script type="text/javascript">
+    function AddToBasket(productId) {
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("AddToBasket", "Product")',
+            contentType: "application/json; charset=utf-8",
+            data: { 'productId': productId },
+            dataType: "json",
+            success: function (response) {
+                var messageContainer = $('.message-info');
+                if (response.Succeeded == true)
+                {
+                    if (response.Message) {
+                        messageContainer.removeClass("alert-success alert-danger").addClass("alert-success");
+                        messageContainer.append("<span>" + response.Message + "</span>");
+                        messageContainer.show();
+                    }
+                } else {
+                    if (response.Message) {
+                        messageContainer.removeClass("alert-success alert-danger").addClass("alert-danger");
+                        messageContainer.append("<span>" + response.Message + "</span>");
+                        if(response.Error)
+                        {
+                            messageContainer.append("<br/><span>" + response.Error + "</span>");
+                        }
+                        messageContainer.show();
+                    }
+                }
+            },
+            error: function (jqXHR, exception) {
+                var messageContainer = $('.message-info');
+                var msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'Not connect.\n Verify Network.';
+                } else if (jqXHR.status == 404) {
+                    msg = 'Requested page not found. [404]';
+                } else if (jqXHR.status == 500) {
+                    msg = 'Internal Server Error [500].';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } else {
+                    msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                }
+                messageContainer.html(msg);
+                messageContainer.show();
+            }
+        });
+    };
+</script>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - WLFU</title>
     <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/Styles.css" rel="stylesheet" />
     <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="~/Scripts/modernizr-2.6.2.js"></script>
 </head>
@@ -32,7 +33,7 @@
                 </div>
                 @Html.Partial("_LoginPartial")
                 <ul class="nav navbar-nav navbar-right" style="padding-right:20px;">
-                    <li><a href="#" class="navbar-link">Basket</a></li>
+                    <li><a href="@Url.Action("Basket", "Product")" class="navbar-link">Basket</a></li>
                 </ul>
             </div>
         </div>

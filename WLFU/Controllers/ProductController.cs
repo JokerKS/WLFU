@@ -346,5 +346,73 @@ namespace JokeKS.WLFU.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
         #endregion
+
+        #region AddToBasket() Get
+        [HttpGet]
+        public JsonResult AddToBasket(int productId)
+        {
+            var model = new AddToBasketResult();
+
+            try
+            {
+                UserManager.AddProductToBasket(
+                    new BasketProduct() { ProductId = productId, UserId = User.Identity.GetUserId(), Amount = 1, DateCreated = DateTime.Now });
+
+                model.Message = "Product was added to basket";
+                model.Succeeded = true;
+            }
+            catch (Exception ex)
+            {
+                model.Message = "Product wasn't added to basket";
+                model.Error = ex.Message;
+                model.Succeeded = false;
+            }
+
+            return Json(model, JsonRequestBehavior.AllowGet);
+        }
+        #endregion
+
+        public ActionResult DeleteFromBasket(int? productId)
+        {
+            if ((productId ?? 0) == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            string message = string.Empty;
+            bool status = false;
+            var product = ProductManager.GetById(productId.Value);
+            try
+            {
+                UserManager.RemoveProductFromBasket(User.Identity.GetUserId(), productId.Value);
+                message = $"Product \"{product.Name}\" was successfully deleted from your basket";
+                status = true;
+            }
+            catch (Exception)
+            {
+                message = $"An error occurred while deleting product \"{product.Name}\"";
+            }
+            return RedirectToAction("Basket", new { message, status });
+        }
+
+        #region Basket() Get
+        [HttpGet]
+        public ActionResult Basket(string message, bool status = false)
+        {
+            BasketListModel model = new BasketListModel()
+            {
+                Message = message,
+                Status = status,
+            };
+            model.ProductsInBasket = UserManager.GetProductsInBasket(User.Identity.GetUserId());
+            return View(model);
+        }
+        #endregion
+    }
+
+    public class AddToBasketResult
+    {
+        public string Message { get; set; }
+        public string Error { get; set; }
+        public bool Succeeded { get; set; }
     }
 }

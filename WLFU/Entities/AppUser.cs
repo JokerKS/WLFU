@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace JokerKS.WLFU.Entities
@@ -15,5 +16,7 @@ namespace JokerKS.WLFU.Entities
         [Required]
         [DataType(DataType.Date)]
         public System.DateTime BirthDate { get; set; }
+
+        public List<Product.BasketProduct> BasketProducts { get; set; }
     }
 }
