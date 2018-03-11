@@ -440,9 +440,11 @@ namespace JokeKS.WLFU.Controllers
             }
 
             var orderModel = new OrderModel();
-            orderModel.Products = ProductManager.GetList(model.SelectedProducts.Select(x => x.ProductId));
+            orderModel.Products = ProductManager.GetList(model.SelectedProducts.Where(x => x.Checked).Select(x => x.ProductId));
 
-            return RedirectToAction("Create", "Order", orderModel);
+            TempData["orderModel"] = orderModel;
+
+            return RedirectToAction("Create", "Order");
         }
         #endregion
     }
