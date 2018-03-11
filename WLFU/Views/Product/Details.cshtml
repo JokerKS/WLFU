@@ -38,11 +38,21 @@
             @Html.DisplayFor(model => model.Product.Price) zł
 
             @Html.DisplayNameFor(model => model.Product.Amount)
-            @Html.DisplayFor(model => model.Product.Amount)
+            @Html.DisplayFor(model => model.AvailableAmount)
         </div>
 
-        <div>
-            <button type="button" class="btn btn-success btn-add-to" onclick="AddToBasket(@Model.Product.Id)">Add to basket</button>
+        <div class="add-to-basket-btns">
+            @if (Model.AddedToBasket != null)
+            {
+                <div>
+                    You have already added this product to cart the quantity @Model.AddedToBasket.Amount.
+                    If you want to increase the order quantity, then add to cart the quantity you need. 
+                    Or change the quantity in the cart.
+                </div>
+            }
+
+            <input class="txt-amount" type="number" value="1" min="1" max="@Model.AvailableAmount" />
+            <button type="button" class="btn btn-success btn-add-to" onclick="AddToBasket(@Model.Product.Id, $(this).prev().val())">Add to basket</button>
         </div>
     </div>
     <div class="clearfix"></div>
@@ -94,20 +104,25 @@
         font-family: Tahoma, Arial;
     }
 
-    .img-mini {
-        max-width: 120px;
-        max-height: 120px;
+    .add-to-basket-btns{
+        margin: 5px;
+        text-align: center;
+    }
+    .txt-amount{
+        max-width : 80px;
     }
 </style>
 
 <script src="~/Scripts/jquery-1.9.0.min.js"></script>
 <script type="text/javascript">
-    function AddToBasket(productId) {
+    function AddToBasket(productId, amount) {
+        console.log(amount);
+
         $.ajax({
             type: "GET",
             url: '@Url.Action("AddToBasket", "Product")',
             contentType: "application/json; charset=utf-8",
-            data: { 'productId': productId },
+            data: { 'productId': productId, 'amount': amount },
             dataType: "json",
             success: function (response) {
                 var messageContainer = $('.message-info');

@@ -3,3 +3,8 @@
     margin-bottom: 15px;
     padding: 10px;
 }
+
+.img-mini {
+    max-width: 120px;
+    max-height: 120px;
+}

@@ -328,17 +328,15 @@ namespace JokeKS.WLFU.Controllers
         {
             ProductModel model = new ProductModel();
 
-            var product = ProductManager.GetById(productId, true);
-
-            if(product != null)
+            model.Product = ProductManager.GetById(productId, true);
+            if(model.Product != null)
             {
-                model.Product = product;
-
-                var imageIds = product.Images.Select(x => x.ImageId).ToList();
-
-                using (var db = new AppContext())
+                model.AddedToBasket = UserManager.GetBasketProduct(User.Identity.GetUserId(), model.Product.Id);
+                model.Images = ImageManager.GetByIds(model.Product.Images.Select(x => x.ImageId).ToList());
+                model.AvailableAmount = model.Product.Amount;
+                if (model.AddedToBasket != null)
                 {
-                    model.Images = db.Images.Where(x => imageIds.Contains(x.Id)).ToList();
+                    model.AvailableAmount -= model.AddedToBasket.Amount;
                 }
 
                 return View(model);
@@ -349,14 +347,21 @@ namespace JokeKS.WLFU.Controllers
 
         #region AddToBasket() Get
         [HttpGet]
-        public JsonResult AddToBasket(int productId)
+        public JsonResult AddToBasket(int productId, int amount)
         {
             var model = new AddToBasketResult();
 
             try
             {
-                UserManager.AddProductToBasket(
-                    new BasketProduct() { ProductId = productId, UserId = User.Identity.GetUserId(), Amount = 1, DateCreated = DateTime.Now });
+                var basketProduct = new BasketProduct()
+                {
+                    ProductId = productId,
+                    UserId = User.Identity.GetUserId(),
+                    Amount = amount,
+                    DateCreated = DateTime.Now
+                };
+
+                UserManager.AddProductToBasket(basketProduct);
 
                 model.Message = "Product was added to basket";
                 model.Succeeded = true;
@@ -404,6 +409,16 @@ namespace JokeKS.WLFU.Controllers
                 Status = status,
             };
             model.ProductsInBasket = UserManager.GetProductsInBasket(User.Identity.GetUserId());
+
+            model.SummaryPrice = 0M;
+            foreach (var item in model.ProductsInBasket)
+            {
+                model.SummaryPrice += item.Amount * item.Product.Price;
+            }
+
+            var images = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
+            model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
+
             return View(model);
         }
         #endregion

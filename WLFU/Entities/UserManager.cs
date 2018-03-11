@@ -8,6 +8,23 @@ namespace JokerKS.WLFU.Entities
 {
     public class UserManager
     {
+        #region GetBasketProduct()
+        public static BasketProduct GetBasketProduct(string userId, int productId)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.BasketProducts.Where(x => x.UserId == userId && x.ProductId == productId).FirstOrDefault();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        #endregion
+
         #region AddProductToBasket()
         public static void AddProductToBasket(BasketProduct model)
         {
@@ -15,7 +32,16 @@ namespace JokerKS.WLFU.Entities
             {
                 using (var db = new AppContext())
                 {
-                    db.BasketProducts.Add(model);
+                    var existed = GetBasketProduct(model.UserId, model.ProductId);
+                    if (existed != null)
+                    {
+                        existed.Amount = existed.Amount + model.Amount;
+                        db.Entry(existed).State = EntityState.Modified;
+                    }
+                    else
+                    {
+                        db.BasketProducts.Add(model);
+                    }
                     db.SaveChanges();
                 }
             }

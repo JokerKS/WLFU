@@ -6,11 +6,9 @@ namespace JokerKS.WLFU.Models
 {
     public class ProductModel
     {
-        public ProductModel()
-        {
-            Images = new List<Image>();
-        }
         public Product Product { get; set; }
         public List<Image> Images { get; set; }
+        public BasketProduct AddedToBasket { get; set; }
+        public int AvailableAmount { get; set; }
     }
 }
