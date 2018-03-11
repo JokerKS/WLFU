@@ -17,59 +17,75 @@
 
 @if (Model.ProductsInBasket.Any())
 {
-    <table class="table">
-        <tr>
-            <th style="text-align: center;">
-                @Html.DisplayName("Photo")
-            </th>
-            <th>
-                @Html.DisplayName("Name")
-            </th>
-            <th style="text-align: center;">
-                @Html.DisplayName("Price")
-            </th>
-            <th style="text-align: center;">
-                @Html.DisplayName("Amount")
-            </th>
-            <th>
-                @Html.DisplayName("Date created")
-            </th>
-            <th></th>
-        </tr>
-
-    @foreach (var item in Model.ProductsInBasket)
+    using (Html.BeginForm())
     {
-        <tr>
-            <td style="text-align: center;">
-                @if (item.Product.MainImageId.HasValue && Model.MainImages.ContainsKey(item.Product.MainImageId.Value))
-                {
-                    <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.MainImages[item.Product.MainImageId.Value].Path)" 
-                        alt="@Model.MainImages[item.Product.MainImageId.Value].Title"/>
-                }
-            </td>
-            <td>
-                <a href="@Url.Action("Details", item.Product.Id)">
-                    @Html.DisplayFor(model => item.Product.Name)
-                </a>
-            </td>
-            <td style="text-align: center;">
-                @Html.DisplayFor(modelItem => item.Product.Price) zł
-            </td>
-            <td style="text-align: center;">
-                @Html.DisplayFor(modelItem => item.Amount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateCreated)
-            </td>
-            <td>
-                @Html.ActionLink("Delete", "DeleteFromBasket", new { productId = item.ProductId })
-            </td>
-        </tr>
+        <table class="table">
+            <tr>
+                <th></th>
+                <th style="text-align: center;">
+                    @Html.DisplayName("Photo")
+                </th>
+                <th>
+                    @Html.DisplayName("Name")
+                </th>
+                <th style="text-align: center;">
+                    @Html.DisplayName("Price")
+                </th>
+                <th style="text-align: center;">
+                    @Html.DisplayName("Amount")
+                </th>
+                <th>
+                    @Html.DisplayName("Date created")
+                </th>
+                <th></th>
+            </tr>
+
+        @foreach (var prod in Model.ProductsInBasket.Select((value, i) => new { i, value }))
+        {
+            var item = prod.value;
+
+            <tr>
+                <td>
+                    @Html.HiddenFor(model => model.SelectedProducts[prod.i].ProductId)
+                    @Html.CheckBoxFor(model => model.SelectedProducts[prod.i].Checked)
+                </td>
+                <td style="text-align: center;">
+                    @if (item.Product.MainImageId.HasValue && Model.MainImages.ContainsKey(item.Product.MainImageId.Value))
+                    {
+                        <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.MainImages[item.Product.MainImageId.Value].Path)" 
+                            alt="@Model.MainImages[item.Product.MainImageId.Value].Title"/>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", item.Product.Id)">
+                        @Html.DisplayFor(model => item.Product.Name)
+                    </a>
+                </td>
+                <td style="text-align: center;">
+                    @Html.DisplayFor(modelItem => item.Product.Price) zł
+                </td>
+                <td style="text-align: center;">
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DateCreated)
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "DeleteFromBasket", new { productId = item.ProductId })
+                </td>
+            </tr>
+        }
+        </table>
+        <div style="float: right">
+            <span>Sum: </span><span>@Model.SummaryPrice zł</span>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Make an order" class="btn btn-default" />
+            </div>
+        </div>
     }
-    </table>
-    <div style="float: right">
-        <span>Sum: </span><span>@Model.SummaryPrice zł</span>
-    </div>
 }
 else
 {

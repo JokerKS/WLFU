@@ -410,6 +410,13 @@ namespace JokeKS.WLFU.Controllers
             };
             model.ProductsInBasket = UserManager.GetProductsInBasket(User.Identity.GetUserId());
 
+            model.SelectedProducts = model.ProductsInBasket.Select(x => new SelectedProduct
+            {
+                ProductId = x.ProductId,
+                Checked = true,
+                Amount = x.Amount
+            }).ToList();
+
             model.SummaryPrice = 0M;
             foreach (var item in model.ProductsInBasket)
             {
@@ -420,6 +427,22 @@ namespace JokeKS.WLFU.Controllers
             model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
 
             return View(model);
+        }
+        #endregion
+
+        #region Basket() Post
+        [HttpPost]
+        public ActionResult Basket(BasketListModel model)
+        {
+            if(model == null || model.SelectedProducts == null || model.SelectedProducts.Count < 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var orderModel = new OrderModel();
+            orderModel.Products = ProductManager.GetList(model.SelectedProducts.Select(x => x.ProductId));
+
+            return RedirectToAction("Create", "Order", orderModel);
         }
         #endregion
     }

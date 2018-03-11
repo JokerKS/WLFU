@@ -11,5 +11,14 @@ namespace JokerKS.WLFU.Models
         public string Message { get; set; }
         public bool Status { get; set; }
         public decimal SummaryPrice { get; set; }
+
+        public List<SelectedProduct> SelectedProducts { get; set; }
+    }
+
+    public class SelectedProduct
+    {
+        public int ProductId { get; set; }
+        public bool Checked { get; set; }
+        public int Amount { get; set; }
     }
 }

@@ -367,12 +367,15 @@
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Entities\AppRole.cs" />
     <Compile Include="Entities\AppUser.cs" />
     <Compile Include="Entities\DbInterface\Identity.cs" />
     <Compile Include="Entities\Helpers\Pager.cs" />
     <Compile Include="Entities\Product\BasketProduct.cs" />
+    <Compile Include="Entities\Product\Order.cs" />
+    <Compile Include="Entities\Product\OrderDetail.cs" />
     <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product\Product.cs" />
@@ -398,8 +401,13 @@
     <Compile Include="Migrations\201803102145096_UpdateBasketProducts.Designer.cs">
       <DependentUpon>201803102145096_UpdateBasketProducts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803111714178_OrderTable.cs" />
+    <Compile Include="Migrations\201803111714178_OrderTable.Designer.cs">
+      <DependentUpon>201803111714178_OrderTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
+    <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductListModel.cs" />
@@ -438,6 +446,7 @@
     <Content Include="Views\Product\List.cshtml" />
     <Content Include="Views\Product\Details.cshtml" />
     <Content Include="Views\Product\Basket.cshtml" />
+    <Content Include="Views\Order\Create.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -459,6 +468,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803102145096_UpdateBasketProducts.resx">
       <DependentUpon>201803102145096_UpdateBasketProducts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803111714178_OrderTable.resx">
+      <DependentUpon>201803111714178_OrderTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
