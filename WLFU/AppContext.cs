@@ -13,6 +13,7 @@ namespace JokerKS.WLFU
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
+        public DbSet<ProductComment> ProductComments { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<BasketProduct> BasketProducts { get; set; }

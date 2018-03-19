@@ -7,11 +7,11 @@
 
 <h2>Basket</h2>
 
-
-@if (!string.IsNullOrEmpty(Model.Message))
+@* Якщо загрузка сторінки після видалення *@
+@if (Model.DeleteResult != null && !string.IsNullOrEmpty(Model.DeleteResult.Message))
 {
-    <div class="message-info @(Model.Status ? "alert-success" : "alert-danger" )">
-        @Model.Message
+    <div class="message-info @(Model.DeleteResult.Succeeded ? "alert-success" : "alert-danger" )">
+        @Model.DeleteResult.Message
     </div>
 }
 
@@ -43,6 +43,8 @@
         @foreach (var prod in Model.ProductsInBasket.Select((value, i) => new { i, value }))
         {
             var item = prod.value;
+            // Визначаємо одразу кількість товарів доступних до замовлення(щоб не робити пару запитань до бази)
+            var availableCount = item.Product.AvailableAmount;
 
             <tr>
                 <td>
@@ -57,7 +59,7 @@
                     }
                 </td>
                 <td>
-                    <a href="@Url.Action("Details", item.Product.Id)">
+                    <a href="@Url.Action("Details", new { productId = item.Product.Id } )">
                         @Html.DisplayFor(model => item.Product.Name)
                     </a>
                 </td>
@@ -65,7 +67,7 @@
                     @Html.DisplayFor(modelItem => item.Product.Price) zł
                 </td>
                 <td style="text-align: center;">
-                    @Html.DisplayFor(modelItem => item.Amount)
+                    @Html.EditorFor(modelItem => item.Amount, new { htmlAttributes = new { type = "number", min = 1, max = availableCount } }) / @availableCount
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreated)

@@ -11,6 +11,7 @@ using JokerKS.WLFU;
 using System.Data.Entity;
 using JokerKS.WLFU.Entities.Product;
 using System.Net;
+using JokerKS.WLFU.Entities.Helpers;
 
 namespace JokeKS.WLFU.Controllers
 {
@@ -333,11 +334,10 @@ namespace JokeKS.WLFU.Controllers
             {
                 model.AddedToBasket = UserManager.GetBasketProduct(User.Identity.GetUserId(), model.Product.Id);
                 model.Images = ImageManager.GetByIds(model.Product.Images.Select(x => x.ImageId).ToList());
-                model.AvailableAmount = model.Product.Amount;
-                if (model.AddedToBasket != null)
-                {
-                    model.AvailableAmount -= model.AddedToBasket.Amount;
-                }
+
+                // Якщо даний товар доданий в цього користувача вже доданий до кошика, 
+                // То віднімаємо від кількості доступних товарів до покупки кількість в кошику
+                model.AvailableAmount = model.Product.AvailableAmount - (model.AddedToBasket != null ? model.AddedToBasket.Amount : 0);
 
                 return View(model);
             }
@@ -349,10 +349,28 @@ namespace JokeKS.WLFU.Controllers
         [HttpGet]
         public JsonResult AddToBasket(int productId, int amount)
         {
-            var model = new AddToBasketResult();
+            var model = new MessageResult();
 
             try
             {
+                // Якщо продукт не знайдено(наприклад його видалили зняли з продажі),
+                // То не дозволяємо додавати продукт до кошика
+                var product = ProductManager.GetById(productId);
+                if (product == null)
+                {
+                    throw new Exception("Product not founded!");
+                }
+
+                // Якщо доступна кількість продукту меньша ніж додавана до кошика,
+                // То не дозволяємо додавати продукт до кошика
+                // Не забуваємо враховувати кількість для цього користувача вже доданих до кошика
+                var existedInBasket = BasketProductManager.GetBasketProduct(User.Identity.GetUserId(), product.Id);
+
+                if (product.AvailableAmount - (existedInBasket != null ? existedInBasket.Amount : 0) < amount)
+                {
+                    throw new Exception("You cannot add more than available to order!");
+                }
+
                 var basketProduct = new BasketProduct()
                 {
                     ProductId = productId,
@@ -361,13 +379,15 @@ namespace JokeKS.WLFU.Controllers
                     DateCreated = DateTime.Now
                 };
 
-                UserManager.AddProductToBasket(basketProduct);
+                BasketProductManager.Add(basketProduct);
 
-                model.Message = "Product was added to basket";
+                // Продукт успішно доданий до кошика 
+                model.Message =  $"Product \"{product.Name}\" was successfully added to the basket in the amounts of {amount}";
                 model.Succeeded = true;
             }
             catch (Exception ex)
             {
+                // Додаємо повідомлення з помилкою
                 model.Message = "Product wasn't added to basket";
                 model.Error = ex.Message;
                 model.Succeeded = false;
@@ -377,39 +397,53 @@ namespace JokeKS.WLFU.Controllers
         }
         #endregion
 
+        #region DeleteFromBasket() Get
         public ActionResult DeleteFromBasket(int? productId)
         {
-            if ((productId ?? 0) == 0)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            string message = string.Empty;
-            bool status = false;
-            var product = ProductManager.GetById(productId.Value);
+            var model = new MessageResult();
             try
             {
-                UserManager.RemoveProductFromBasket(User.Identity.GetUserId(), productId.Value);
-                message = $"Product \"{product.Name}\" was successfully deleted from your basket";
-                status = true;
+                // Перевіряємо чи подано productId
+                if ((productId ?? 0) == 0)
+                {
+                    throw new Exception("Product not founded!");
+                }
+
+                // Перевіряємо чи є такий продукт
+                var product = ProductManager.GetById(productId.Value);
+                if(product == null)
+                {
+                    throw new Exception("Product not founded!");
+                }
+
+                BasketProductManager.Delete(User.Identity.GetUserId(), productId.Value);
+
+                // Продукт успішно видалений з кошика 
+                model.Message = $"Product \"{product.Name}\" was successfully deleted from your basket!";
+                model.Succeeded = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                message = $"An error occurred while deleting product \"{product.Name}\"";
+                // Додаємо повідомлення з помилкою
+                model.Message = "An error occurred while deleting the item from your basket!";
+                model.Error = ex.Message;
+                model.Succeeded = false;
             }
-            return RedirectToAction("Basket", new { message, status });
-        }
+            return RedirectToAction("Basket", new { message = model });
+        } 
+        #endregion
 
         #region Basket() Get
         [HttpGet]
-        public ActionResult Basket(string message, bool status = false)
+        public ActionResult Basket(MessageResult deleteResult)
         {
-            BasketListModel model = new BasketListModel()
-            {
-                Message = message,
-                Status = status,
-            };
-            model.ProductsInBasket = UserManager.GetProductsInBasket(User.Identity.GetUserId());
+            BasketListModel model = new BasketListModel();
+            model.DeleteResult = deleteResult;
 
+            // Беремо всі продукти в кошику користувача
+            model.ProductsInBasket = BasketProductManager.GetProductsInBasket(User.Identity.GetUserId());
+
+            // Позначаємо всі продукти зазначеними
             model.SelectedProducts = model.ProductsInBasket.Select(x => new SelectedProduct
             {
                 ProductId = x.ProductId,
@@ -440,19 +474,16 @@ namespace JokeKS.WLFU.Controllers
             }
 
             var orderModel = new OrderModel();
-            orderModel.Products = ProductManager.GetList(model.SelectedProducts.Where(x => x.Checked).Select(x => x.ProductId));
+            orderModel.Products = new Dictionary<SelectedProduct, Product>();
+            foreach (var item in model.SelectedProducts.Where(x => x.Checked))
+            {
+                orderModel.Products.Add(item, null);
+            }
 
             TempData["orderModel"] = orderModel;
 
             return RedirectToAction("Create", "Order");
         }
         #endregion
-    }
-
-    public class AddToBasketResult
-    {
-        public string Message { get; set; }
-        public string Error { get; set; }
-        public bool Succeeded { get; set; }
     }
 }

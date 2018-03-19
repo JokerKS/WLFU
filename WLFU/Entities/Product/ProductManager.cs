@@ -176,5 +176,32 @@ namespace JokerKS.WLFU.Entities.Product
         }
         #endregion
 
+
+        #region GetAllowedCount()
+        public static int GetAllowedCount(Product product)
+        {
+            var count = 0;
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var orders = db.OrderDetails.Where(x => x.ProductId == product.Id);
+                    var orderedCount = 0;
+                    if(orders.Count() > 0)
+                    {
+                        orderedCount = orders.Sum(x => x.Amount);
+                    }
+                    count = product.Amount - orderedCount;
+                }
+                if (count < 0)
+                    throw new Exception("The Count cannot be negative");
+            }
+            catch (Exception)
+            {
+                count = 0;
+            }
+            return count;
+        } 
+        #endregion
     }
 }

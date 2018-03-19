@@ -6,6 +6,6 @@ namespace JokerKS.WLFU.Models
     public class OrderModel
     {
         public Order Order { get; set; }
-        public List<Product> Products { get; set; }
+        public Dictionary<SelectedProduct, Product> Products { get; set; }
     }
 }

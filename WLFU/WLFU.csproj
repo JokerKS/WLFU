@@ -129,6 +129,8 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -372,13 +374,17 @@
     <Compile Include="Entities\AppRole.cs" />
     <Compile Include="Entities\AppUser.cs" />
     <Compile Include="Entities\DbInterface\Identity.cs" />
+    <Compile Include="Entities\Helpers\MessageResult.cs" />
     <Compile Include="Entities\Helpers\Pager.cs" />
     <Compile Include="Entities\Product\BasketProduct.cs" />
     <Compile Include="Entities\Product\Order.cs" />
     <Compile Include="Entities\Product\OrderDetail.cs" />
+    <Compile Include="Entities\Product\OrderManager.cs" />
     <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product\Product.cs" />
+    <Compile Include="Entities\Product\ProductComment.cs" />
+    <Compile Include="Entities\Product\BasketProductManager.cs" />
     <Compile Include="Entities\Product\ProductManager.cs" />
     <Compile Include="Entities\Product\ProductCategoryManager.cs" />
     <Compile Include="Entities\Product\ProductImage.cs" />
@@ -404,6 +410,14 @@
     <Compile Include="Migrations\201803111714178_OrderTable.cs" />
     <Compile Include="Migrations\201803111714178_OrderTable.Designer.cs">
       <DependentUpon>201803111714178_OrderTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803182015435_ProductCommentsTable.cs" />
+    <Compile Include="Migrations\201803182015435_ProductCommentsTable.Designer.cs">
+      <DependentUpon>201803182015435_ProductCommentsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803182043312_Product_IsActive.cs" />
+    <Compile Include="Migrations\201803182043312_Product_IsActive.Designer.cs">
+      <DependentUpon>201803182043312_Product_IsActive.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
@@ -447,6 +461,7 @@
     <Content Include="Views\Product\Details.cshtml" />
     <Content Include="Views\Product\Basket.cshtml" />
     <Content Include="Views\Order\Create.cshtml" />
+    <Content Include="Views\Order\ShowGeneralInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -471,6 +486,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803111714178_OrderTable.resx">
       <DependentUpon>201803111714178_OrderTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803182015435_ProductCommentsTable.resx">
+      <DependentUpon>201803182015435_ProductCommentsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803182043312_Product_IsActive.resx">
+      <DependentUpon>201803182043312_Product_IsActive.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -50,9 +50,12 @@
                     Or change the quantity in the cart.
                 </div>
             }
-
-            <input class="txt-amount" type="number" value="1" min="1" max="@Model.AvailableAmount" />
-            <button type="button" class="btn btn-success btn-add-to" onclick="AddToBasket(@Model.Product.Id, $(this).prev().val())">Add to basket</button>
+            @if (Model.AvailableAmount > 0)
+            {
+                <input class="txt-amount" type="number" value="1" min="1" max="@Model.AvailableAmount" />
+            }
+            <button type="button" class="btn btn-success btn-add-to" onclick="AddToBasket(@Model.Product.Id, $(this).prev().val())" 
+                   disabled= @(Model.AvailableAmount > 0 ? "" : "disabled") >Add to basket</button>
         </div>
     </div>
     <div class="clearfix"></div>
