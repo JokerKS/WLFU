@@ -122,14 +122,21 @@ namespace JokerKS.WLFU.Entities.Product
 
 
         #region Add()
-        public static void Add(Product product)
+        public static void Add(Product product, AppContext context = null)
         {
             try
             {
-                using (var db = new AppContext())
+                if (context == null)
                 {
-                    db.Products.Add(product);
-                    db.SaveChanges();
+                    using (var db = new AppContext())
+                    {
+                        db.Products.Add(product);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    context.Products.Add(product);
                 }
             }
             catch (Exception ex)
@@ -140,15 +147,22 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region Update()
-        public static void Update(Product product)
+        public static void Update(Product product, AppContext context = null)
         {
             try
             {
-                using (var db = new AppContext())
+                if(context == null)
+                { 
+                    using (var db = new AppContext())
+                    {
+                        db.Products.Attach(product);
+                        db.Entry(product).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                else
                 {
-                    db.Products.Attach(product);
-                    db.Entry(product).State = EntityState.Modified;
-                    db.SaveChanges();
+                    context.Products.Add(product);
                 }
             }
             catch (Exception ex)

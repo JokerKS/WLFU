@@ -370,12 +370,21 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\AuctionController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Entities\AppRole.cs" />
     <Compile Include="Entities\AppUser.cs" />
+    <Compile Include="Entities\Auction\AuctionComment.cs" />
+    <Compile Include="Entities\Auction\AuctionTag.cs" />
+    <Compile Include="Entities\Auction\AuctionImage.cs" />
+    <Compile Include="Entities\Auction\BidAtAuction.cs" />
+    <Compile Include="Entities\Auction\AuctionTagManager.cs" />
+    <Compile Include="Entities\Auction\AuctionManager.cs" />
     <Compile Include="Entities\DbInterface\Identity.cs" />
     <Compile Include="Entities\Helpers\MessageResult.cs" />
     <Compile Include="Entities\Helpers\Pager.cs" />
+    <Compile Include="Entities\Auction\Auction.cs" />
+    <Compile Include="Entities\TagManager.cs" />
     <Compile Include="Entities\Product\BasketProduct.cs" />
     <Compile Include="Entities\Product\Order.cs" />
     <Compile Include="Entities\Product\OrderDetail.cs" />
@@ -428,8 +437,21 @@
     <Compile Include="Migrations\201803251342508_OrderDetails_Price.Designer.cs">
       <DependentUpon>201803251342508_OrderDetails_Price.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803251843206_Auctions.cs" />
+    <Compile Include="Migrations\201803251843206_Auctions.Designer.cs">
+      <DependentUpon>201803251843206_Auctions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803251956019_Tags_Name_isUnique.cs" />
+    <Compile Include="Migrations\201803251956019_Tags_Name_isUnique.Designer.cs">
+      <DependentUpon>201803251956019_Tags_Name_isUnique.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803252022081_Auctions_Datestart_null.cs" />
+    <Compile Include="Migrations\201803252022081_Auctions_Datestart_null.Designer.cs">
+      <DependentUpon>201803252022081_Auctions_Datestart_null.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
+    <Compile Include="Models\CreateAuctionModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
@@ -472,6 +494,8 @@
     <Content Include="Views\Order\Create.cshtml" />
     <Content Include="Views\Order\ShowGeneralInfo.cshtml" />
     <Content Include="Views\Order\Result.cshtml" />
+    <Content Include="Views\Auction\Create.cshtml" />
+    <Content Include="Views\Auction\Success.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -481,6 +505,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\Auctions\" />
     <Folder Include="Images\Products\" />
     <Folder Include="Images\Temp\" />
   </ItemGroup>
@@ -508,6 +533,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803251342508_OrderDetails_Price.resx">
       <DependentUpon>201803251342508_OrderDetails_Price.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803251843206_Auctions.resx">
+      <DependentUpon>201803251843206_Auctions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803251956019_Tags_Name_isUnique.resx">
+      <DependentUpon>201803251956019_Tags_Name_isUnique.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803252022081_Auctions_Datestart_null.resx">
+      <DependentUpon>201803252022081_Auctions_Datestart_null.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

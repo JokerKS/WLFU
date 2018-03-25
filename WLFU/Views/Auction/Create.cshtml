@@ -1,6 +1,7 @@
-﻿@model JokerKS.WLFU.Models.CreateProductModel
+﻿@model JokerKS.WLFU.Models.CreateAuctionModel
+
 @{
-    ViewBag.Title = "Create Product";
+    ViewBag.Title = "Create";
 }
 <link href="~/Content/Styles.css" rel="stylesheet" />
 <link href="~/Content/bootstrap-tagsinput.css" rel="stylesheet" />
@@ -18,32 +19,33 @@
         border-radius: 5px;
     }
 
-    .dropzone .dragover {
-        border-color: #000;
-        color: #000;
-    }
+        .dropzone .dragover {
+            border-color: #000;
+            color: #000;
+        }
 
-    .dropzone:before {
-        content: "";
+        .dropzone:before {
+            content: "";
+            display: inline-block;
+            vertical-align: middle;
+            height: 100%;
+        }
+
+    .v-center {
         display: inline-block;
         vertical-align: middle;
-        height: 100%;
     }
 
-    .v-center{
-        display: inline-block;
-        vertical-align: middle;
-    }
-
-    .bootstrap-tagsinput{
-        min-width:350px !important;
+    .bootstrap-tagsinput {
+        min-width: 350px !important;
     }
 </style>
 
-<h2>Create Product</h2>
+<h2>Create Auction</h2>
 <hr />
 
-<form id="ProductForm" class="form-horizontal" enctype="multipart/form-data" method="post">
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "AuctionForm", @class="form-horizontal", enctype = "multipart/form-data" }))
+{
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
@@ -52,24 +54,8 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", autocomplete = "off"} })
-        </div>
-        @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            <div class="input-group">
-                <span class="input-group-addon">PLN</span>
-                @Html.EditorFor(model => model.Price, "", new { htmlAttributes = new { @type = "number", @min = "0", @Value = "", @step = "0.5", @class = "form-control" } })
-            </div>
-            @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
-        </div>
-        @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-4">
-            @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @type = "number", @min = "0", @Value = "1", @class = "form-control"} })
-            @Html.ValidationMessageFor(model => model.Amount, "", new { @class = "text-danger" })
+            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
         </div>
     </div>
 
@@ -84,7 +70,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
-            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off"} })
+            @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
             @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
         </div>
     </div>
@@ -99,8 +85,48 @@
     </div>
 
     <div class="form-group">
+        @Html.LabelFor(model => model.StartPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.StartPrice, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.StartPrice, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.PriceIncrease, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.PriceIncrease, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.PriceIncrease, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.InstantSellingPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.InstantSellingPrice, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.InstantSellingPrice, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DateStart, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DateStart, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+            @Html.ValidationMessageFor(model => model.DateStart, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.DateFinish, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.DateFinish, new { htmlAttributes = new { @class = "form-control", @type = "datetime-local" } })
+            @Html.ValidationMessageFor(model => model.DateFinish, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
         <label for="Images" class="control-label col-md-2">Images:</label>
-        <div  class="col-md-10">
+        <div class="col-md-10">
             <div id="dropzone" class="dropzone" name="dropzone">
                 <div class="v-center">
                     <span>Drop files here to upload</span><br>
@@ -114,7 +140,7 @@
     </div>
 
     <div id="image-preview" class="form-group">
-        
+
     </div>
     <div id="image-info" style="display:none">
 
@@ -122,10 +148,10 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10" style="text-align:center">
-            <input type="button" value="Create" class="btn btn-default" onclick="SendProduct()" />
+            <input type="button" value="Create" class="btn btn-default" onclick="SendAuction()" />
         </div>
     </div>
-</form>
+}
 
 <script src="~/Scripts/tinymce/tinymce.min.js"></script>
 <script>
@@ -232,12 +258,12 @@
 
     //dropzone revalidation
     function RevalidateDropzone(){
-        var validator = $("#ProductForm").validate();
+        var validator = $("#AuctionForm").validate();
         validator.element("#selectedFiles");
     }
 
     $().ready(function () {
-        $("#ProductForm").validate({
+        $("#AuctionForm").validate({
             ignore: "",
             errorClass: "text-danger",
             rules: {
@@ -266,8 +292,8 @@
     });
 
 
-    var SendProduct = function () {
-        var form = $("#ProductForm");
+    var SendAuction = function () {
+        var form = $("#AuctionForm");
 
         if (form.valid()) {
 
@@ -287,7 +313,7 @@
                         $("#RequestId").val(response.requestId);
 
                         var formdata = new FormData(form);
-                        
+
                         $("#image-info").empty();
 
                         $.each(response.pathes, function(key, value){

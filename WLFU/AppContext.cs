@@ -1,4 +1,5 @@
 ﻿using JokerKS.WLFU.Entities;
+using JokerKS.WLFU.Entities.Auction;
 using JokerKS.WLFU.Entities.Product;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -10,16 +11,28 @@ namespace JokerKS.WLFU
 {
     public class AppContext : IdentityDbContext<AppUser>
     {
-        public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
+
+        public DbSet<Product> Products { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<ProductComment> ProductComments { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductRating> ProductRatings { get; set; }
+
+        public DbSet<Auction> Auctions { get; set; }
+        public DbSet<AuctionTag> AuctionTags { get; set; }
+        public DbSet<AuctionComment> AuctionComments { get; set; }
+        public DbSet<AuctionImage> AuctionImages { get; set; }
+
+
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Image> Images { get; set; }
+
         public DbSet<BasketProduct> BasketProducts { get; set; }
+
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+
         public AppContext(): base("WLFUdb")
         {
             Database.SetInitializer(new DbInitial());
@@ -32,6 +45,11 @@ namespace JokerKS.WLFU
             modelBuilder.Entity<Product>()
                 .HasMany(u => u.Images)
                 .WithRequired(a => a.Product)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Auction>()
+                .HasMany(u => u.Images)
+                .WithRequired(a => a.Auction)
                 .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<AppUser>()

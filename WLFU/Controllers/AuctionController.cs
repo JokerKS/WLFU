@@ -12,17 +12,18 @@ using System.Data.Entity;
 using JokerKS.WLFU.Entities.Product;
 using System.Net;
 using JokerKS.WLFU.Entities.Helpers;
+using JokerKS.WLFU.Entities.Auction;
 
 namespace JokeKS.WLFU.Controllers
 {
     [Authorize]
-    public class ProductController : Controller
+    public class AuctionController : Controller
     {
         #region Create() Get
         [HttpGet]
         public ActionResult Create()
         {
-            CreateProductModel model = new CreateProductModel();
+            CreateAuctionModel model = new CreateAuctionModel();
             model.Categories = ProductCategoryManager.GetList()
                 .Select(x => new SelectListItem()
                 {
@@ -38,7 +39,7 @@ namespace JokeKS.WLFU.Controllers
 
         #region Create() Post
         [HttpPost]
-        public ActionResult Create(CreateProductModel model, IEnumerable<string> filePathes, IEnumerable<string> titles)
+        public ActionResult Create(CreateAuctionModel model, IEnumerable<string> filePathes, IEnumerable<string> titles)
         {
             #region Get tags from string
             string[] tags = null;
@@ -79,12 +80,15 @@ namespace JokeKS.WLFU.Controllers
 
             try
             {
-                Product prod = new Product()
+                Auction auction = new Auction()
                 {
                     Name = model.Name,
-                    Price = model.Price,
                     Description = model.Description,
-                    Amount = model.Amount,
+                    DateStart = model.DateStart,
+                    DateFinish = model.DateFinish,
+                    StartPrice = model.StartPrice,
+                    PriceIncrease = model.PriceIncrease,
+                    InstantSellingPrice = model.InstantSellingPrice,
                     DesignerId = User.Identity.GetUserId(),
                     CategoryId = model.CategoryId
                 };
@@ -95,17 +99,16 @@ namespace JokeKS.WLFU.Controllers
                     {
                         var existTag = TagManager.GetByName(tag);
                         if (existTag == null)
-                            prod.Tags.Add(new ProductTag() { Tag = new Tag() { Name = tag } });
+                            auction.Tags.Add(new AuctionTag() { Tag = new Tag() { Name = tag } });
                         else
-                            prod.Tags.Add(new ProductTag() { TagId = existTag.Id });
+                            auction.Tags.Add(new AuctionTag() { TagId = existTag.Id });
                     }
-
-                    ProductManager.Add(prod, db);
+                    AuctionManager.Add(auction, db);
 
                     //work with images
                     List<Image> images = new List<Image>();
-                    string path = Server.MapPath("~/Images/Temp/Products/") + model.RequestId + '\\';
-                    string pathToMove = Server.MapPath("~/Images/Products/") + prod.Id + '\\';
+                    string path = Server.MapPath("~/Images/Temp/Auctions/") + model.RequestId + '\\';
+                    string pathToMove = Server.MapPath("~/Images/Auctions/") + auction.Id + '\\';
 
                     if (!Directory.Exists(pathToMove))
                         Directory.CreateDirectory(pathToMove);
@@ -120,19 +123,19 @@ namespace JokeKS.WLFU.Controllers
 
                             if (file.index == Convert.ToInt32(model.MainImageIndex))
                             {
-                                prod.MainImage = new Image()
+                                auction.MainImage = new Image()
                                 {
-                                    Path = prod.Id + "/" + fileName,
+                                    Path = auction.Id + "/" + fileName,
                                     Title = titles.ElementAt(file.index)
                                 };
                             }
                             else
                             {
-                                prod.Images.Add(new ProductImage
+                                auction.Images.Add(new AuctionImage
                                 {
                                     Image = new Image
                                     {
-                                        Path = prod.Id + "/" + fileName,
+                                        Path = auction.Id + "/" + fileName,
                                         Title = titles.ElementAt(file.index)
                                     }
                                 });
@@ -145,14 +148,15 @@ namespace JokeKS.WLFU.Controllers
                         Directory.Delete(path, true);
                     }
 
-                    ProductManager.Update(prod, db);
-
-                    var successModel = new SuccessCreateProductModel()
-                    {
-                        ProductName = prod.Name
-                    };
-                    return View("Success", successModel);
+                    AuctionManager.Update(auction, db);
                 }
+
+                // TODO: CHANGE MODEL
+                var successModel = new SuccessCreateProductModel()
+                {
+                    ProductName = auction.Name
+                };
+                return View("Success", successModel);
             }
             catch (Exception ex)
             {
@@ -181,14 +185,14 @@ namespace JokeKS.WLFU.Controllers
                     guid = new Guid(requestId);
                 }
 
-                string basePath = Server.MapPath("~/Images/Temp/Products/") + guid + "\\";
+                string basePath = Server.MapPath("~/Images/Temp/Auctions/") + guid + "\\";
                 if (Directory.Exists(basePath))
                 {
                     Directory.Delete(basePath, true);
                 }
                 Directory.CreateDirectory(basePath);
 
-                //save images and get paths
+                // Збереження зображень і отримання шляху до них
                 var pathes = new List<string>();
                 string fileName = string.Empty;
                 foreach (var image in images.Select((value, index) => new { index, value }))
@@ -204,88 +208,6 @@ namespace JokeKS.WLFU.Controllers
             {
                 return Json(new { message = "Uploaded error" });
             }
-        }
-        #endregion
-
-
-        #region Categories() Get
-        [HttpGet]
-        public ActionResult Categories(ProductCategoryListModel model = null)
-        {
-            if (model == null)
-            {
-                var pager = new Pager();
-
-                model = new ProductCategoryListModel()
-                {
-                    Pager = pager
-                };
-            }
-            model.Categories = ProductCategoryManager.GetList(model.Pager);
-
-            return View(model);
-        }
-        #endregion
-
-        #region CategoryAdd() Get
-        [HttpGet]
-        public ActionResult CategoryAdd(string categoryId)
-        {
-            var id = Convert.ToInt32(categoryId);
-            var model = new ProductCategoryAddModel();
-            if (id > 0)
-            {
-                var category = ProductCategoryManager.GetById(id);
-                if(category != null)
-                {
-                    model.CategoryId = category.Id;
-                    model.Name = category.Name;
-                    model.Description = category.Description;
-                }
-            }
-
-            return PartialView(model);
-        }
-        #endregion
-
-        #region CategoryAdd() Post
-        [HttpPost]
-        public ActionResult CategoryAdd(ProductCategoryAddModel model)
-        {
-            if(model != null)
-            {
-                var category = new ProductCategory();
-                category.Name = model.Name;
-                category.Description = model.Description;
-
-                if(model.CategoryId > 0)
-                {
-                    category.Id = model.CategoryId;
-                    ProductCategoryManager.Update(category);
-                }
-                else
-                {
-                    ProductCategoryManager.Add(category);
-                }
-                return RedirectToAction("Categories");
-            }
-            else
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-        }
-        #endregion
-
-        #region CategoryDelete() Get
-        [HttpGet]
-        public ActionResult CategoryDelete(int? id)
-        {
-            if (!id.HasValue || id == 0)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            ProductCategoryManager.Delete(id.Value);
-            return RedirectToAction("Categories");
         }
         #endregion
 

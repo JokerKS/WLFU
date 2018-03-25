@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JokerKS.WLFU.Entities
 {
@@ -9,6 +10,7 @@ namespace JokerKS.WLFU.Entities
 
         [Required]
         [StringLength(25)]
+        [Index(IsUnique = true)]
         public string Name { get; set; }
     }
 }
