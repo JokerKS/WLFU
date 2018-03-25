@@ -454,6 +454,7 @@
     <Compile Include="Models\CreateAuctionModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
+    <Compile Include="Models\AuctionListModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductListModel.cs" />
     <Compile Include="Models\ProductCategoryListModel.cs" />
@@ -496,6 +497,7 @@
     <Content Include="Views\Order\Result.cshtml" />
     <Content Include="Views\Auction\Create.cshtml" />
     <Content Include="Views\Auction\Success.cshtml" />
+    <Content Include="Views\Auction\List.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

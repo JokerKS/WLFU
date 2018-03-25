@@ -218,7 +218,7 @@ namespace JokeKS.WLFU.Controllers
         {
             var pager = new Pager();
 
-            var model = new ProductListModel()
+            var model = new AuctionListModel()
             {
                 Pager = pager,
                 Categories = ProductCategoryManager.GetList()
@@ -226,11 +226,11 @@ namespace JokeKS.WLFU.Controllers
 
             if(categoryId.HasValue && categoryId > 0)
             {
-                model.Products = ProductManager.GetListByCategory(categoryId.Value, pager, true);
+                model.Auctions = AuctionManager.GetListByCategory(categoryId.Value, pager, true);
             }
             else
             {
-                model.Products = ProductManager.GetList(pager, true);
+                model.Auctions = AuctionManager.GetList(pager, true);
             }
 
             return View(model);
@@ -239,11 +239,11 @@ namespace JokeKS.WLFU.Controllers
 
         #region Details() Get
         [HttpGet]
-        public ActionResult Details(int productId)
+        public ActionResult Details(int auctionId)
         {
             ProductModel model = new ProductModel();
 
-            model.Product = ProductManager.GetById(productId, true);
+            model.Product = ProductManager.GetById(auctionId, true);
             if(model.Product != null)
             {
                 model.AddedToBasket = UserManager.GetBasketProduct(User.Identity.GetUserId(), model.Product.Id);

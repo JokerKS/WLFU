@@ -15,6 +15,11 @@ namespace JokerKS.WLFU
                 new { controller = "Product", action = "List", id = UrlParameter.Optional }
             );
             routes.MapRoute(
+                "Auctions",
+                "Auctions/{id}",
+                new { controller = "Auction", action = "List", id = UrlParameter.Optional }
+            );
+            routes.MapRoute(
                 "Basket",
                 "Basket",
                 new { controller = "Product", action = "Basket"}
