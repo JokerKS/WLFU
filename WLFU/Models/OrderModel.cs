@@ -1,4 +1,5 @@
-﻿using JokerKS.WLFU.Entities.Product;
+﻿using JokerKS.WLFU.Entities;
+using JokerKS.WLFU.Entities.Product;
 using System.Collections.Generic;
 
 namespace JokerKS.WLFU.Models
@@ -7,5 +8,7 @@ namespace JokerKS.WLFU.Models
     {
         public Order Order { get; set; }
         public Dictionary<SelectedProduct, Product> Products { get; set; }
+        public Dictionary<int, Image> MainImages { get; set; }
+        public decimal SummaryPrice { get; set; }
     }
 }

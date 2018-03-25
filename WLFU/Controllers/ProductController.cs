@@ -459,7 +459,7 @@ namespace JokeKS.WLFU.Controllers
 
             var images = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
             model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
-
+            
             return View(model);
         }
         #endregion
@@ -473,16 +473,40 @@ namespace JokeKS.WLFU.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            var orderModel = new OrderModel();
-            orderModel.Products = new Dictionary<SelectedProduct, Product>();
-            foreach (var item in model.SelectedProducts.Where(x => x.Checked))
+            // Беремо всі зазначені товари, щоб перевірити чи можна їх замовити
+            var selectedProducts = model.SelectedProducts.Where(x => x.Checked && x.Amount > 0).ToDictionary(x => x.ProductId, x => x.Amount);
+            var products = ProductManager.GetList(selectedProducts.Select(x => x.Key));
+            foreach (var product in products)
             {
-                orderModel.Products.Add(item, null);
+                // Добавлення помилки, якщо кількість товарів до замовлення більша ніж доступна
+                if(product.AvailableAmount < selectedProducts[product.Id])
+                {
+                    ModelState.AddModelError("", $"The amount of product '{product.Name}' ordered more than is available!");
+                }
             }
 
-            TempData["orderModel"] = orderModel;
+            if (ModelState.IsValid)
+            {
+                var orderModel = new OrderModel();
+                orderModel.Products = new Dictionary<SelectedProduct, Product>();
+                foreach (var item in model.SelectedProducts.Where(x => x.Checked))
+                {
+                    orderModel.Products.Add(item, null);
+                }
 
-            return RedirectToAction("Create", "Order");
+                // Для передачі до іншого контролера зберігаємо дані до TempData
+                TempData["orderModel"] = orderModel;
+
+                // Якщо все добре, то переходимо до оформлення замовлення
+                return RedirectToAction("Create", "Order");
+            }
+
+            // Беремо всі продукти в кошику користувача
+            model.ProductsInBasket = BasketProductManager.GetProductsInBasket(User.Identity.GetUserId());
+            var images = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
+
+            model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
+            return View(model);
         }
         #endregion
     }

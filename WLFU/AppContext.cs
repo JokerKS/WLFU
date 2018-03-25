@@ -14,6 +14,7 @@ namespace JokerKS.WLFU
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<ProductComment> ProductComments { get; set; }
+        public DbSet<ProductRating> ProductRatings { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<Image> Images { get; set; }
         public DbSet<BasketProduct> BasketProducts { get; set; }
@@ -36,6 +37,11 @@ namespace JokerKS.WLFU
             modelBuilder.Entity<AppUser>()
                 .HasMany(u => u.BasketProducts)
                 .WithRequired(a => a.User)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(u => u.Ratings)
+                .WithRequired(a => a.Product)
                 .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);

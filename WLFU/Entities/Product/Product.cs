@@ -39,11 +39,12 @@ namespace JokerKS.WLFU.Entities.Product
         public AppUser Designer { get; set; } 
         #endregion
 
-        #region Tags, Images, Comments
+        #region Tags, Images, Comments, Ratings
         [Required]
         public IList<ProductTag> Tags { get; set; }
         public IList<ProductImage> Images { get; set; }
         public IList<ProductComment> Comments { get; set; }
+        public IList<ProductRating> Ratings { get; set; }
         #endregion
 
         #region MainImage

@@ -4,40 +4,96 @@
     ViewBag.Title = "ShowGeneralInfo";
 }
 
-<h2>ShowGeneralInfo</h2>
+<h2>Summarized ordering</h2>
 
 <p>
     @Html.ActionLink("Back", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>Image</th>
-        <th>Name</th>
-        <th>Amount</th>
-        <th>Price</th>
-        <th></th>
-    </tr>
 
-@foreach (var item in Model.Products) {
-    <tr>
-        <td>
+@using (Html.BeginForm("ShowGeneralInfo", "Order", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false)
 
-        </td>
-        <td>
-            @Html.DisplayFor(model => item.Value.Name)
-        </td>
-        <td>
-            @Html.DisplayFor(model => item.Key.Amount)
-        </td>
-        <td>
-            @Html.DisplayFor(model => item.Value.Price)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
+    <div class="form-horizontal">
+        <table class="table">
+            <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Price</th>
+            </tr>
+
+            @foreach (var item in Model.Products)
+            {
+                <tr>
+                    <td>
+                        @if (item.Value.MainImageId.HasValue && Model.MainImages.ContainsKey(item.Value.MainImageId.Value))
+                        {
+                            <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.MainImages[item.Value.MainImageId.Value].Path)"
+                                 alt="@Model.MainImages[item.Value.MainImageId.Value].Title" />
+                        }
+                    </td>
+                    <td>
+                        @Html.HiddenFor(model => item.Key.ProductId)
+                        @Html.DisplayFor(model => item.Value.Name)
+                    </td>
+                    <td>
+                        @Html.HiddenFor(model => item.Key.Amount)
+                        @Html.DisplayFor(model => item.Key.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Value.Price)
+                    </td>
+                </tr>
+            }
+        </table>
+
+        <div style="float: right">
+            <span>Sum: </span><span>@Model.SummaryPrice zł</span>
+        </div>
+
+        <table class="table">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Order.FirstName)</th>
+                <th>@Html.DisplayNameFor(model => model.Order.LastName)</th>
+                <th>@Html.DisplayNameFor(model => model.Order.Address)</th>
+                <th>@Html.DisplayNameFor(model => model.Order.Postcode)</th>
+                <th>@Html.DisplayNameFor(model => model.Order.City)</th>
+                <th>@Html.DisplayNameFor(model => model.Order.PhoneNumber)</th>
+            </tr>
+            <tr>
+                <td>
+                    @Html.HiddenFor(model => model.Order.FirstName)
+                    @Html.DisplayFor(model => model.Order.FirstName)
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Order.LastName)
+                    @Html.DisplayFor(model => model.Order.LastName)
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Order.Address)
+                    @Html.DisplayFor(model => model.Order.Address)
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Order.Postcode)
+                    @Html.DisplayFor(model => model.Order.Postcode)
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Order.City)
+                    @Html.DisplayFor(model => model.Order.City)
+                </td>
+                <td>
+                    @Html.HiddenFor(model => model.Order.PhoneNumber)
+                    @Html.DisplayFor(model => model.Order.PhoneNumber)
+                </td>
+            </tr>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create order" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
 }
-
-</table>

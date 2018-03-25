@@ -10,7 +10,10 @@ namespace JokerKS.WLFU.Entities.Product
         [Key, Column(Order = 1)]
         public int ProductId { get; set; }
 
+        [Required]
         public int Amount { get; set; }
+        [Required]
+        public decimal Price { get; set; }
 
         [ForeignKey("OrderId")]
         public Order Order { get; set; }

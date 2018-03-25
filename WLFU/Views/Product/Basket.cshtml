@@ -19,6 +19,7 @@
 {
     using (Html.BeginForm())
     {
+        @Html.ValidationSummary(false)
         <table class="table">
             <tr>
                 <th></th>
@@ -67,7 +68,7 @@
                     @Html.DisplayFor(modelItem => item.Product.Price) zł
                 </td>
                 <td style="text-align: center;">
-                    @Html.EditorFor(modelItem => item.Amount, new { htmlAttributes = new { type = "number", min = 1, max = availableCount } }) / @availableCount
+                    @Html.EditorFor(model => model.SelectedProducts[prod.i].Amount, new { htmlAttributes = new { type = "number", min = 1, max = availableCount } }) / @availableCount
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.DateCreated)

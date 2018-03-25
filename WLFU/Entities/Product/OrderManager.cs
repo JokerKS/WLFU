@@ -14,6 +14,7 @@ namespace JokerKS.WLFU.Entities.Product
             {
                 using (var db = new AppContext())
                 {
+                    order.DateCreated = DateTime.Now;
                     db.Orders.Add(order);
                     db.SaveChanges();
                 }

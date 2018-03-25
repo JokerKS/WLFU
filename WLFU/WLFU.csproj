@@ -383,6 +383,7 @@
     <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product\Product.cs" />
+    <Compile Include="Entities\Product\ProductRating.cs" />
     <Compile Include="Entities\Product\ProductComment.cs" />
     <Compile Include="Entities\Product\BasketProductManager.cs" />
     <Compile Include="Entities\Product\ProductManager.cs" />
@@ -418,6 +419,14 @@
     <Compile Include="Migrations\201803182043312_Product_IsActive.cs" />
     <Compile Include="Migrations\201803182043312_Product_IsActive.Designer.cs">
       <DependentUpon>201803182043312_Product_IsActive.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803241137556_ProductRatings.cs" />
+    <Compile Include="Migrations\201803241137556_ProductRatings.Designer.cs">
+      <DependentUpon>201803241137556_ProductRatings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803251342508_OrderDetails_Price.cs" />
+    <Compile Include="Migrations\201803251342508_OrderDetails_Price.Designer.cs">
+      <DependentUpon>201803251342508_OrderDetails_Price.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
@@ -462,6 +471,7 @@
     <Content Include="Views\Product\Basket.cshtml" />
     <Content Include="Views\Order\Create.cshtml" />
     <Content Include="Views\Order\ShowGeneralInfo.cshtml" />
+    <Content Include="Views\Order\Result.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -492,6 +502,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803182043312_Product_IsActive.resx">
       <DependentUpon>201803182043312_Product_IsActive.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803241137556_ProductRatings.resx">
+      <DependentUpon>201803241137556_ProductRatings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803251342508_OrderDetails_Price.resx">
+      <DependentUpon>201803251342508_OrderDetails_Price.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
