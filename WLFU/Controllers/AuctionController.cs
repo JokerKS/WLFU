@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using JokerKS.WLFU.Models;
 using JokerKS.WLFU.Entities;
 using JokerKS.WLFU;
-using System.Data.Entity;
 using JokerKS.WLFU.Entities.Product;
 using System.Net;
 using JokerKS.WLFU.Entities.Helpers;
 using JokerKS.WLFU.Entities.Auction;
+using System.Transactions;
 
 namespace JokeKS.WLFU.Controllers
 {
@@ -151,10 +151,9 @@ namespace JokeKS.WLFU.Controllers
                     AuctionManager.Update(auction, db);
                 }
 
-                // TODO: CHANGE MODEL
-                var successModel = new SuccessCreateProductModel()
+                var successModel = new SuccessCreateAuctionModel()
                 {
-                    ProductName = auction.Name
+                    AuctionName = auction.Name
                 };
                 return View("Success", successModel);
             }
@@ -162,14 +161,6 @@ namespace JokeKS.WLFU.Controllers
             {
                 throw;
             }
-        }
-        #endregion
-
-        #region Success() Get
-        [HttpGet]
-        private ViewResult Success(SuccessCreateProductModel model)
-        {
-            return View(model);
         }
         #endregion
 
@@ -241,17 +232,12 @@ namespace JokeKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Details(int auctionId)
         {
-            ProductModel model = new ProductModel();
+            AuctionModel model = new AuctionModel();
 
-            model.Product = ProductManager.GetById(auctionId, true);
-            if(model.Product != null)
+            model.Auction = AuctionManager.GetById(auctionId, true);
+            if(model.Auction != null)
             {
-                model.AddedToBasket = UserManager.GetBasketProduct(User.Identity.GetUserId(), model.Product.Id);
-                model.Images = ImageManager.GetByIds(model.Product.Images.Select(x => x.ImageId).ToList());
-
-                // Якщо даний товар доданий в цього користувача вже доданий до кошика, 
-                // То віднімаємо від кількості доступних товарів до покупки кількість в кошику
-                model.AvailableAmount = model.Product.AvailableAmount - (model.AddedToBasket != null ? model.AddedToBasket.Amount : 0);
+                model.Images = ImageManager.GetByIds(model.Auction.Images.Select(x => x.ImageId).ToList());
 
                 return View(model);
             }
@@ -259,50 +245,68 @@ namespace JokeKS.WLFU.Controllers
         }
         #endregion
 
-        #region AddToBasket() Get
+        #region MakeBid() Get
         [HttpGet]
-        public JsonResult AddToBasket(int productId, int amount)
+        public JsonResult MakeBid(int auctionId, decimal price)
         {
             var model = new MessageResult();
 
             try
             {
-                // Якщо продукт не знайдено(наприклад його видалили зняли з продажі),
-                // То не дозволяємо додавати продукт до кошика
-                var product = ProductManager.GetById(productId);
-                if (product == null)
+                // Якщо аукціон не знайдено(наприклад його видалили),
+                var auction = AuctionManager.GetById(auctionId);
+                if (auction == null)
                 {
-                    throw new Exception("Product not founded!");
+                    throw new Exception("Auction not founded!");
                 }
 
-                // Якщо доступна кількість продукту меньша ніж додавана до кошика,
-                // То не дозволяємо додавати продукт до кошика
-                // Не забуваємо враховувати кількість для цього користувача вже доданих до кошика
-                var existedInBasket = BasketProductManager.GetBasketProduct(User.Identity.GetUserId(), product.Id);
-
-                if (product.AvailableAmount - (existedInBasket != null ? existedInBasket.Amount : 0) < amount)
+                if(auction.IsClosed)
                 {
-                    throw new Exception("You cannot add more than available to order!");
+                    throw new Exception($"The auction '{auction.Name}' is completed! Make a bid is no longer possible.");
                 }
 
-                var basketProduct = new BasketProduct()
+                // Перевіряємо чи дана ставка можлива
+                if(auction.CurrentPrice + auction.PriceIncrease > price)
                 {
-                    ProductId = productId,
-                    UserId = User.Identity.GetUserId(),
-                    Amount = amount,
-                    DateCreated = DateTime.Now
+                    throw new Exception($"The price '{price}' can't be less than the minimum price of the last bid '{auction.CurrentPrice + auction.PriceIncrease}'");
+                }
+
+                var bid = new BidAtAuction()
+                {
+                    AuctionId = auction.Id,
+                    Price = price,
+                    UserId = User.Identity.GetUserId()
                 };
 
-                BasketProductManager.Add(basketProduct);
+                // Використовуємо TransactionScope, щоб в базі одночасно занести дані ставки 
+                // і обновити дані аукціону, якщо це фінальна ставка
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    // Якщо в аукціоні вказана ціна, по якій завершується аукціон і ставка перевищує або = цій ціні, 
+                    // то позначаємо аукціон завершеним, а ставку кінцевою(користувач виграв лот)
+                    if (auction.InstantSellingPrice.HasValue && bid.Price >= auction.InstantSellingPrice.Value)
+                    {
+                        bid.IsWinner = true;
+                        auction.IsClosed = true;
+                        AuctionManager.Update(auction);
+                    }
 
-                // Продукт успішно доданий до кошика 
-                model.Message =  $"Product \"{product.Name}\" was successfully added to the basket in the amounts of {amount}";
+                    BidAtAuctionManager.Add(bid);
+
+                    scope.Complete();
+                }
+                // Ставка успішно зроблена
+                model.Message = $"Bid at the auction \"{auction.Name}\" was successfully added!";
+                if(bid.IsWinner)
+                {
+                    model.Message += "\nCongratulations! Your bid won on the auction!\nTo place your order go to basket";
+                }
                 model.Succeeded = true;
             }
             catch (Exception ex)
             {
-                // Додаємо повідомлення з помилкою
-                model.Message = "Product wasn't added to basket";
+                // Не вдалося зробити ставку
+                model.Message = "Bid at the auction wasn't added!";
                 model.Error = ex.Message;
                 model.Succeeded = false;
             }
@@ -310,6 +314,7 @@ namespace JokeKS.WLFU.Controllers
             return Json(model, JsonRequestBehavior.AllowGet);
         }
         #endregion
+
 
         #region DeleteFromBasket() Get
         public ActionResult DeleteFromBasket(int? productId)

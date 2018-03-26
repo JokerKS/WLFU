@@ -26,12 +26,14 @@ namespace JokerKS.WLFU.Entities.Auction
         public bool IsPublished { get; set; }
         [Required]
         public bool IsActive { get; set; }
+        [Required]
+        public bool IsClosed { get; set; }
 
         [Required]
         public decimal StartPrice { get; set; }
         [Required]
         public decimal PriceIncrease { get; set; }
-        public decimal InstantSellingPrice { get; set; }
+        public decimal? InstantSellingPrice { get; set; }
 
         #region DateStart
         private DateTime? dateStart;
@@ -85,5 +87,14 @@ namespace JokerKS.WLFU.Entities.Auction
         [ForeignKey("CategoryId")]
         public Product.ProductCategory Category { get; set; }
         #endregion
+
+        [NotMapped]
+        public decimal CurrentPrice
+        {
+            get
+            {
+                return AuctionManager.GetCurrentPrice(this);
+            }
+        }
     }
 }

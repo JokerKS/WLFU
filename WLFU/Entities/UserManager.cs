@@ -1,12 +1,10 @@
 ﻿using JokerKS.WLFU.Entities.Product;
 using System;
-using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 
 namespace JokerKS.WLFU.Entities
 {
-    public class UserManager
+    public static class UserManager
     {
         #region GetBasketProduct()
         public static BasketProduct GetBasketProduct(string userId, int productId)

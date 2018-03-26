@@ -10,7 +10,9 @@ namespace JokerKS.WLFU.Entities.Auction
         public int Id { get; set; }
         public DateTime DateCreated { get; set; }
         public decimal Price { get; set; }
-
+        [Required]
+        public bool IsWinner { get; set; }
+        
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public AppUser User { get; set; }

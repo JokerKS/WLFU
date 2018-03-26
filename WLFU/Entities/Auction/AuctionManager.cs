@@ -7,6 +7,34 @@ namespace JokerKS.WLFU.Entities.Auction
 {
     public static class AuctionManager
     {
+        #region GetById()
+        public static Auction GetById(int id, bool includeImages = false)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    if (includeImages)
+                    {
+                        return db.Auctions
+                            .Where(x => x.Id == id)
+                            .Include(x => x.MainImage)
+                            .Include(x => x.Images)
+                            .FirstOrDefault();
+                    }
+                    else
+                    {
+                        return db.Auctions.Find(id);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        #endregion
+
         #region GetList()
         public static List<Auction> GetList(Pager pager = null, bool includeImages = false)
         {
@@ -161,6 +189,32 @@ namespace JokerKS.WLFU.Entities.Auction
                 throw ex;
             }
         }
+        #endregion
+
+
+        #region GetCurrentPrice()
+        public static decimal GetCurrentPrice(Auction auction)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var lastBid = db.Bids.Where(x => x.AuctionId == auction.Id).OrderByDescending(x => x.Price).FirstOrDefault();
+                    if(lastBid != null)
+                    {
+                        return lastBid.Price;
+                    }
+                    else
+                    {
+                        return auction.StartPrice;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        } 
         #endregion
     }
 }

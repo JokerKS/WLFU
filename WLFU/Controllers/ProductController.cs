@@ -161,14 +161,6 @@ namespace JokeKS.WLFU.Controllers
         }
         #endregion
 
-        #region Success() Get
-        [HttpGet]
-        private ViewResult Success(SuccessCreateProductModel model)
-        {
-            return View(model);
-        }
-        #endregion
-
         #region SaveImages() Post
         [HttpPost]
         public JsonResult SaveImages(IEnumerable<HttpPostedFileBase> images, string requestId)

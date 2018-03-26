@@ -131,6 +131,7 @@
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -377,6 +378,7 @@
     <Compile Include="Entities\Auction\AuctionComment.cs" />
     <Compile Include="Entities\Auction\AuctionTag.cs" />
     <Compile Include="Entities\Auction\AuctionImage.cs" />
+    <Compile Include="Entities\Auction\BidAtAuctionManager.cs" />
     <Compile Include="Entities\Auction\BidAtAuction.cs" />
     <Compile Include="Entities\Auction\AuctionTagManager.cs" />
     <Compile Include="Entities\Auction\AuctionManager.cs" />
@@ -449,18 +451,28 @@
     <Compile Include="Migrations\201803252022081_Auctions_Datestart_null.Designer.cs">
       <DependentUpon>201803252022081_Auctions_Datestart_null.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201803261746443_BidAtAuctions.cs" />
+    <Compile Include="Migrations\201803261746443_BidAtAuctions.Designer.cs">
+      <DependentUpon>201803261746443_BidAtAuctions.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201803262046343_BidAtAuctions_isWinner.cs" />
+    <Compile Include="Migrations\201803262046343_BidAtAuctions_isWinner.Designer.cs">
+      <DependentUpon>201803262046343_BidAtAuctions_isWinner.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
     <Compile Include="Models\CreateAuctionModel.cs" />
     <Compile Include="Models\OrderModel.cs" />
     <Compile Include="Models\ProductCategoryAddModel.cs" />
     <Compile Include="Models\AuctionListModel.cs" />
+    <Compile Include="Models\AuctionModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductListModel.cs" />
     <Compile Include="Models\ProductCategoryListModel.cs" />
     <Compile Include="Models\CreateProductModel.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\RegisterModel.cs" />
+    <Compile Include="Models\SuccessCreateAuctionModel.cs" />
     <Compile Include="Models\SuccessCreateProductModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -498,6 +510,7 @@
     <Content Include="Views\Auction\Create.cshtml" />
     <Content Include="Views\Auction\Success.cshtml" />
     <Content Include="Views\Auction\List.cshtml" />
+    <Content Include="Views\Auction\Details.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -544,6 +557,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803252022081_Auctions_Datestart_null.resx">
       <DependentUpon>201803252022081_Auctions_Datestart_null.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803261746443_BidAtAuctions.resx">
+      <DependentUpon>201803261746443_BidAtAuctions.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201803262046343_BidAtAuctions_isWinner.resx">
+      <DependentUpon>201803262046343_BidAtAuctions_isWinner.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

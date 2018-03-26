@@ -137,6 +137,7 @@ namespace JokerKS.WLFU.Entities.Product
                 else
                 {
                     context.Products.Add(product);
+                    context.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -162,7 +163,8 @@ namespace JokerKS.WLFU.Entities.Product
                 }
                 else
                 {
-                    context.Products.Add(product);
+                    context.Entry(product).State = EntityState.Modified;
+                    context.SaveChanges();
                 }
             }
             catch (Exception ex)

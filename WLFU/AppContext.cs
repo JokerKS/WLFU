@@ -23,6 +23,7 @@ namespace JokerKS.WLFU
         public DbSet<AuctionTag> AuctionTags { get; set; }
         public DbSet<AuctionComment> AuctionComments { get; set; }
         public DbSet<AuctionImage> AuctionImages { get; set; }
+        public DbSet<BidAtAuction> Bids { get; set; }
 
 
         public DbSet<Tag> Tags { get; set; }
