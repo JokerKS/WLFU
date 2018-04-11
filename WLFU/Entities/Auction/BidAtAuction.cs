@@ -12,7 +12,11 @@ namespace JokerKS.WLFU.Entities.Auction
         public decimal Price { get; set; }
         [Required]
         public bool IsWinner { get; set; }
-        
+
+        // Позначає чи переможець замовив товар
+        [Required]
+        public bool IsOrdered { get; set; }
+
         public string UserId { get; set; }
         [ForeignKey("UserId")]
         public AppUser User { get; set; }

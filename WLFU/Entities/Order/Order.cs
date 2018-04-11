@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JokerKS.WLFU.Entities.Product
+namespace JokerKS.WLFU.Entities.Order
 {
     public class Order : IIdentity
     {
@@ -24,7 +24,8 @@ namespace JokerKS.WLFU.Entities.Product
         [Required]
         public string PhoneNumber { get; set; }
 
-        public List<OrderDetail> Details { get; set; }
+        public List<ProductOrderDetail> ProductDetails { get; set; }
+        public List<AuctionOrderDetail> AuctionDetails { get; set; }
 
         [ForeignKey("UserId")]
         public AppUser User { get; set; }

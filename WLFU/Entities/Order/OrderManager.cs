@@ -1,9 +1,6 @@
-﻿using JokerKS.WLFU.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 
-namespace JokerKS.WLFU.Entities.Product
+namespace JokerKS.WLFU.Entities.Order
 {
     public class OrderManager
     {

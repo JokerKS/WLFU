@@ -201,7 +201,7 @@ namespace JokerKS.WLFU.Entities.Product
             {
                 using (var db = new AppContext())
                 {
-                    var orders = db.OrderDetails.Where(x => x.ProductId == product.Id);
+                    var orders = db.ProductOrderDetails.Where(x => x.ProductId == product.Id);
                     var orderedCount = 0;
                     if(orders.Count() > 0)
                     {

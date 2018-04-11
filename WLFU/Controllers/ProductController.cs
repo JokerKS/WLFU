@@ -12,6 +12,7 @@ using System.Data.Entity;
 using JokerKS.WLFU.Entities.Product;
 using System.Net;
 using JokerKS.WLFU.Entities.Helpers;
+using JokerKS.WLFU.Entities.Auction;
 
 namespace JokeKS.WLFU.Controllers
 {
@@ -303,6 +304,9 @@ namespace JokeKS.WLFU.Controllers
                 model.Products = ProductManager.GetList(pager, true);
             }
 
+            // Вибираємо тільки ті продукти, яких кількість "на складі" більша 0
+            model.Products = model.Products.Where(x => x.AvailableAmount > 0).ToList();
+
             return View(model);
         }
         #endregion
@@ -435,15 +439,34 @@ namespace JokeKS.WLFU.Controllers
                 Amount = x.Amount
             }).ToList();
 
+            // Беремо всі виграні аукціони
+            model.Bids = BidAtAuctionManager.GetWinningBidByUserId(User.Identity.GetUserId());
+            model.AuctionInBasket = AuctionManager.GetList(model.Bids.Select(x => x.AuctionId));
+
+            // Позначаємо всі аукціони зазначеними
+            model.SelectedAuctions = model.AuctionInBasket.Select(x => new SelectedAuction
+            {
+                AuctionId = x.Id,
+                Checked = true
+            }).ToList();
+
             model.SummaryPrice = 0M;
             foreach (var item in model.ProductsInBasket)
             {
                 model.SummaryPrice += item.Amount * item.Product.Price;
             }
 
-            var images = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
-            model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
-            
+            foreach (var item in model.AuctionInBasket)
+            {
+                model.SummaryPrice += item.CurrentPrice;
+            }
+
+            var productImages = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
+            model.ProductMainImages = ImageManager.GetByIds(productImages).ToDictionary(x => x.Id, v => v);
+
+            var auctionImages = model.AuctionInBasket.Where(x => x.MainImageId.HasValue).Select(x => x.MainImageId.Value);
+            model.AuctionMainImages = ImageManager.GetByIds(auctionImages).ToDictionary(x => x.Id, v => v);
+
             return View(model);
         }
         #endregion
@@ -452,7 +475,17 @@ namespace JokeKS.WLFU.Controllers
         [HttpPost]
         public ActionResult Basket(BasketListModel model)
         {
-            if(model == null || model.SelectedProducts == null || model.SelectedProducts.Count < 0)
+            // Якщо модель пуста
+            if(model == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            // Якщо не зазначено жодного продукту або аукціону
+            else if (model.SelectedProducts == null && model.SelectedAuctions == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            else if (!model.SelectedProducts.Any() && !model.SelectedAuctions.Any())
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -478,6 +511,12 @@ namespace JokeKS.WLFU.Controllers
                     orderModel.Products.Add(item, null);
                 }
 
+                orderModel.Auctions = new Dictionary<SelectedAuction, Auction>();
+                foreach (var item in model.SelectedAuctions.Where(x => x.Checked))
+                {
+                    orderModel.Auctions.Add(item, null);
+                }
+
                 // Для передачі до іншого контролера зберігаємо дані до TempData
                 TempData["orderModel"] = orderModel;
 
@@ -487,9 +526,15 @@ namespace JokeKS.WLFU.Controllers
 
             // Беремо всі продукти в кошику користувача
             model.ProductsInBasket = BasketProductManager.GetProductsInBasket(User.Identity.GetUserId());
-            var images = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
+            // Беремо всі виграні аукціони
+            model.AuctionInBasket = AuctionManager.GetList(model.Bids.Select(x => x.AuctionId));
 
-            model.MainImages = ImageManager.GetByIds(images).ToDictionary(x => x.Id, v => v);
+            var productImages = model.ProductsInBasket.Where(x => x.Product.MainImageId.HasValue).Select(x => x.Product.MainImageId.Value);
+            model.ProductMainImages = ImageManager.GetByIds(productImages).ToDictionary(x => x.Id, v => v);
+
+            var auctionImages = model.AuctionInBasket.Where(x => x.MainImageId.HasValue).Select(x => x.MainImageId.Value);
+            model.AuctionMainImages = ImageManager.GetByIds(auctionImages).ToDictionary(x => x.Id, v => v);
+
             return View(model);
         }
         #endregion

@@ -42,7 +42,7 @@ namespace JokerKS.WLFU.Entities.Auction
             {
                 using (var db = new AppContext())
                 {
-                    var query = db.Auctions.AsQueryable();
+                    var query = db.Auctions.Where(x => !x.IsClosed);
 
                     if (includeImages)
                     {
@@ -92,7 +92,7 @@ namespace JokerKS.WLFU.Entities.Auction
             {
                 using (var db = new AppContext())
                 {
-                    var query = db.Auctions.Where(x => x.CategoryId == categoryId).AsQueryable();
+                    var query = db.Auctions.Where(x => x.CategoryId == categoryId && !x.IsClosed).AsQueryable();
 
                     if (includeImages)
                     {
@@ -119,6 +119,35 @@ namespace JokerKS.WLFU.Entities.Auction
             }
         }
         #endregion
+
+
+        #region MarkAuctionAsOrdered
+        public static void MarkAuctionAsOrdered(int auctionId, string userId)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var bid = BidAtAuctionManager.GetWinningBid(auctionId);
+                    if(bid == null || bid.UserId != userId)
+                    {
+                        throw new Exception("This user won't the auction");
+                    }
+
+                    // Позначаємо ставку як замовлена
+                    bid.IsOrdered = true;
+                    db.Entry(bid).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        } 
+        #endregion
+
+
 
         #region Add()
         public static void Add(Auction auction, AppContext context = null)

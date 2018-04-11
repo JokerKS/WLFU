@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace JokerKS.WLFU.Entities.Product
+namespace JokerKS.WLFU.Entities.Order
 {
-    public class OrderDetail
+    public class ProductOrderDetail
     {
         [Key, Column(Order = 0)]
         public int OrderId { get; set; }
@@ -18,6 +18,6 @@ namespace JokerKS.WLFU.Entities.Product
         [ForeignKey("OrderId")]
         public Order Order { get; set; }
         [ForeignKey("ProductId")]
-        public Product Product { get; set; }
+        public Product.Product Product { get; set; }
     }
 }

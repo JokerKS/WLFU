@@ -386,11 +386,12 @@
     <Compile Include="Entities\Helpers\MessageResult.cs" />
     <Compile Include="Entities\Helpers\Pager.cs" />
     <Compile Include="Entities\Auction\Auction.cs" />
+    <Compile Include="Entities\Order\AuctionOrderDetail.cs" />
     <Compile Include="Entities\TagManager.cs" />
     <Compile Include="Entities\Product\BasketProduct.cs" />
-    <Compile Include="Entities\Product\Order.cs" />
-    <Compile Include="Entities\Product\OrderDetail.cs" />
-    <Compile Include="Entities\Product\OrderManager.cs" />
+    <Compile Include="Entities\Order\Order.cs" />
+    <Compile Include="Entities\Order\ProductOrderDetail.cs" />
+    <Compile Include="Entities\Order\OrderManager.cs" />
     <Compile Include="Entities\Product\ProductCategory.cs" />
     <Compile Include="Entities\Image.cs" />
     <Compile Include="Entities\Product\Product.cs" />
@@ -458,6 +459,14 @@
     <Compile Include="Migrations\201803262046343_BidAtAuctions_isWinner.cs" />
     <Compile Include="Migrations\201803262046343_BidAtAuctions_isWinner.Designer.cs">
       <DependentUpon>201803262046343_BidAtAuctions_isWinner.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804041802068_Bids_IsOrdered.cs" />
+    <Compile Include="Migrations\201804041802068_Bids_IsOrdered.Designer.cs">
+      <DependentUpon>201804041802068_Bids_IsOrdered.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804111822283_OrderProductDetails&amp;OrderAuctionDetails.cs" />
+    <Compile Include="Migrations\201804111822283_OrderProductDetails&amp;OrderAuctionDetails.Designer.cs">
+      <DependentUpon>201804111822283_OrderProductDetails&amp;OrderAuctionDetails.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
@@ -563,6 +572,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201803262046343_BidAtAuctions_isWinner.resx">
       <DependentUpon>201803262046343_BidAtAuctions_isWinner.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804041802068_Bids_IsOrdered.resx">
+      <DependentUpon>201804041802068_Bids_IsOrdered.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804111822283_OrderProductDetails&amp;OrderAuctionDetails.resx">
+      <DependentUpon>201804111822283_OrderProductDetails&amp;OrderAuctionDetails.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

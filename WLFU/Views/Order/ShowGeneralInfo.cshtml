@@ -28,10 +28,10 @@
             {
                 <tr>
                     <td>
-                        @if (item.Value.MainImageId.HasValue && Model.MainImages.ContainsKey(item.Value.MainImageId.Value))
+                        @if (item.Value.MainImageId.HasValue && Model.ProductMainImages.ContainsKey(item.Value.MainImageId.Value))
                         {
-                            <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.MainImages[item.Value.MainImageId.Value].Path)"
-                                 alt="@Model.MainImages[item.Value.MainImageId.Value].Title" />
+                            <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.ProductMainImages[item.Value.MainImageId.Value].Path)"
+                                 alt="@Model.ProductMainImages[item.Value.MainImageId.Value].Title" />
                         }
                     </td>
                     <td>
@@ -44,6 +44,28 @@
                     </td>
                     <td>
                         @Html.DisplayFor(model => item.Value.Price)
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model.Auctions)
+            {
+                <tr>
+                    <td>
+                        @if (item.Value.MainImageId.HasValue && Model.AuctionMainImages.ContainsKey(item.Value.MainImageId.Value))
+                        {
+                            <img class="img-mini" src="@Url.Content("~/Images/Auctions/" + Model.AuctionMainImages[item.Value.MainImageId.Value].Path)"
+                                 alt="@Model.AuctionMainImages[item.Value.MainImageId.Value].Title" />
+                        }
+                    </td>
+                    <td>
+                        @Html.HiddenFor(model => item.Key.AuctionId)
+                        @Html.DisplayFor(model => item.Value.Name)
+                    </td>
+                    <td>
+                        <input type="text" value="1" disabled />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Value.CurrentPrice)
                     </td>
                 </tr>
             }

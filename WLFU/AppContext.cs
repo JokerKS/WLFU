@@ -1,5 +1,6 @@
 ﻿using JokerKS.WLFU.Entities;
 using JokerKS.WLFU.Entities.Auction;
+using JokerKS.WLFU.Entities.Order;
 using JokerKS.WLFU.Entities.Product;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -32,7 +33,8 @@ namespace JokerKS.WLFU
         public DbSet<BasketProduct> BasketProducts { get; set; }
 
         public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<ProductOrderDetail> ProductOrderDetails { get; set; }
+        public DbSet<AuctionOrderDetail> AuctionOrderDetails { get; set; }
 
         public AppContext(): base("WLFUdb")
         {

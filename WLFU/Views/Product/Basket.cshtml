@@ -15,84 +15,147 @@
     </div>
 }
 
-@if (Model.ProductsInBasket.Any())
+@using (Html.BeginForm())
 {
-    using (Html.BeginForm())
-    {
-        @Html.ValidationSummary(false)
-        <table class="table">
-            <tr>
-                <th></th>
-                <th style="text-align: center;">
-                    @Html.DisplayName("Photo")
-                </th>
-                <th>
-                    @Html.DisplayName("Name")
-                </th>
-                <th style="text-align: center;">
-                    @Html.DisplayName("Price")
-                </th>
-                <th style="text-align: center;">
-                    @Html.DisplayName("Amount")
-                </th>
-                <th>
-                    @Html.DisplayName("Date created")
-                </th>
-                <th></th>
-            </tr>
+    @Html.ValidationSummary(false)
 
-        @foreach (var prod in Model.ProductsInBasket.Select((value, i) => new { i, value }))
+    @* Виграні аукціони *@
+    <h3>Won auctions</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Photo")
+            </th>
+            <th>
+                @Html.DisplayName("Name")
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Price")
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Amount")
+            </th>
+            <th>
+                @Html.DisplayName("Closed date")
+            </th>
+            <th></th>
+        </tr>
+        @foreach (var auct in Model.AuctionInBasket.Select((val, i) => new { Index = i, Value = val }))
         {
-            var item = prod.value;
-            // Визначаємо одразу кількість товарів доступних до замовлення(щоб не робити пару запитань до бази)
-            var availableCount = item.Product.AvailableAmount;
-
+            var auction = auct.Value;
             <tr>
                 <td>
-                    @Html.HiddenFor(model => model.SelectedProducts[prod.i].ProductId)
-                    @Html.CheckBoxFor(model => model.SelectedProducts[prod.i].Checked)
+                    @Html.HiddenFor(model => model.SelectedAuctions[auct.Index].AuctionId)
+                    @Html.CheckBoxFor(model => model.SelectedAuctions[auct.Index].Checked)
                 </td>
                 <td style="text-align: center;">
-                    @if (item.Product.MainImageId.HasValue && Model.MainImages.ContainsKey(item.Product.MainImageId.Value))
+                    @if (auction.MainImageId.HasValue && Model.AuctionMainImages.ContainsKey(auction.MainImageId.Value))
                     {
-                        <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.MainImages[item.Product.MainImageId.Value].Path)" 
-                            alt="@Model.MainImages[item.Product.MainImageId.Value].Title"/>
+                        <img class="img-mini" src="@Url.Content("~/Images/Auctions/" + Model.AuctionMainImages[auction.MainImageId.Value].Path)"
+                                alt="@Model.AuctionMainImages[auction.MainImageId.Value].Title" />
                     }
                 </td>
                 <td>
-                    <a href="@Url.Action("Details", new { productId = item.Product.Id } )">
-                        @Html.DisplayFor(model => item.Product.Name)
+                    <a href="@Url.Action("Details", "Auction", new { auctionId = auction.Id })">
+                        @Html.DisplayFor(model => auction.Name)
                     </a>
                 </td>
                 <td style="text-align: center;">
-                    @Html.DisplayFor(modelItem => item.Product.Price) zł
+                    @Html.DisplayFor(modelItem => auction.CurrentPrice) zł
                 </td>
                 <td style="text-align: center;">
-                    @Html.EditorFor(model => model.SelectedProducts[prod.i].Amount, new { htmlAttributes = new { type = "number", min = 1, max = availableCount } }) / @availableCount
+                    <input type="text" value="1" disabled/> 
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.DateCreated)
+                    @Html.DisplayFor(modelItem => Model.Bids.FirstOrDefault(x => x.AuctionId == auction.Id).DateCreated)
                 </td>
                 <td>
-                    @Html.ActionLink("Delete", "DeleteFromBasket", new { productId = item.ProductId })
+                    @Html.ActionLink("Abandon the auction", "AbandonAuction", new { auctionId = auction.Id })
                 </td>
             </tr>
         }
-        </table>
-        <div style="float: right">
-            <span>Sum: </span><span>@Model.SummaryPrice zł</span>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Make an order" class="btn btn-default" />
-            </div>
-        </div>
+    </table>
+    if (!Model.AuctionInBasket.Any())
+    {
+        <p>No winning auctions.</p>
     }
-}
-else
-{
-    <span>Products in basket not founded</span>
+
+    @* Продукти додані до кошика *@
+    <h3>Added products</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Photo")
+            </th>
+            <th>
+                @Html.DisplayName("Name")
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Price")
+            </th>
+            <th style="text-align: center;">
+                @Html.DisplayName("Amount")
+            </th>
+            <th>
+                @Html.DisplayName("Date created")
+            </th>
+            <th></th>
+        </tr>
+
+    @foreach (var prod in Model.ProductsInBasket.Select((value, i) => new { i, value }))
+    {
+        var item = prod.value;
+        // Визначаємо одразу кількість товарів доступних до замовлення(щоб не робити пару запитань до бази)
+        var availableCount = item.Product.AvailableAmount;
+
+        <tr>
+            <td>
+                @Html.HiddenFor(model => model.SelectedProducts[prod.i].ProductId)
+                @Html.CheckBoxFor(model => model.SelectedProducts[prod.i].Checked)
+            </td>
+            <td style="text-align: center;">
+                @if (item.Product.MainImageId.HasValue && Model.ProductMainImages.ContainsKey(item.Product.MainImageId.Value))
+                {
+                    <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.ProductMainImages[item.Product.MainImageId.Value].Path)" 
+                        alt="@Model.ProductMainImages[item.Product.MainImageId.Value].Title"/>
+                }
+            </td>
+            <td>
+                <a href="@Url.Action("Details", new { productId = item.Product.Id } )">
+                    @Html.DisplayFor(model => item.Product.Name)
+                </a>
+            </td>
+            <td style="text-align: center;">
+                @Html.DisplayFor(modelItem => item.Product.Price) zł
+            </td>
+            <td style="text-align: center;">
+                @Html.EditorFor(model => model.SelectedProducts[prod.i].Amount, new { htmlAttributes = new { type = "number", min = 1, max = availableCount } }) / @availableCount
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateCreated)
+            </td>
+            <td>
+                @Html.ActionLink("Delete", "DeleteFromBasket", new { productId = item.ProductId })
+            </td>
+        </tr>
+    }
+    </table>
+    if (!Model.ProductsInBasket.Any())
+    {
+        <span>Your product basket is empty.</span>
+    }
+
+    <div style="float: right">
+        <span>Sum: </span><span>@Model.SummaryPrice zł</span>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Make an order" class="btn btn-success" />
+        </div>
+    </div>
 }
 
-@Html.ActionLink("Back to products", "List")
+@Html.ActionLink("Back to products", "List") | @Html.ActionLink("Back to auctions", "List", "Auction", null, null)

@@ -18,6 +18,6 @@ namespace JokerKS.WLFU.Entities
         public System.DateTime BirthDate { get; set; }
 
         public List<Product.BasketProduct> BasketProducts { get; set; }
-        public List<Product.Order> Orders { get; set; }
+        public List<Order.Order> Orders { get; set; }
     }
 }
