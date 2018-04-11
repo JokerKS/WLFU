@@ -4,36 +4,32 @@
     ViewBag.Title = "Login";
 }
 
-<h2>Login</h2>
-<hr />
-
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-
-    <div>
-        @Html.ValidationSummary(false)
+<div class="container">
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
-
-        <div>
-            @Html.LabelFor(model => model.EmailOrUserName)
-            <div>
-                @Html.TextBoxFor(model => model.EmailOrUserName, new { @class = "form-control" })
+        <div class="row">
+            <div class="col-xs-8 col-sm-6 col-md-4 col-xs-offset-2 col-sm-offset-3 col-md-offset-4">
+                <h2 style="text-align:center">Login</h2>
+                <hr class="colorline">
+                <br />
+                <div class="form-group">
+                    @Html.ValidationMessageFor(x => x.EmailOrUserName, "", new { @class = "text-danger" })
+                    @Html.EditorFor(x => x.EmailOrUserName, new { htmlAttributes = new { @class = "form-control input-lg", placeholder = "Email or Username" } })
+                </div>
+                <div class="form-group">
+                    @Html.ValidationMessageFor(x => x.Password, "", new { @class = "text-danger" })
+                    @Html.EditorFor(x => x.Password, new { htmlAttributes = new { @class = "form-control input-lg", placeholder = "Password" } })
+                </div>
+                <hr class="colorline">
+                <div class="form-group">
+                    <p style="text-align:center">
+                        <input class="btn btn-lg btn-success" type="submit" value="Login">
+                    </p>
+                </div>
             </div>
         </div>
-
-        <div>
-            @Html.LabelFor(model => model.Password)
-            <div>
-                @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Password" })
-            </div>
-        </div>
-
-        <div>
-            <div>
-                <input type="submit" value="Login" class="btn btn-default" />
-            </div>
-        </div>
-
-    </div>
-}
+    }
+</div>

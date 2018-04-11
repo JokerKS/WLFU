@@ -8,3 +8,8 @@
     max-width: 120px !important;
     max-height: 120px !important;
 }
+
+.btn-success{
+    min-width: 200px;
+    max-width: 350px;
+}
