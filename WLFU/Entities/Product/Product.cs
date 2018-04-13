@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using JokerKS.WLFU.Entities.User;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;

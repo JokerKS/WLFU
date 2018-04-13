@@ -15,14 +15,17 @@
         </div>
 
         <div class="products-container col-md-10">
-            <h3>Products</h3>
+            <h3>Auctions</h3>
             @if (Model.Auctions.Any())
             {
                 foreach (var auction in Model.Auctions)
                 {
                     <div class="product-container row">
                         <div class="img-container col-md-4">
-                            <img src="@Url.Content("~/Images/Auctions/" + auction.MainImage.Path)" alt="@auction.Name" />
+                            <div class="img-container">
+                                <img src="@Url.Content("~/Images/Auctions/" + auction.MainImage.Path)" alt="@auction.Name" />
+                                <h2><span>@auction.CurrentPrice zł</span></h2>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             @Html.ActionLink(auction.Name, "Details", new { auctionId = auction.Id })
@@ -37,7 +40,7 @@
             else
             {
                 <div>
-                    <span>Products not founded</span>
+                    <span>Auctions not founded</span>
                 </div>
             }
         </div>
@@ -47,10 +50,6 @@
 
 
 <style>
-    .img-container img {
-        width: 100%;
-        height: 100%;
-    }
     .products-container{
         background-color: lightblue;
     }

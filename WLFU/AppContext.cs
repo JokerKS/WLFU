@@ -2,6 +2,7 @@
 using JokerKS.WLFU.Entities.Auction;
 using JokerKS.WLFU.Entities.Order;
 using JokerKS.WLFU.Entities.Product;
+using JokerKS.WLFU.Entities.User;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;

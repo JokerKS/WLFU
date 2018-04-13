@@ -1,9 +1,13 @@
 ﻿using JokerKS.WLFU;
 using JokerKS.WLFU.Entities;
+using JokerKS.WLFU.Entities.Auction;
+using JokerKS.WLFU.Entities.Product;
+using JokerKS.WLFU.Entities.User;
 using JokerKS.WLFU.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -29,11 +33,14 @@ namespace JokeKS.WLFU.Controllers
             }
         }
 
+        #region Register Get
         public ActionResult Register()
         {
             return View();
-        }
+        } 
+        #endregion
 
+        #region Register Post
         [HttpPost]
         public async Task<ActionResult> Register(RegisterModel model)
         {
@@ -63,13 +70,17 @@ namespace JokeKS.WLFU.Controllers
             }
             return View(model);
         }
+        #endregion
 
+        #region Login Get
         public ActionResult Login(string returnUrl)
         {
             ViewBag.returnUrl = returnUrl;
             return View();
         }
+        #endregion
 
+        #region Login Post
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginModel model, string returnUrl)
@@ -105,10 +116,52 @@ namespace JokeKS.WLFU.Controllers
             ViewBag.returnUrl = returnUrl;
             return View(model);
         }
+        #endregion
+
+        #region Logout
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();
             return RedirectToAction("Login");
         }
+        #endregion
+
+
+        #region Profile Get
+        public new ActionResult Profile(string userId = null)
+        {
+            bool isMyProfile = false;
+
+            // Метода використовується як для відображення власного профілю, так і для відображення чужого профілю
+            if(string.IsNullOrEmpty(userId) || userId == User.Identity.GetUserId())
+            {
+                userId = User.Identity.GetUserId();
+                isMyProfile = true;
+            }
+
+            var model = new UserProfileModel {
+                User = UserManager.FindById(userId)
+            };
+
+            model.UserProducts = ProductManager.GetListByDesigner(model.User.Id, true);
+            model.UserAuctions = AuctionManager.GetListByDesigner(model.User.Id, true);
+
+            // Беремо зображення до продуктів
+            var productImages = model.UserProducts.Where(x => x.MainImageId.HasValue).Select(x => x.MainImageId.Value);
+            model.ProductMainImages = ImageManager.GetByIds(productImages).ToDictionary(x => x.Id, v => v);
+
+            var auctionImages = model.UserAuctions.Where(x => x.MainImageId.HasValue).Select(x => x.MainImageId.Value);
+            model.AuctionMainImages = ImageManager.GetByIds(auctionImages).ToDictionary(x => x.Id, v => v);
+
+            if (isMyProfile)
+            {
+                return View("MyProfile", model);
+            }
+            else
+            {
+                return View("Profile", model);
+            }
+        } 
+        #endregion
     }
 }

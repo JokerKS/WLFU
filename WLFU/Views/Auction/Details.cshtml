@@ -35,6 +35,11 @@
         </h3>
 
         <div>
+            @Html.DisplayNameFor(model => model.Auction.Designer)
+            <a href="@Url.Action("Profile", "Account", new { userId = Model.Auction.DesignerId })">
+                @Html.DisplayFor(model => model.Auction.Designer.UserName)
+            </a>
+
             @Html.DisplayNameFor(model => model.Auction.CurrentPrice)
             @Html.DisplayFor(model => model.Auction.CurrentPrice) zł
         </div>

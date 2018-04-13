@@ -1,0 +1,163 @@
+﻿@model JokerKS.WLFU.Models.UserProfileModel
+@using System.Web.Optimization
+
+@{
+    ViewBag.Title = "MyProfile";
+}
+
+@Styles.Render("~/content/jquery-ui/css")
+<style>
+    .profile-img{
+        max-height : 100px;
+    }
+</style>
+
+<div class="container">
+    <h2>Profile</h2>
+
+    @* Main profile info *@
+    <div class="form-group">
+        <div class="col-md-2">
+            <img class="profile-img" src="~/Images/default-avatar-woman.jpg" alt="Profile Image" />
+        </div>
+        <div class="col-md-10">
+            <h3>@Model.User.UserName</h3>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Products</a></li>
+            <li><a href="#tabs-2">Auctions</a></li>
+            <li><a href="#tabs-3">Orders</a></li>
+            <li><a href="#tabs-4">Comments and Rankings</a></li>
+        </ul>
+
+        @* Product Tab *@
+        <div id="tabs-1">
+            <h3>User products</h3>
+            <table class="table">
+                <tr>
+                    <th style="text-align: center;">
+                        @Html.DisplayName("Photo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name")
+                    </th>
+                    <th style="text-align: center;">
+                        @Html.DisplayName("Price")
+                    </th>
+                    <th style="text-align: center;">
+                        @Html.DisplayName("Amount")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Category")
+                    </th>
+                </tr>
+
+                @foreach (var product in Model.UserProducts)
+                {
+                    <tr>
+                        <td style="text-align: center;">
+                            @if (product.MainImageId.HasValue && Model.ProductMainImages.ContainsKey(product.MainImageId.Value))
+                {
+                                <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.ProductMainImages[product.MainImageId.Value].Path)"
+                                     alt="@Model.ProductMainImages[product.MainImageId.Value].Title" />
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Product", new { productId = product.Id } )">
+                                @Html.DisplayFor(model => product.Name)
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            @Html.DisplayFor(modelItem => product.Price) zł
+                        </td>
+                        <td style="text-align: center;">
+                            @Html.DisplayFor(model => product.AvailableAmount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => product.Category)
+                        </td>
+                    </tr>
+                }
+            </table>
+            @if (!Model.UserProducts.Any())
+            {
+                <p>No user products.</p>
+            }
+        </div>
+
+        @* Auction Tab *@
+        <div id="tabs-2">
+            <h3>User auctions</h3>
+            <table class="table">
+                <tr>
+                    <th style="text-align: center;">
+                        @Html.DisplayName("Photo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Name")
+                    </th>
+                    <th style="text-align: center;">
+                        @Html.DisplayName("Price")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Is Closed")
+                    </th>
+                </tr>
+                @foreach (var auction in Model.UserAuctions)
+                {
+                    <tr>
+                        <td style="text-align: center;">
+                            @if (auction.MainImageId.HasValue && Model.AuctionMainImages.ContainsKey(auction.MainImageId.Value))
+                            {
+                                <img class="img-mini" src="@Url.Content("~/Images/Auctions/" + Model.AuctionMainImages[auction.MainImageId.Value].Path)"
+                                     alt="@Model.AuctionMainImages[auction.MainImageId.Value].Title" />
+                            }
+                        </td>
+                        <td>
+                            <a href="@Url.Action("Details", "Auction", new { auctionId = auction.Id })">
+                                @Html.DisplayFor(model => auction.Name)
+                            </a>
+                        </td>
+                        <td style="text-align: center;">
+                            @Html.DisplayFor(modelItem => auction.CurrentPrice) zł
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => auction.IsClosed)
+                        </td>
+                    </tr>
+                }
+            </table>
+            @if (!Model.UserAuctions.Any())
+            {
+                <p>No user auctions.</p>
+            }
+        </div>
+
+        @* Orders Tab *@
+        <div id="tabs-3">
+            <p><strong>Click this tab again to close the content pane.</strong></p>
+            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+        </div>
+
+        @* Comments and Rankings Tab *@
+        <div id="tabs-4">
+            <p><strong>Click this tab again to close the content pane.</strong></p>
+            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-ui")
+
+    <script>
+      $( function() {
+        $( "#tabs" ).tabs({
+        });
+      } );
+    </script>
+}

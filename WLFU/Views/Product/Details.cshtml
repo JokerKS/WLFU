@@ -34,6 +34,11 @@
         </h3>
 
         <div>
+            @Html.DisplayNameFor(model => model.Product.Designer)
+            <a href="@Url.Action("Profile", "Account", new { userId = Model.Product.DesignerId })">
+                @Html.DisplayFor(model => model.Product.Designer.UserName)
+            </a>
+
             @Html.DisplayNameFor(model => model.Product.Price)
             @Html.DisplayFor(model => model.Product.Price) zł
 

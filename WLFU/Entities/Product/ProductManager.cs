@@ -92,6 +92,30 @@ namespace JokerKS.WLFU.Entities.Product
         }
         #endregion
 
+        #region GetListByDesigner()
+        public static List<Product> GetListByDesigner(string designerId, bool includeImages = false)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var query = db.Products.Where(x => x.DesignerId == designerId).AsQueryable();
+
+                    if (includeImages)
+                    {
+                        query = query.Include(x => x.MainImage);
+                    }
+
+                    return query.ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
+        #endregion
+
         #region GetById()
         public static Product GetById(int id, bool includeImages = false)
         {
@@ -103,6 +127,7 @@ namespace JokerKS.WLFU.Entities.Product
                     {
                         return db.Products
                             .Where(x => x.Id == id)
+                            .Include(x => x.Designer)
                             .Include(x => x.MainImage)
                             .Include(x => x.Images)
                             .FirstOrDefault();

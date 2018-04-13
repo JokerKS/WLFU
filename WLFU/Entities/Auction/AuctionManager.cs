@@ -18,6 +18,7 @@ namespace JokerKS.WLFU.Entities.Auction
                     {
                         return db.Auctions
                             .Where(x => x.Id == id)
+                            .Include(x => x.Designer)
                             .Include(x => x.MainImage)
                             .Include(x => x.Images)
                             .FirstOrDefault();
@@ -108,6 +109,30 @@ namespace JokerKS.WLFU.Entities.Auction
                             query = query.Skip(pager.ItemsSkip);
                         }
                         query = query.Take(pager.PageSize);
+                    }
+
+                    return query.ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Auction>();
+            }
+        }
+        #endregion
+
+        #region GetListByDesigner()
+        public static List<Auction> GetListByDesigner(string designerId, bool includeImages = false)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var query = db.Auctions.Where(x => x.DesignerId == designerId).AsQueryable();
+
+                    if (includeImages)
+                    {
+                        query = query.Include(x => x.MainImage);
                     }
 
                     return query.ToList();

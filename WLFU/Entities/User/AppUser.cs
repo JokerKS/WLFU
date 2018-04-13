@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace JokerKS.WLFU.Entities
+namespace JokerKS.WLFU.Entities.User
 {
     public class AppUser : IdentityUser
     {

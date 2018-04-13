@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace JokerKS.WLFU.Entities
+namespace JokerKS.WLFU.Entities.User
 {
     public static class UserManager
     {

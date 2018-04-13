@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JokerKS.WLFU.Entities.User;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace JokerKS.WLFU.Entities.Product
