@@ -286,10 +286,9 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
-        public ActionResult List(int? categoryId)
+        public ActionResult List(int page = 1, int? categoryId = null)
         {
-            var pager = new Pager();
-
+            var pager = new Pager(page, 3);
             var model = new ProductListModel()
             {
                 Pager = pager,
@@ -298,15 +297,12 @@ namespace JokeKS.WLFU.Controllers
 
             if(categoryId.HasValue && categoryId > 0)
             {
-                model.Products = ProductManager.GetListByCategory(categoryId.Value, pager, true);
+                model.Products = ProductManager.GetAvailableListByCategory(categoryId.Value, pager, true);
             }
             else
             {
-                model.Products = ProductManager.GetList(pager, true);
+                model.Products = ProductManager.GetAvailableList(pager, true);
             }
-
-            // Вибираємо тільки ті продукти, яких кількість "на складі" більша 0
-            model.Products = model.Products.Where(x => x.AvailableAmount > 0).ToList();
 
             return View(model);
         }

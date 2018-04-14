@@ -1,4 +1,5 @@
 ﻿@model JokerKS.WLFU.Models.ProductListModel
+@using JokerKS.WLFU.Entities.HtmlHelpers;
 @{
     ViewBag.Title = "List";
 }
@@ -34,6 +35,13 @@
                             </div>
                         </div>
                         <div class="clearfix"></div>
+                    </div>
+                }
+
+                if (Model.Pager.PageCount > 1)
+                {
+                    <div class="pager-container">
+                        @Html.PageLinks(Model.Pager, x => Url.Action("List", new { page = x, categoryId = Model.CategoryId }))
                     </div>
                 }
             }

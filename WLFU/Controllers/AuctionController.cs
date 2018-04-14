@@ -205,9 +205,9 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
-        public ActionResult List(int? categoryId)
+        public ActionResult List(int page = 1, int? categoryId = null)
         {
-            var pager = new Pager();
+            var pager = new Pager(page);
 
             var model = new AuctionListModel()
             {

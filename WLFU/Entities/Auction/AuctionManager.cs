@@ -56,9 +56,9 @@ namespace JokerKS.WLFU.Entities.Auction
 
                         if (pager.ItemsSkip > 0)
                         {
-                            query = query.Skip(pager.ItemsSkip);
+                            query = query.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.PageSize);
+                        query = query.Take(pager.ItemsPerPage);
                     }
 
                     return query.ToList();
@@ -106,9 +106,9 @@ namespace JokerKS.WLFU.Entities.Auction
 
                         if (pager.ItemsSkip > 0)
                         {
-                            query = query.Skip(pager.ItemsSkip);
+                            query = query.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.PageSize);
+                        query = query.Take(pager.ItemsPerPage);
                     }
 
                     return query.ToList();

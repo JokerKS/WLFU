@@ -1,11 +1,12 @@
 ﻿@model JokerKS.WLFU.Models.AuctionListModel
+@using JokerKS.WLFU.Entities.HtmlHelpers;
 @{
     ViewBag.Title = "List";
 }
 
 <div class="container">
     <div class="row">
-        <div class="categories-container col-md-2">
+        <div class="categories-container col-sm-3 col-md-2">
             <h3>Categories</h3>
             @foreach (var category in Model.Categories)
             {
@@ -14,20 +15,20 @@
             }
         </div>
 
-        <div class="products-container col-md-10">
+        <div class="products-container col-sm-9 col-md-10">
             <h3>Auctions</h3>
             @if (Model.Auctions.Any())
             {
                 foreach (var auction in Model.Auctions)
                 {
                     <div class="product-container row">
-                        <div class="img-container col-md-4">
+                        <div class="col-sm-6 col-md-4">
                             <div class="img-container">
                                 <img src="@Url.Content("~/Images/Auctions/" + auction.MainImage.Path)" alt="@auction.Name" />
                                 <h2><span>@auction.CurrentPrice zł</span></h2>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-sm-6 col-md-6">
                             @Html.ActionLink(auction.Name, "Details", new { auctionId = auction.Id })
                             <div class="product-description">
                                 @Html.Raw(auction.Description)
@@ -36,10 +37,17 @@
                         <div class="clearfix"></div>
                     </div>
                 }
+
+                if (Model.Pager.PageCount > 1)
+                {
+                    <div>
+                        @Html.PageLinks(Model.Pager, x => Url.Action("List", new { page = x, categoryId = Model.CategoryId }))
+                    </div>
+                }
             }
             else
             {
-                <div>
+                <div class="pager-container">
                     <span>Auctions not founded</span>
                 </div>
             }

@@ -125,268 +125,249 @@
     </div>
 </form>
 
-<script src="~/Scripts/tinymce/tinymce.min.js"></script>
-<script>
-    $(document).ready(function(){
-        tinyMCE.init({
-            mode: "textareas",
-            height: 300,
-            theme: "modern",
-            menubar: false,
+@section scripts{
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            tinyMCE.init({
+                mode: "textareas",
+                height: 300,
+                theme: "modern",
+                menubar: false,
 
-            plugins: [
-                'lists textcolor',
-            ],
-            setup: function (editor) {
-                editor.on('change', function () {
-                    tinyMCE.triggerSave();
-                    var content = tinyMCE.activeEditor.getContent();
-                    $("#" + editor.id).valid();
-                });
-            },
-            toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+                plugins: [
+                    'lists textcolor',
+                ],
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        tinyMCE.triggerSave();
+                        var content = tinyMCE.activeEditor.getContent();
+                        $("#" + editor.id).valid();
+                    });
+                },
+                toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+            });
         });
-    });
-</script>
+    </script>
 
-<script src="~/Scripts/jquery.validate.min.js"></script>
-<script>
-    var filesToUpload = [];
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script>
+        var filesToUpload = [];
 
-    (function () {
-        var dropzone = document.getElementById('dropzone');
-        dropzone.ondrop = function (e) {
-            e.preventDefault();
-            this.className = 'dropzone';
+        (function () {
+            var dropzone = document.getElementById('dropzone');
+            dropzone.ondrop = function (e) {
+                e.preventDefault();
+                this.className = 'dropzone';
 
-            FilesChosen(e.dataTransfer.files);
-        };
+                FilesChosen(e.dataTransfer.files);
+            };
 
-        dropzone.ondragover = function () {
-            if (this.className == 'dropzone')
-                this.className += ' dragover';
-            return false;
-        };
+            dropzone.ondragover = function () {
+                if (this.className == 'dropzone')
+                    this.className += ' dragover';
+                return false;
+            };
 
-        dropzone.ondragleave = function () {
-            this.className = 'dropzone';
-            return false;
-        };
-    }());
+            dropzone.ondragleave = function () {
+                this.className = 'dropzone';
+                return false;
+            };
+        }());
 
-    $("#selectedFiles").change(function () {
-        FilesChosen($("#selectedFiles")[0].files);
-        $("#selectedFiles").val('');
-    });
+        $("#selectedFiles").change(function () {
+            FilesChosen($("#selectedFiles")[0].files);
+            $("#selectedFiles").val('');
+        });
 
-    function FilesChosen(files) {
-        if (window.FormData && window.FileReader && window.FileList) {
-            if (files.length > 0) {
-                for (var i = 0; i < files.length; i++) {
+        function FilesChosen(files) {
+            if (window.FormData && window.FileReader && window.FileList) {
+                if (files.length > 0) {
+                    for (var i = 0; i < files.length; i++) {
 
-                    supportedFormats = ['jpeg', 'gif', 'png'];
-                    var correctFormat = false;
-                    supportedFormats.forEach(function (extension) {
-                        if (files[i].type.match('image/' + extension)) {
-                            correctFormat = true;
+                        supportedFormats = ['jpeg', 'gif', 'png'];
+                        var correctFormat = false;
+                        supportedFormats.forEach(function (extension) {
+                            if (files[i].type.match('image/' + extension)) {
+                                correctFormat = true;
+                            }
+                        })
+
+                        if (correctFormat) {
+                            filesToUpload.push(files[i]);
+
+                            var reader = new FileReader();
+                            reader.onload = function (file) {
+                                var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
+                                var imgCount = $('input[type=button][id="deleteImg"]');
+                                if (imgCount.length == 0)
+                                    isMainRadioBtn += " checked";
+                                isMainRadioBtn += "/>Is Main Image</label></div>";
+                                document.getElementById('image-preview')
+                                    .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
+                            };
+                            reader.readAsDataURL(files[i]);
                         }
-                    })
 
-                    if (correctFormat) {
-                        filesToUpload.push(files[i]);
-
-                        var reader = new FileReader();
-                        reader.onload = function (file) {
-                            var isMainRadioBtn = "<div class='radio'><label><input name='IsMain' type='radio'";
-                            var imgCount = $('input[type=button][id="deleteImg"]');
-                            if (imgCount.length == 0)
-                                isMainRadioBtn += " checked";
-                            isMainRadioBtn += "/>Is Main Image</label></div>";
-                            document.getElementById('image-preview')
-                                .insertAdjacentHTML('beforeend', '<div><div class="col-md-2" style="text-align: right;">' + isMainRadioBtn + '<input id="deleteImg" type="button" class="btn btn-danger" value="Delete Image" onclick="DeleteImg(this)"/></div><div class="col-md-10"><div class="img-wrap form-group"><div class="col-md-4"><img src="' + file.target.result + '" class="img-thumbnail" alt="Image Not Found"/></div><div class="col-md-6"><div id="image-title"><label>Image Title</label><input class="form-control text-box single-line"/></div></div></div></div></div>');
-                        };
-                        reader.readAsDataURL(files[i]);
-                    }
-
-                    RevalidateDropzone();
-                }
-            }
-        } else alert("This browser doesn't support HTML5 file uploads!");
-    }
-
-    var DeleteImg = function (e) {
-        var delInputs = $('input[type=button][id="deleteImg"]');
-        if(delInputs.length == filesToUpload.length)
-            for (var i = 0; i < delInputs.length; i++) {
-                if (delInputs[i] == e){
-                    filesToUpload.splice(i, 1);
-                    $(e).parent().parent().remove();
-                    if(filesToUpload.length == 0)
                         RevalidateDropzone();
-                    return;
+                    }
                 }
-            }
-    }
+            } else alert("This browser doesn't support HTML5 file uploads!");
+        }
 
-    //dropzone revalidation
-    function RevalidateDropzone(){
-        var validator = $("#ProductForm").validate();
-        validator.element("#selectedFiles");
-    }
-
-    $().ready(function () {
-        $("#ProductForm").validate({
-            ignore: "",
-            errorClass: "text-danger",
-            rules: {
-                Name: {
-                    required: true,
-                    minlength: 6,
-                    maxlength: 50
-                },
-                Description: {
-                    required: true,
-                    minlength: 50
-                },
-                Images: {
-                    accept: false,
-                    greaterThanZero: true
-                },
-                CategoryId: {
-                    required: true
+        var DeleteImg = function (e) {
+            var delInputs = $('input[type=button][id="deleteImg"]');
+            if(delInputs.length == filesToUpload.length)
+                for (var i = 0; i < delInputs.length; i++) {
+                    if (delInputs[i] == e){
+                        filesToUpload.splice(i, 1);
+                        $(e).parent().parent().remove();
+                        if(filesToUpload.length == 0)
+                            RevalidateDropzone();
+                        return;
+                    }
                 }
-            }
+        }
+
+        //dropzone revalidation
+        function RevalidateDropzone(){
+            var validator = $("#ProductForm").validate();
+            validator.element("#selectedFiles");
+        }
+
+        $().ready(function () {
+            $("#ProductForm").validate({
+                ignore: "",
+                errorClass: "text-danger",
+                rules: {
+                    Name: {
+                        required: true,
+                        minlength: 6,
+                        maxlength: 50
+                    },
+                    Description: {
+                        required: true,
+                        minlength: 50
+                    },
+                    Images: {
+                        accept: false,
+                        greaterThanZero: true
+                    },
+                    CategoryId: {
+                        required: true
+                    }
+                }
+            });
+
+            $.validator.addMethod("greaterThanZero", function (value, element) {
+                return filesToUpload.length > 0 ? true : false;
+            }, 'At least one picture is required');
         });
 
-        $.validator.addMethod("greaterThanZero", function (value, element) {
-            return filesToUpload.length > 0 ? true : false;
-        }, 'At least one picture is required');
-    });
 
+        var SendProduct = function () {
+            var form = $("#ProductForm");
 
-    var SendProduct = function () {
-        var form = $("#ProductForm");
+            if (form.valid()) {
 
-        if (form.valid()) {
+                var data = new FormData();
+                for (var i = 0; i < filesToUpload.length; i++) {
+                    data.append('images', filesToUpload[i]);
+                }
 
-            var data = new FormData();
-            for (var i = 0; i < filesToUpload.length; i++) {
-                data.append('images', filesToUpload[i]);
-            }
+                $.ajax({
+                    url: "@Url.Action("SaveImages")",
+                    type:"POST",
+                    processData: false,
+                    contentType: false,
+                    data: data,
+                    success: function (response) {
+                        if (response){
+                            $("#RequestId").val(response.requestId);
 
-            $.ajax({
-                url: "@Url.Action("SaveImages")",
-                type:"POST",
-                processData: false,
-                contentType: false,
-                data: data,
-                success: function (response) {
-                    if (response){
-                        $("#RequestId").val(response.requestId);
-
-                        var formdata = new FormData(form);
+                            var formdata = new FormData(form);
                         
-                        $("#image-info").empty();
+                            $("#image-info").empty();
 
-                        $.each(response.pathes, function(key, value){
-                            $("#image-info").append("<input name='filePathes' type='hidden' value='"+value+"'/>");
-                        });
+                            $.each(response.pathes, function(key, value){
+                                $("#image-info").append("<input name='filePathes' type='hidden' value='"+value+"'/>");
+                            });
 
-                        var titles = $('.img-wrap #image-title :input');
-                        for (var i = 0; i < filesToUpload.length; i++) {
-                            $("#image-info").append("<input name='titles' type='hidden' value='"+titles[i].value+"'/>");
-                        }
-
-                        var isMain = $('input[name=IsMain]');
-                        for (var i = 0; i < isMain.length; i++) {
-                            if (isMain[i].checked) {
-                                $("#image-info").append("<input name='MainImageIndex' type='hidden' value='"+i+"'/>");
-                                break;
+                            var titles = $('.img-wrap #image-title :input');
+                            for (var i = 0; i < filesToUpload.length; i++) {
+                                $("#image-info").append("<input name='titles' type='hidden' value='"+titles[i].value+"'/>");
                             }
+
+                            var isMain = $('input[name=IsMain]');
+                            for (var i = 0; i < isMain.length; i++) {
+                                if (isMain[i].checked) {
+                                    $("#image-info").append("<input name='MainImageIndex' type='hidden' value='"+i+"'/>");
+                                    break;
+                                }
+                            }
+
+                            form.submit();
                         }
-
-                        form.submit();
+                    },
+                    error: function (er) {
+                        alert(er);
                     }
-                },
-                error: function (er) {
-                    alert(er);
-                }
 
-            });
-
-            @*$.ajax({
-                url: "@Url.Action("Create")",
-                type: "POST",
-                contentType: false,
-                processData: false,
-                data: formdata,
-                dataType: 'json',
-                encode: true,
-                async: false,
-                beforeSend: function () {
-                    if (!$("#ProductForm").valid) return;
-                },
-                success: function (result) {
-                    if (!$("#ProductForm").valid) return;
-                    window.location.href = result.newUrl;
-                },
-                error: function (err) {
-                    alert(err.statusText);
-                }
-            });*@
-        }
-    };
-</script>
-
-<script src="~/Scripts/bootstrap-tagsinput.min.js"></script>
-<script src="~/Scripts/bootstrap3-typeahead.min.js"></script>
-<script>
-    //Tags input initialization
-    $('.tags-input').tagsinput({
-        maxChars: 25,
-        typeahead: {
-            source: @Html.Raw(Json.Encode(Model.AllTagsString)),
-            afterSelect: function () {
-                this.$element[0].value = '';
+                });
             }
-        }
-    })
+        };
+    </script>
 
-    //Add tag on focusout
-    $('.tags-input').focusout(function() {
-        $('.tags-input').add($('.tags-input').input.val());
-        $('.tags-input').input.typeahead('val', '');
-    });
-</script>
+    <script src="~/Scripts/bootstrap-tagsinput.min.js"></script>
+    <script src="~/Scripts/bootstrap3-typeahead.min.js"></script>
+    <script>
+        //Tags input initialization
+        $('.tags-input').tagsinput({
+            maxChars: 25,
+            typeahead: {
+                source: @Html.Raw(Json.Encode(Model.AllTagsString)),
+                afterSelect: function () {
+                    this.$element[0].value = '';
+                }
+            }
+        })
 
-<script src="~/Scripts/bootstrapValidator.min.js"></script>
-<script>
-    /*
-    $(document).ready(function () {
-        $('#ProductForm')
-            .find('[name="TagsString"]')
-                .change(function (e) {
-                    $('#ProductForm').bootstrapValidator('revalidateField', 'TagsString');
-                })
-                .end()
-            .bootstrapValidator({
-                framework: 'bootstrap',
-                excluded: ':disabled',
-                icon: {
-                    valid: 'glyphicon glyphicon-ok',
-                    invalid: 'glyphicon glyphicon-remove',
-                    validating: 'glyphicon glyphicon-refresh'
-                },
-                fields: {
-                    TagsString: {
-                        validators: {
-                            notEmpty: {
-                                message: 'Please enter at least one tag'
+        //Add tag on focusout
+        $('.tags-input').focusout(function() {
+            $('.tags-input').add($('.tags-input').input.val());
+            $('.tags-input').input.typeahead('val', '');
+        });
+    </script>
+
+    <script src="~/Scripts/bootstrapValidator.min.js"></script>
+    <script>
+        /*
+        $(document).ready(function () {
+            $('#ProductForm')
+                .find('[name="TagsString"]')
+                    .change(function (e) {
+                        $('#ProductForm').bootstrapValidator('revalidateField', 'TagsString');
+                    })
+                    .end()
+                .bootstrapValidator({
+                    framework: 'bootstrap',
+                    excluded: ':disabled',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        TagsString: {
+                            validators: {
+                                notEmpty: {
+                                    message: 'Please enter at least one tag'
+                                }
                             }
                         }
                     }
-                }
-            });
-    });
-    */
-</script>
+                });
+        });
+        */
+    </script>
+}

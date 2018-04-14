@@ -2,28 +2,34 @@
 {
     public class Pager
     {
-        public Pager(int page, int pageSize)
+        #region Pager()
+        public Pager() : this(1, 10)
         {
-            PageIndex = page;
-            PageSize = pageSize;
         }
-        public Pager()
+        public Pager(int page) : this(page, 10)
         {
-            PageIndex = 1;
-            PageSize = 10;
         }
+        public Pager(int page, int itemsPerPage)
+        {
+            CurrentPage = page < 1 ? 1 : page;
+            ItemsPerPage = itemsPerPage < 1 ? 10 : itemsPerPage;
+            SortDirection = Entities.Helpers.SortDirection.ASC();
+        } 
+        #endregion
 
-        public int PageIndex { get; set; }
-        public int PageSize { get; set; }
+        public int CurrentPage { get; set; }
+        public int ItemsPerPage { get; set; }
         public int TotalCount { get; set; }
+
+        public string SearchExpression { get; set; }
+        public string SortExpression { get; set; }
+        public string SortDirection { get; set; }
 
         public int PageCount
         {
             get
             {
-                int count = TotalCount / PageSize;
-
-                return TotalCount - count * PageSize == 0 && count > 0 ? count : count + 1;
+                return (TotalCount + ItemsPerPage - 1) / ItemsPerPage;
             }
         }
 
@@ -31,7 +37,7 @@
         {
             get
             {
-                return (PageIndex - 1) * PageSize;
+                return (CurrentPage - 1) * ItemsPerPage;
             }
         }
     }

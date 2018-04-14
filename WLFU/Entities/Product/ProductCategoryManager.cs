@@ -24,7 +24,7 @@ namespace JokerKS.WLFU.Entities.Product
                         {
                             query = query.Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.PageSize);
+                        query = query.Take(pager.ItemsPerPage);
                     }
 
                     return query.ToList();

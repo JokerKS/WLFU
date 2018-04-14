@@ -423,6 +423,8 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\AuctionController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Entities\Helpers\SortDirection.cs" />
+    <Compile Include="Entities\HtmlHelpers\HtmlHelpers.cs" />
     <Compile Include="Entities\User\AppRole.cs" />
     <Compile Include="Entities\User\AppUser.cs" />
     <Compile Include="Entities\Auction\AuctionComment.cs" />

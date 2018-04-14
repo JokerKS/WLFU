@@ -8,12 +8,13 @@ namespace JokerKS.WLFU.Entities.Product
     public static class ProductManager
     {
         #region GetList()
-        public static List<Product> GetList(Pager pager = null, bool includeImages = false)
+        public static List<Product> GetAvailableList(Pager pager = null, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
+                    // Вибираємо тільки ті продукти, яких кількість "на складі" більша 0
                     var query = db.Products.AsQueryable();
 
                     if (includeImages)
@@ -21,21 +22,23 @@ namespace JokerKS.WLFU.Entities.Product
                         query = query.Include(x => x.MainImage);
                     }
 
+                    var products = query.ToList().Where(x => x.AvailableAmount > 0);
+
                     if (pager != null)
                     {
                         pager.TotalCount = query.Count();
 
                         if(pager.ItemsSkip > 0)
                         {
-                            query = query.Skip(pager.ItemsSkip);
+                            products = products.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.PageSize);
+                        products = products.Take(pager.ItemsPerPage);
                     }
 
-                    return query.ToList();
+                    return products.ToList();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new List<Product>();
             }
@@ -58,7 +61,7 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region GetListByCategory()
-        public static List<Product> GetListByCategory(int categoryId, Pager pager = null, bool includeImages = false)
+        public static List<Product> GetAvailableListByCategory(int categoryId, Pager pager = null, bool includeImages = false)
         {
             try
             {
@@ -71,18 +74,20 @@ namespace JokerKS.WLFU.Entities.Product
                         query = query.Include(x => x.MainImage);
                     }
 
+                    var products = query.ToList().Where(x => x.AvailableAmount > 0);
+
                     if (pager != null)
                     {
                         pager.TotalCount = query.Count();
 
                         if (pager.ItemsSkip > 0)
                         {
-                            query = query.Skip(pager.ItemsSkip);
+                            products = products.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.PageSize);
+                        products = products.Take(pager.ItemsPerPage);
                     }
 
-                    return query.ToList();
+                    return products.ToList();
                 }
             }
             catch (Exception)

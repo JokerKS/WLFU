@@ -10,6 +10,19 @@
     .profile-img{
         max-height : 100px;
     }
+
+    .table-user-products,
+    .table-user-auctions{
+        display: block;
+        overflow-x: auto;
+    }
+
+    .th-product-name{
+        min-width:150px;
+    }
+    .column-center{
+        text-align:center;
+    }
 </style>
 
 <div class="container">
@@ -32,24 +45,26 @@
             <li><a href="#tabs-2">Auctions</a></li>
             <li><a href="#tabs-3">Orders</a></li>
             <li><a href="#tabs-4">Comments and Rankings</a></li>
+            <li><a href="#tabs-5">Settings</a></li>
         </ul>
 
         @* Product Tab *@
         <div id="tabs-1">
             <h3>User products</h3>
-            <table class="table">
+            <table class="table table-user-products">
                 <tr>
                     <th style="text-align: center;">
                         @Html.DisplayName("Photo")
                     </th>
-                    <th>
+                    <th class="th-product-name">
                         @Html.DisplayName("Name")
                     </th>
-                    <th style="text-align: center;">
+                    <th class="column-center">
                         @Html.DisplayName("Price")
                     </th>
-                    <th style="text-align: center;">
-                        @Html.DisplayName("Amount")
+                    <th class="column-center">
+                        @Html.DisplayName("Amount")<br />
+                        @Html.DisplayName("(available/all)")
                     </th>
                     <th>
                         @Html.DisplayName("Category")
@@ -59,7 +74,7 @@
                 @foreach (var product in Model.UserProducts)
                 {
                     <tr>
-                        <td style="text-align: center;">
+                        <td class="column-center">
                             @if (product.MainImageId.HasValue && Model.ProductMainImages.ContainsKey(product.MainImageId.Value))
                 {
                                 <img class="img-mini" src="@Url.Content("~/Images/Products/" + Model.ProductMainImages[product.MainImageId.Value].Path)"
@@ -71,14 +86,14 @@
                                 @Html.DisplayFor(model => product.Name)
                             </a>
                         </td>
-                        <td style="text-align: center;">
+                        <td class="column-center">
                             @Html.DisplayFor(modelItem => product.Price) zł
                         </td>
-                        <td style="text-align: center;">
-                            @Html.DisplayFor(model => product.AvailableAmount)
+                        <td class="column-center">
+                            @Html.DisplayFor(model => product.AvailableAmount) / @Html.DisplayFor(model => product.Amount)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => product.Category)
+                            @Html.DisplayFor(modelItem => product.Category.Name)
                         </td>
                     </tr>
                 }
@@ -92,25 +107,25 @@
         @* Auction Tab *@
         <div id="tabs-2">
             <h3>User auctions</h3>
-            <table class="table">
+            <table class="table table-user-auctions">
                 <tr>
-                    <th style="text-align: center;">
+                    <th class="column-center">
                         @Html.DisplayName("Photo")
                     </th>
-                    <th>
+                    <th class="th-product-name">
                         @Html.DisplayName("Name")
                     </th>
-                    <th style="text-align: center;">
+                    <th class="column-center">
                         @Html.DisplayName("Price")
                     </th>
-                    <th>
+                    <th class="column-center">
                         @Html.DisplayName("Is Closed")
                     </th>
                 </tr>
                 @foreach (var auction in Model.UserAuctions)
                 {
                     <tr>
-                        <td style="text-align: center;">
+                        <td class="column-center">
                             @if (auction.MainImageId.HasValue && Model.AuctionMainImages.ContainsKey(auction.MainImageId.Value))
                             {
                                 <img class="img-mini" src="@Url.Content("~/Images/Auctions/" + Model.AuctionMainImages[auction.MainImageId.Value].Path)"
@@ -122,10 +137,10 @@
                                 @Html.DisplayFor(model => auction.Name)
                             </a>
                         </td>
-                        <td style="text-align: center;">
+                        <td class="column-center">
                             @Html.DisplayFor(modelItem => auction.CurrentPrice) zł
                         </td>
-                        <td>
+                        <td class="column-center">
                             @Html.DisplayFor(modelItem => auction.IsClosed)
                         </td>
                     </tr>
@@ -145,6 +160,12 @@
 
         @* Comments and Rankings Tab *@
         <div id="tabs-4">
+            <p><strong>Click this tab again to close the content pane.</strong></p>
+            <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
+        </div>
+
+        @* Settings Tab *@
+        <div id="tabs-5">
             <p><strong>Click this tab again to close the content pane.</strong></p>
             <p>Duis cursus. Maecenas ligula eros, blandit nec, pharetra at, semper at, magna. Nullam ac lacus. Nulla facilisi. Praesent viverra justo vitae neque. Praesent blandit adipiscing velit. Suspendisse potenti. Donec mattis, pede vel pharetra blandit, magna ligula faucibus eros, id euismod lacus dolor eget odio. Nam scelerisque. Donec non libero sed nulla mattis commodo. Ut sagittis. Donec nisi lectus, feugiat porttitor, tempor ac, tempor vitae, pede. Aenean vehicula velit eu tellus interdum rutrum. Maecenas commodo. Pellentesque nec elit. Fusce in lacus. Vivamus a libero vitae lectus hendrerit hendrerit.</p>
         </div>
