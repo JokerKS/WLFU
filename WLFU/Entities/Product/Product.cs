@@ -9,12 +9,15 @@ namespace JokerKS.WLFU.Entities.Product
 {
     public class Product : IIdentity
     {
+        #region Product()
         public Product()
         {
             Tags = new List<ProductTag>();
             Images = new List<ProductImage>();
-        }
+        } 
+        #endregion
 
+        #region Product
         [Key]
         public int Id { get; set; }
         [Required]
@@ -31,7 +34,8 @@ namespace JokerKS.WLFU.Entities.Product
         [Required]
         public bool IsPublished { get; set; }
         [Required]
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } 
+        #endregion
 
         #region Designer
         [Required]

@@ -15,17 +15,21 @@ namespace JokerKS.WLFU
     {
         public DbSet<ProductCategory> ProductCategories { get; set; }
 
+        #region Product tables
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
         public DbSet<ProductComment> ProductComments { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<ProductRating> ProductRatings { get; set; }
+        #endregion
 
+        #region Auction tables
         public DbSet<Auction> Auctions { get; set; }
         public DbSet<AuctionTag> AuctionTags { get; set; }
         public DbSet<AuctionComment> AuctionComments { get; set; }
         public DbSet<AuctionImage> AuctionImages { get; set; }
-        public DbSet<BidAtAuction> Bids { get; set; }
+        public DbSet<BidAtAuction> Bids { get; set; } 
+        #endregion
 
 
         public DbSet<Tag> Tags { get; set; }
@@ -33,18 +37,21 @@ namespace JokerKS.WLFU
 
         public DbSet<BasketProduct> BasketProducts { get; set; }
 
+        #region Order tables
         public DbSet<Order> Orders { get; set; }
         public DbSet<ProductOrderDetail> ProductOrderDetails { get; set; }
-        public DbSet<AuctionOrderDetail> AuctionOrderDetails { get; set; }
+        public DbSet<AuctionOrderDetail> AuctionOrderDetails { get; set; } 
+        #endregion
 
         public AppContext(): base("WLFUdb")
         {
             Database.SetInitializer(new DbInitial());
         }
 
+        #region OnModelCreating()
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Product>().Property(x => x.Price).HasPrecision(16,2);
+            modelBuilder.Entity<Product>().Property(x => x.Price).HasPrecision(16, 2);
 
             modelBuilder.Entity<Product>()
                 .HasMany(u => u.Images)
@@ -70,11 +77,14 @@ namespace JokerKS.WLFU
 
             modelBuilder.Entity<AppUser>().ToTable("Users", "dbo");
         }
+        #endregion
 
+        #region Create()
         public static AppContext Create()
         {
             return new AppContext();
-        }
+        } 
+        #endregion
     }
 
     public class DbInitial : CreateDatabaseIfNotExists<AppContext>
