@@ -1,4 +1,6 @@
-﻿namespace JokerKS.WLFU
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace JokerKS.WLFU
 {
     public class Pager
     {
@@ -22,6 +24,7 @@
         public int TotalCount { get; set; }
 
         public string SearchExpression { get; set; }
+        [Display(Name = "Sort Expression:")]
         public string SortExpression { get; set; }
         public string SortDirection { get; set; }
 
@@ -38,6 +41,14 @@
             get
             {
                 return (CurrentPage - 1) * ItemsPerPage;
+            }
+        }
+
+        public string SortQuery
+        {
+            get
+            {
+                return string.IsNullOrEmpty(SortExpression) ? null : $"{SortExpression} {SortDirection}";
             }
         }
     }

@@ -15,44 +15,69 @@
             }
         </div>
 
-        <div class="products-container col-md-10">
-            <h3>Products</h3>
-            @if (Model.Products.Any())
-            {
-                foreach (var product in Model.Products)
-                {
-                    <div class="product-container row">
-                        <div class="col-md-4">
-                            <div class="img-container">
-                                <img src="@Url.Content("~/Images/Products/" + product.MainImage.Path)" alt="@product.Name" />
-                                <h2><span>@product.Price zł</span></h2>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            @Html.ActionLink(product.Name, "Details", new { productId = product.Id })
-                            <div class="product-description">
-                                @Html.Raw(product.Description)
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                }
+        @using (Html.BeginForm("List", "Product", new { pager = Model.Pager, categoryId = Model.CategoryId }, FormMethod.Get, null))
+        {
+            @Html.HiddenFor(model => model.Pager.CurrentPage, new { id = "pageIndex" })
 
-                if (Model.Pager.PageCount > 1)
-                {
-                    <div class="pager-container">
-                        @Html.PageLinks(Model.Pager, x => Url.Action("List", new { page = x, categoryId = Model.CategoryId }))
+            <div class="products-container col-md-10">
+                <div class="search-container">
+                    <div class="input-group">
+                        @Html.EditorFor(model => model.Pager.SearchExpression,
+                            new { htmlAttributes = new { @type = "search", @class = "form-control", placeholder = "Search Expression",
+                                autocomplete = false, style = "min-width:300px;", onchange = "if(!$(this).val())this.form.submit();"
+                            } })
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
                     </div>
-                }
-            }
-            else
-            {
-                <div>
-                    <span>Products not founded</span>
                 </div>
-            }
-        </div>
+                <div class="sort-container">
+                    @Html.LabelFor(model => model.Pager.SortExpression)
+                    <div class="sort-types">
+                        @Html.DropDownListFor(model => model.Pager.SortExpression,
+                            new SelectList(Model.SortExpressions, "Key", "Value", Model.Pager.SortExpression),
+                            new { onchange = "$('#pageIndex').val(1);this.form.submit();", @class = "form-control" })
+                    </div>
+                </div>
+                <div class="clearfix"></div>
 
+                <h3>Products</h3>
+                @if (Model.Products.Any())
+                {
+                    foreach (var product in Model.Products)
+                    {
+                        <div class="product-container row">
+                            <div class="col-md-4">
+                                <div class="img-container">
+                                    <img src="@Url.Content("~/Images/Products/" + product.MainImage.Path)" alt="@product.Name" />
+                                    <h2><span>@product.Price zł</span></h2>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                @Html.ActionLink(product.Name, "Details", new { productId = product.Id })
+                                <div class="product-description">
+                                    @Html.Raw(product.Description)
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    }
+
+                    if (Model.Pager.PageCount > 1)
+                    {
+                        <div class="pager-container">
+                            @Html.PageLinks(Model.Pager, "#pageIndex")
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div>
+                        <span>Products not founded</span>
+                    </div>
+                }
+            </div>
+        }
     </div>
 </div>
 

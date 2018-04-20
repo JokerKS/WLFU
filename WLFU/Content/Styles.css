@@ -91,3 +91,26 @@
     }
 }
 /* -------------------------------------------------- */
+
+/* Search and Sort */
+.search-container, 
+.sort-container{
+    float: left;
+    width: 50%;
+    margin-top: 8px;
+}
+
+.sort-container label,
+.sort-types{
+    float: left;
+}
+
+.sort-container label{
+    width: 27%;
+    padding-left: 7px;
+    padding-top: 7px;
+}
+.sort-types{
+    width: 73%;
+}
+/* -------------------------------------------------- */

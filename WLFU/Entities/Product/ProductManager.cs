@@ -2,35 +2,57 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq.Dynamic;
 
 namespace JokerKS.WLFU.Entities.Product
 {
     public static class ProductManager
     {
         #region GetList()
-        public static List<Product> GetAvailableList(Pager pager = null, bool includeImages = false)
+        public static List<Product> GetAvailableList(Pager pager = null, int? categoryId = null, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    // Вибираємо тільки ті продукти, яких кількість "на складі" більша 0
-                    var query = db.Products.AsQueryable();
-
+                    var query = db.Products.Include(x => x.Tags).AsQueryable();
+                    if(categoryId.HasValue)
+                    {
+                        query = query.Where(x => x.CategoryId == categoryId.Value);
+                    }
                     if (includeImages)
                     {
                         query = query.Include(x => x.MainImage);
                     }
 
+                    // Вибираємо тільки ті продукти, яких кількість "на складі" більша 0
                     var products = query.ToList().Where(x => x.AvailableAmount > 0);
 
                     if (pager != null)
                     {
-                        pager.TotalCount = query.Count();
+                        if(!string.IsNullOrEmpty(pager.SearchExpression))
+                        {
+                            var search = pager.SearchExpression;
+                            var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search)).Select(x => x.Id).ToList();
+
+                            products = products.Where(x => x.Name.Contains(search) ||
+                                x.Description.Contains(search) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);                   
+                        }
+
+                        if (!string.IsNullOrEmpty(pager.SortQuery))
+                        {
+                            products = products.OrderBy(pager.SortQuery);
+                        }
+                        else
+                        {
+                            products = products.OrderBy(x => x.Id);
+                        }
+
+                        pager.TotalCount = products.Count();
 
                         if(pager.ItemsSkip > 0)
                         {
-                            products = products.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
+                            products = products.Skip(pager.ItemsSkip);
                         }
                         products = products.Take(pager.ItemsPerPage);
                     }
@@ -51,43 +73,6 @@ namespace JokerKS.WLFU.Entities.Product
                 using (var db = new AppContext())
                 {
                     return db.Products.Where(x => ids.Contains(x.Id)).ToList();
-                }
-            }
-            catch (Exception)
-            {
-                return new List<Product>();
-            }
-        }
-        #endregion
-
-        #region GetListByCategory()
-        public static List<Product> GetAvailableListByCategory(int categoryId, Pager pager = null, bool includeImages = false)
-        {
-            try
-            {
-                using (var db = new AppContext())
-                {
-                    var query = db.Products.Where(x => x.CategoryId == categoryId).AsQueryable();
-
-                    if(includeImages)
-                    {
-                        query = query.Include(x => x.MainImage);
-                    }
-
-                    var products = query.ToList().Where(x => x.AvailableAmount > 0);
-
-                    if (pager != null)
-                    {
-                        pager.TotalCount = query.Count();
-
-                        if (pager.ItemsSkip > 0)
-                        {
-                            products = products.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
-                        }
-                        products = products.Take(pager.ItemsPerPage);
-                    }
-
-                    return products.ToList();
                 }
             }
             catch (Exception)

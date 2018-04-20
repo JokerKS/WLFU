@@ -286,23 +286,37 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
-        public ActionResult List(int page = 1, int? categoryId = null)
+        public ActionResult List(Pager pager = null, int? categoryId = null)
         {
-            var pager = new Pager(page, 3);
+            if (pager == null)
+            {
+                pager = new Pager();
+            }
+            pager.ItemsPerPage = 4;
+
             var model = new ProductListModel()
             {
                 Pager = pager,
-                Categories = ProductCategoryManager.GetList()
+                Categories = ProductCategoryManager.GetList(),
             };
 
-            if(categoryId.HasValue && categoryId > 0)
+            model.SortExpressions = new Dictionary<string, string>();
+            model.SortExpressions.Add(string.Empty, string.Empty);
+            IEnumerable<Sortable> sortAttr;
+            string propertyName;
+            foreach (var propertyInfo in typeof(Product).GetProperties()
+                    .Where(x => x.IsSortable()).Select(x => x))
             {
-                model.Products = ProductManager.GetAvailableListByCategory(categoryId.Value, pager, true);
+                sortAttr = propertyInfo.GetCustomAttributes(false).Where(x => x.GetType() == typeof(Sortable)).Select(x => x as Sortable ?? null);
+                if(sortAttr.Count() > 0)
+                {
+                    propertyName = sortAttr.First() == null ? null : sortAttr.First().SortablePropertyName;
+                    model.SortExpressions.Add(propertyInfo.Name, string.IsNullOrEmpty(propertyName) ? propertyInfo.Name : propertyName);
+                }
             }
-            else
-            {
-                model.Products = ProductManager.GetAvailableList(pager, true);
-            }
+
+            // Вибираємо продукти за поданими фільтрами
+            model.Products = ProductManager.GetAvailableList(pager, categoryId, true);
 
             return View(model);
         }
