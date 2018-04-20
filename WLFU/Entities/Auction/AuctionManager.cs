@@ -46,7 +46,7 @@ namespace JokerKS.WLFU.Entities.Auction
                 using (var db = new AppContext())
                 {
                     var query = db.Auctions.Include(x => x.Tags).Where(x => !x.IsClosed);
-                    if (categoryId.HasValue)
+                    if (categoryId.HasValue && categoryId.Value > 0)
                     {
                         query = query.Where(x => x.CategoryId == categoryId.Value);
                     }

@@ -286,6 +286,7 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult List(Pager pager = null, int? categoryId = null)
         {
             if (pager == null)
@@ -294,11 +295,12 @@ namespace JokeKS.WLFU.Controllers
             }
             pager.ItemsPerPage = 10;
 
-            var model = new ProductListModel()
-            {
-                Pager = pager,
-                Categories = ProductCategoryManager.GetList(),
-            };
+            var model = new ProductListModel { Pager = pager };
+
+            // Беремо всі категорії + додаємо допоміжну, яка значить вибрати всі категорії
+            model.Categories = new List<ProductCategory>();
+            model.Categories.Add(new ProductCategory() { Id = 0, Name = "Wszystkie" });
+            model.Categories.AddRange(ProductCategoryManager.GetList());
 
             model.SortExpressions = new Dictionary<string, string>();
             model.SortExpressions.Add(string.Empty, string.Empty);
@@ -324,6 +326,7 @@ namespace JokeKS.WLFU.Controllers
 
         #region Details() Get
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Details(int productId)
         {
             ProductModel model = new ProductModel();
@@ -346,8 +349,20 @@ namespace JokeKS.WLFU.Controllers
 
         #region AddToBasket() Get
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult AddToBasket(int productId, int amount)
         {
+            if(!User.Identity.IsAuthenticated)
+            {
+                return Json(new
+                {
+                    redirectUrl = (Url.Action("Login", "Account",
+                        new {
+                            ReturnUrl = Url.Action("Details", "Product", new { productId = productId })
+                        }))
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             var model = new MessageResult();
 
             try

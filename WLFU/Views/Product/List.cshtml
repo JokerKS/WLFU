@@ -10,7 +10,14 @@
             <h3>Categories</h3>
             @foreach (var category in Model.Categories)
             {
-                @Html.ActionLink(category.Name, "List", new { categoryId = category.Id })
+                if (category.Id > 0)
+                {
+                    @Html.ActionLink(category.Name, "List", new { categoryId = category.Id })
+                }
+                else
+                {
+                    @Html.ActionLink(category.Name, "List")
+                }
                 <br/>
             }
         </div>

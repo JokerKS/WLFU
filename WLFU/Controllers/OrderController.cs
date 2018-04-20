@@ -13,6 +13,7 @@ using JokerKS.WLFU.Entities.Order;
 
 namespace JokerKS.WLFU.Controllers
 {
+    [Authorize]
     public class OrderController : Controller
     {
         #region Create() Get

@@ -10,6 +10,42 @@ namespace JokerKS.WLFU.Entities.Product
     public static class ProductManager
     {
         #region GetList()
+        public static List<Product> GetList(IEnumerable<int> ids)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.Products.Where(x => ids.Contains(x.Id)).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
+        #endregion
+
+        #region GetNotActiveList()
+        public static List<Product> GetNotActiveList()
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.Products.Where(x => !x.IsActive)
+                        .Include(x => x.Designer)
+                        .Include(x => x.Category).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
+        #endregion
+
+        #region GetAvailableList()
         public static List<Product> GetAvailableList(Pager pager = null, int? categoryId = null, bool includeImages = false)
         {
             try
@@ -17,7 +53,7 @@ namespace JokerKS.WLFU.Entities.Product
                 using (var db = new AppContext())
                 {
                     var query = db.Products.Include(x => x.Tags).AsQueryable();
-                    if(categoryId.HasValue)
+                    if (categoryId.HasValue && categoryId.Value > 0)
                     {
                         query = query.Where(x => x.CategoryId == categoryId.Value);
                     }
@@ -31,13 +67,13 @@ namespace JokerKS.WLFU.Entities.Product
 
                     if (pager != null)
                     {
-                        if(!string.IsNullOrEmpty(pager.SearchExpression))
+                        if (!string.IsNullOrEmpty(pager.SearchExpression))
                         {
                             var search = pager.SearchExpression;
                             var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).Select(x => x.Id).ToList();
 
                             products = products.Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                                x.Description.Contains(search, StringComparison.OrdinalIgnoreCase) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);                   
+                                x.Description.Contains(search, StringComparison.OrdinalIgnoreCase) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);
                         }
 
                         if (!string.IsNullOrEmpty(pager.SortQuery))
@@ -51,7 +87,7 @@ namespace JokerKS.WLFU.Entities.Product
 
                         pager.TotalCount = products.Count();
 
-                        if(pager.ItemsSkip > 0)
+                        if (pager.ItemsSkip > 0)
                         {
                             products = products.Skip(pager.ItemsSkip);
                         }
@@ -62,21 +98,6 @@ namespace JokerKS.WLFU.Entities.Product
                 }
             }
             catch (Exception e)
-            {
-                return new List<Product>();
-            }
-        }
-
-        public static List<Product> GetList(IEnumerable<int> ids)
-        {
-            try
-            {
-                using (var db = new AppContext())
-                {
-                    return db.Products.Where(x => ids.Contains(x.Id)).ToList();
-                }
-            }
-            catch (Exception)
             {
                 return new List<Product>();
             }

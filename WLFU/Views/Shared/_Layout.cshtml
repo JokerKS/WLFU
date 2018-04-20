@@ -42,15 +42,37 @@
     </nav>
 
     <div class="container body-content">
-        <div class="menu-container">
-            <ul class="nav navbar-nav navbar-nav-menu">
-                <li @(controller == "Product" ? "class='active'" : "" )><a href="@Url.Action("List", "Product")">Products</a></li>
-                <li @(controller == "Auction" ? "class='active'" : "" )><a href="@Url.Action("List", "Auction")">Auctions</a></li>
-                <li @(controller == "Tutorial" ? "class='active'" : "" )><a href="#">Tutorials</a></li>
-            </ul>
-        </div>
-        <div class="clearfix"></div>
-        @RenderBody()
+        @if (controller != "Admin" && controller != "Account")
+        {
+            <div class="menu-container">
+                <ul class="nav navbar-nav navbar-nav-menu">
+                    <li @(controller == "Product" ? "class='active'" : "" )><a href="@Url.Action("List", "Product")">Products</a></li>
+                    <li @(controller == "Auction" ? "class='active'" : "" )><a href="@Url.Action("List", "Auction")">Auctions</a></li>
+                    <li @(controller == "Tutorial" ? "class='active'" : "" )><a href="#">Tutorials</a></li>
+                </ul>
+            </div>
+            <div class="clearfix"></div>
+            @RenderBody()
+        }
+
+        @if (controller == "Account")
+        {
+            @RenderBody()
+        }
+
+        @if (controller == "Admin")
+        {
+            <div class="admin-panel-menu col-md-2">
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="@Url.Action("Products", "Admin")">Products</a></li>
+                    <li><a href="@Url.Action("Auctions", "Admin")">Auctions</a></li>
+                    <li><a href="@Url.Action("Users", "Admin")">Users</a></li>
+                </ul>
+            </div>
+            <div class="admin-panel-content col-md-10">
+                @RenderBody()
+            </div>
+        }
     </div>
 
     <hr />

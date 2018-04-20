@@ -205,6 +205,7 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult List(Pager pager = null, int? categoryId = null)
         {
             if (pager == null)
@@ -213,11 +214,12 @@ namespace JokeKS.WLFU.Controllers
             }
             pager.ItemsPerPage = 10;
 
-            var model = new AuctionListModel()
-            {
-                Pager = pager,
-                Categories = ProductCategoryManager.GetList()
-            };
+            var model = new AuctionListModel { Pager = pager };
+
+            // Беремо всі категорії + додаємо допоміжну, яка значить вибрати всі категорії
+            model.Categories = new List<ProductCategory>();
+            model.Categories.Add(new ProductCategory() { Id = 0, Name = "Wszystkie" });
+            model.Categories.AddRange(ProductCategoryManager.GetList());
 
             model.SortExpressions = new Dictionary<string, string>();
             model.SortExpressions.Add(string.Empty, string.Empty);
@@ -242,6 +244,7 @@ namespace JokeKS.WLFU.Controllers
 
         #region Details() Get
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult Details(int auctionId)
         {
             AuctionModel model = new AuctionModel();
@@ -259,8 +262,21 @@ namespace JokeKS.WLFU.Controllers
 
         #region MakeBid() Get
         [HttpGet]
+        [AllowAnonymous]
         public JsonResult MakeBid(int auctionId, decimal price)
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return Json(new
+                {
+                    redirectUrl = (Url.Action("Login", "Account",
+                        new
+                        {
+                            ReturnUrl = Url.Action("Details", "Auction", new { auctionId = auctionId })
+                        }))
+                }, JsonRequestBehavior.AllowGet);
+            }
+
             var model = new MessageResult();
 
             try
