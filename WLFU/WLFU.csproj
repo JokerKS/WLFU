@@ -427,13 +427,14 @@
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\AuctionController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Entities\Helpers\Extensions.cs" />
     <Compile Include="Entities\Helpers\SortableAttribute.cs" />
     <Compile Include="Entities\Helpers\SortDirection.cs" />
     <Compile Include="Entities\HtmlHelpers\HtmlHelpers.cs" />
     <Compile Include="Entities\User\AppRole.cs" />
     <Compile Include="Entities\User\AppUser.cs" />
     <Compile Include="Entities\Auction\AuctionComment.cs" />
-    <Compile Include="Entities\Auction\AuctionTag.cs" />
+    <Compile Include="Entities\Helpers\AuctionTag.cs" />
     <Compile Include="Entities\Auction\AuctionImage.cs" />
     <Compile Include="Entities\Auction\BidAtAuctionManager.cs" />
     <Compile Include="Entities\Auction\BidAtAuction.cs" />

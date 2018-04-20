@@ -205,9 +205,13 @@ namespace JokeKS.WLFU.Controllers
 
         #region List() Get
         [HttpGet]
-        public ActionResult List(int page = 1, int? categoryId = null)
+        public ActionResult List(Pager pager = null, int? categoryId = null)
         {
-            var pager = new Pager(page);
+            if (pager == null)
+            {
+                pager = new Pager();
+            }
+            pager.ItemsPerPage = 10;
 
             var model = new AuctionListModel()
             {
@@ -215,14 +219,22 @@ namespace JokeKS.WLFU.Controllers
                 Categories = ProductCategoryManager.GetList()
             };
 
-            if(categoryId.HasValue && categoryId > 0)
+            model.SortExpressions = new Dictionary<string, string>();
+            model.SortExpressions.Add(string.Empty, string.Empty);
+            IEnumerable<Sortable> sortAttr;
+            string propertyName;
+            foreach (var propertyInfo in typeof(Auction).GetProperties()
+                    .Where(x => x.IsSortable()).Select(x => x))
             {
-                model.Auctions = AuctionManager.GetListByCategory(categoryId.Value, pager, true);
+                sortAttr = propertyInfo.GetCustomAttributes(false).Where(x => x.GetType() == typeof(Sortable)).Select(x => x as Sortable ?? null);
+                if (sortAttr.Count() > 0)
+                {
+                    propertyName = sortAttr.First() == null ? null : sortAttr.First().SortablePropertyName;
+                    model.SortExpressions.Add(propertyInfo.Name, string.IsNullOrEmpty(propertyName) ? propertyInfo.Name : propertyName);
+                }
             }
-            else
-            {
-                model.Auctions = AuctionManager.GetList(pager, true);
-            }
+
+            model.Auctions = AuctionManager.GetList(pager, categoryId, true);
 
             return View(model);
         }

@@ -292,7 +292,7 @@ namespace JokeKS.WLFU.Controllers
             {
                 pager = new Pager();
             }
-            pager.ItemsPerPage = 4;
+            pager.ItemsPerPage = 10;
 
             var model = new ProductListModel()
             {

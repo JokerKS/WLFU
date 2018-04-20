@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq.Dynamic;
+using JokerKS.WLFU.Entities.Helpers;
 
 namespace JokerKS.WLFU.Entities.Product
 {
@@ -33,10 +34,10 @@ namespace JokerKS.WLFU.Entities.Product
                         if(!string.IsNullOrEmpty(pager.SearchExpression))
                         {
                             var search = pager.SearchExpression;
-                            var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search)).Select(x => x.Id).ToList();
+                            var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).Select(x => x.Id).ToList();
 
-                            products = products.Where(x => x.Name.Contains(search) ||
-                                x.Description.Contains(search) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);                   
+                            products = products.Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                x.Description.Contains(search, StringComparison.OrdinalIgnoreCase) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);                   
                         }
 
                         if (!string.IsNullOrEmpty(pager.SortQuery))

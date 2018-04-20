@@ -1,4 +1,5 @@
-﻿using JokerKS.WLFU.Entities.User;
+﻿using JokerKS.WLFU.Entities.Helpers;
+using JokerKS.WLFU.Entities.User;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -16,8 +17,10 @@ namespace JokerKS.WLFU.Entities.Auction
         }
 
         [Key]
+        [Sortable("Date Created")]
         public int Id { get; set; }
         [Required]
+        [Sortable]
         public string Name { get; set; }
         [Required]
         [AllowHtml]
@@ -60,10 +63,12 @@ namespace JokerKS.WLFU.Entities.Auction
         #endregion
 
         [Required]
+        [Sortable("Finish Date")]
         public DateTime DateFinish { get; set; }
 
         #region Designer
         [Required]
+        [Sortable("Designer")]
         public string DesignerId { get; set; }
         [ForeignKey("DesignerId")]
         public AppUser Designer { get; set; }
@@ -90,6 +95,7 @@ namespace JokerKS.WLFU.Entities.Auction
         #endregion
 
         [NotMapped]
+        [Sortable("Price")]
         public decimal CurrentPrice
         {
             get

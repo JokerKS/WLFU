@@ -17,5 +17,7 @@ namespace JokerKS.WLFU.Models
 
         public List<ProductCategory> Categories { get; set; }
         public int CategoryId { get; set; }
+
+        public Dictionary<string, string> SortExpressions { get; set; }
     }
 }

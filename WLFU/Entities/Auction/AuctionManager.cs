@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq.Dynamic;
+using JokerKS.WLFU.Entities.Helpers;
 
 namespace JokerKS.WLFU.Entities.Auction
 {
@@ -37,31 +39,54 @@ namespace JokerKS.WLFU.Entities.Auction
         #endregion
 
         #region GetList()
-        public static List<Auction> GetList(Pager pager = null, bool includeImages = false)
+        public static List<Auction> GetList(Pager pager = null, int? categoryId = null, bool includeImages = false)
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    var query = db.Auctions.Where(x => !x.IsClosed);
-
+                    var query = db.Auctions.Include(x => x.Tags).Where(x => !x.IsClosed);
+                    if (categoryId.HasValue)
+                    {
+                        query = query.Where(x => x.CategoryId == categoryId.Value);
+                    }
                     if (includeImages)
                     {
                         query = query.Include(x => x.MainImage);
                     }
 
+                    var auctions = query.ToList().AsEnumerable();
+
                     if (pager != null)
                     {
-                        pager.TotalCount = query.Count();
+                        if (!string.IsNullOrEmpty(pager.SearchExpression))
+                        {
+                            var search = pager.SearchExpression;
+                            var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).Select(x => x.Id).ToList();
+
+                            auctions = auctions.Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                x.Description.Contains(search, StringComparison.OrdinalIgnoreCase) || x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);
+                        }
+
+                        if (!string.IsNullOrEmpty(pager.SortQuery))
+                        {
+                            auctions = auctions.OrderBy(pager.SortQuery);
+                        }
+                        else
+                        {
+                            auctions = auctions.OrderBy(x => x.Id);
+                        }
+
+                        pager.TotalCount = auctions.Count();
 
                         if (pager.ItemsSkip > 0)
                         {
-                            query = query.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
+                            auctions = auctions.Skip(pager.ItemsSkip);
                         }
-                        query = query.Take(pager.ItemsPerPage);
+                        auctions = auctions.Take(pager.ItemsPerPage);
                     }
 
-                    return query.ToList();
+                    return auctions.ToList();
                 }
             }
             catch (Exception)
@@ -77,41 +102,6 @@ namespace JokerKS.WLFU.Entities.Auction
                 using (var db = new AppContext())
                 {
                     return db.Auctions.Where(x => ids.Contains(x.Id)).ToList();
-                }
-            }
-            catch (Exception)
-            {
-                return new List<Auction>();
-            }
-        }
-        #endregion
-
-        #region GetListByCategory()
-        public static List<Auction> GetListByCategory(int categoryId, Pager pager = null, bool includeImages = false)
-        {
-            try
-            {
-                using (var db = new AppContext())
-                {
-                    var query = db.Auctions.Where(x => x.CategoryId == categoryId && !x.IsClosed).AsQueryable();
-
-                    if (includeImages)
-                    {
-                        query = query.Include(x => x.MainImage);
-                    }
-
-                    if (pager != null)
-                    {
-                        pager.TotalCount = query.Count();
-
-                        if (pager.ItemsSkip > 0)
-                        {
-                            query = query.OrderBy(x => x.Id).Skip(pager.ItemsSkip);
-                        }
-                        query = query.Take(pager.ItemsPerPage);
-                    }
-
-                    return query.ToList();
                 }
             }
             catch (Exception)
