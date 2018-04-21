@@ -1,0 +1,166 @@
+﻿@model JokerKS.WLFU.Models.AdminProductModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div class="product-details form-group">
+    <div class="message-info" style="display:none">
+
+    </div>
+    <div class="col-md-6">
+        <a class="product-main-img" href="#">
+            <div class="polaroid">
+                <p>@Model.Product.MainImage.Title</p>
+                <img src="@Url.Content("~/Images/Products/" + Model.Product.MainImage.Path)" />
+            </div>
+        </a>
+
+        <div id="product-images">
+            @foreach (var image in Model.Images)
+            {
+                <div>
+                    <img class="img-mini img-thumbnail" src="@Url.Content("~/Images/Products/" + image.Path)" alt="@Model.Product.Name" />
+                </div>
+            }
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="col-md-6">
+        <h3>
+            @Html.DisplayFor(model => model.Product.Name)
+        </h3>
+
+        <div>
+            @Html.DisplayNameFor(model => model.Product.Designer)
+            <a href="@Url.Action("Profile", "Account", new { userId = Model.Product.DesignerId })">
+                @Html.DisplayFor(model => model.Product.Designer.UserName)
+            </a>
+
+            @Html.DisplayNameFor(model => model.Product.Price)
+            @Html.DisplayFor(model => model.Product.Price) zł
+
+            @Html.DisplayNameFor(model => model.Product.Amount)
+            @Html.DisplayFor(model => model.Product.AvailableAmount)
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+<div>
+    @Html.DisplayNameFor(model => model.Product.Description)
+    @Html.Raw(Model.Product.Description)
+</div>
+<p>
+    @Html.ActionLink("Back to List", "Products")
+</p>
+
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "AuctionForm", @class = "form-horizontal", enctype = "multipart/form-data" }))
+{
+    <div class="form-horizontal">
+        <h3>The result of the check: </h3>
+        @Html.HiddenFor(model => model.Product.Id)
+        @Html.HiddenFor(model => model.Product.IsActive)
+        <div class="form-group">
+            @Html.LabelFor(model => model.Message, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Message, new { htmlAttributes = new { @class = "form-control", autocomplete = "off" } })
+                @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Product.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="switch">
+                    <input type="checkbox" id="switch-1" class="switch-check">
+                    <label for="switch-1" class="switch-label">
+                        <span class="switch-slider switch-slider-on"></span>
+                        <span class="switch-slider switch-slider-off"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10" style="text-align:center">
+                <input type="button" value="Send Check Result" class="btn btn-default" onclick="this.form.submit()" />
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .product-main-img{
+        float: left;
+        width: 70%;
+        margin-right: 8px;
+    }
+    .polaroid {
+        position: relative;
+    }
+
+    .polaroid img {
+        width: 100%;
+        border: 10px solid #fff;
+        border-bottom: 45px solid #fff;
+        -webkit-box-shadow: 3px 3px 3px 3px #777;
+        -moz-box-shadow: 3px 3px 3px 3px #777;
+        box-shadow: 3px 3px 3px 3px #777;
+    }
+ 
+    .polaroid p {
+        position: absolute;
+        text-align: center;
+        width: 100%;
+        bottom: 0px;
+        font: 400 16px/1 'Kaushan Script', cursive;
+        color: #888;
+    }
+
+    .product-images{
+        position:relative;
+        float: left;
+        width: 30%;
+    }
+
+    .product-details {
+        font-size: 14px;
+        font-family: Tahoma, Arial;
+    }
+</style>
+
+@section scripts{
+    <script>
+        $().ready(function () {
+            $(".switch-check").on("change", function () {
+                $("#Product_IsActive").val($(this).is(':checked'));
+                console.log($("#Product_IsActive").val());
+            });
+        });
+    </script>
+
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            tinyMCE.init({
+                mode: "textareas",
+                height: 300,
+                theme: "modern",
+                menubar: false,
+
+                plugins: [
+                    'lists textcolor',
+                ],
+                setup: function (editor) {
+                    editor.on('change', function () {
+                        tinyMCE.triggerSave();
+                        var content = tinyMCE.activeEditor.getContent();
+                        $("#" + editor.id).valid();
+                    });
+                },
+                toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+            });
+        });
+    </script>
+}

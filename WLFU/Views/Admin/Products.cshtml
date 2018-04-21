@@ -35,7 +35,7 @@
 @foreach (var product in Model) {
     <tr>
         <td>
-            <a href="@Url.Action("Details", "Product", new { productId = product.Id })">
+            <a href="@Url.Action("ProductDetails", "Admin", new { productId = product.Id })">
                 @Html.DisplayFor(model => product.Name)
             </a>
         </td>
@@ -58,8 +58,6 @@
             @Html.DisplayFor(modelItem => product.AvailableAmount) / @Html.DisplayFor(modelItem => product.Amount)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id = product.Id }) <br />
-            @Html.ActionLink("Details", "Details", new { id = product.Id }) <br />
             @Html.ActionLink("Delete", "Delete", new { id = product.Id })
         </td>
     </tr>

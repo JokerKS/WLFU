@@ -1,5 +1,6 @@
 ﻿using JokerKS.WLFU.Entities.Helpers;
 using JokerKS.WLFU.Entities.User;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -38,7 +39,8 @@ namespace JokerKS.WLFU.Entities.Product
         [Required]
         public bool IsPublished { get; set; }
         [Required]
-        public bool IsActive { get; set; } 
+        public bool IsActive { get; set; }
+        public DateTime? DateModified { get; set; }
         #endregion
 
         #region Designer

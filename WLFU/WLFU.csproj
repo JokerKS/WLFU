@@ -432,6 +432,8 @@
     <Compile Include="Entities\Helpers\SortableAttribute.cs" />
     <Compile Include="Entities\Helpers\SortDirection.cs" />
     <Compile Include="Entities\HtmlHelpers\HtmlHelpers.cs" />
+    <Compile Include="Entities\Notification\NotificationManager.cs" />
+    <Compile Include="Entities\Notification\Notification.cs" />
     <Compile Include="Entities\User\AppRole.cs" />
     <Compile Include="Entities\User\AppUser.cs" />
     <Compile Include="Entities\Auction\AuctionComment.cs" />
@@ -527,6 +529,10 @@
     <Compile Include="Migrations\201804111822283_OrderProductDetails&amp;OrderAuctionDetails.Designer.cs">
       <DependentUpon>201804111822283_OrderProductDetails&amp;OrderAuctionDetails.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804211800258_Notifications.cs" />
+    <Compile Include="Migrations\201804211800258_Notifications.Designer.cs">
+      <DependentUpon>201804211800258_Notifications.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\BasketListModel.cs" />
     <Compile Include="Models\CreateAuctionModel.cs" />
@@ -534,6 +540,7 @@
     <Compile Include="Models\ProductCategoryAddModel.cs" />
     <Compile Include="Models\AuctionListModel.cs" />
     <Compile Include="Models\AuctionModel.cs" />
+    <Compile Include="Models\AdminProductModel.cs" />
     <Compile Include="Models\ProductModel.cs" />
     <Compile Include="Models\ProductListModel.cs" />
     <Compile Include="Models\ProductCategoryListModel.cs" />
@@ -585,6 +592,7 @@
     <Content Include="Views\Admin\Products.cshtml" />
     <Content Include="Views\Admin\Auctions.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\Admin\ProductDetails.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -643,6 +651,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804111822283_OrderProductDetails&amp;OrderAuctionDetails.resx">
       <DependentUpon>201804111822283_OrderProductDetails&amp;OrderAuctionDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804211800258_Notifications.resx">
+      <DependentUpon>201804211800258_Notifications.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

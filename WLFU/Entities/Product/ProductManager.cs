@@ -35,7 +35,8 @@ namespace JokerKS.WLFU.Entities.Product
                 {
                     return db.Products.Where(x => !x.IsActive)
                         .Include(x => x.Designer)
-                        .Include(x => x.Category).ToList();
+                        .Include(x => x.Category)
+                        .OrderBy(x => x.DateModified).ToList();
                 }
             }
             catch (Exception)
@@ -52,7 +53,7 @@ namespace JokerKS.WLFU.Entities.Product
             {
                 using (var db = new AppContext())
                 {
-                    var query = db.Products.Include(x => x.Tags).AsQueryable();
+                    var query = db.Products.Where(x => x.IsActive).Include(x => x.Tags).AsQueryable();
                     if (categoryId.HasValue && categoryId.Value > 0)
                     {
                         query = query.Where(x => x.CategoryId == categoryId.Value);
@@ -189,6 +190,7 @@ namespace JokerKS.WLFU.Entities.Product
         {
             try
             {
+                product.DateModified = DateTime.Now;
                 if(context == null)
                 { 
                     using (var db = new AppContext())

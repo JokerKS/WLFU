@@ -39,6 +39,8 @@ namespace JokerKS.WLFU.Entities.Auction
         public decimal PriceIncrease { get; set; }
         public decimal? InstantSellingPrice { get; set; }
 
+        public DateTime? DateModified { get; set; }
+
         #region DateStart
         private DateTime? dateStart;
 

@@ -1,5 +1,6 @@
 ﻿using JokerKS.WLFU.Entities;
 using JokerKS.WLFU.Entities.Auction;
+using JokerKS.WLFU.Entities.Notification;
 using JokerKS.WLFU.Entities.Order;
 using JokerKS.WLFU.Entities.Product;
 using JokerKS.WLFU.Entities.User;
@@ -40,8 +41,10 @@ namespace JokerKS.WLFU
         #region Order tables
         public DbSet<Order> Orders { get; set; }
         public DbSet<ProductOrderDetail> ProductOrderDetails { get; set; }
-        public DbSet<AuctionOrderDetail> AuctionOrderDetails { get; set; } 
+        public DbSet<AuctionOrderDetail> AuctionOrderDetails { get; set; }
         #endregion
+
+        public DbSet<Notification> Notifications { get; set; }
 
         public AppContext(): base("WLFUdb")
         {
