@@ -4,6 +4,7 @@ using JokerKS.WLFU.Entities.Notification;
 using JokerKS.WLFU.Entities.Product;
 using JokerKS.WLFU.Entities.User;
 using JokerKS.WLFU.Models;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -126,6 +127,75 @@ namespace JokerKS.WLFU.Controllers
                 return RedirectToAction("Auctions");
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+        #endregion
+
+        #region Categories() Get
+        [HttpGet]
+        public ActionResult Categories(ProductCategoryListModel model = null)
+        {
+            if (model == null)
+            {
+                var pager = new Pager();
+
+                model = new ProductCategoryListModel()
+                {
+                    Pager = pager
+                };
+            }
+            model.Categories = ProductCategoryManager.GetList(model.Pager);
+
+            return View(model);
+        }
+        #endregion
+
+        #region CategoryAdd() Get
+        [HttpGet]
+        public ActionResult CategoryAdd(string categoryId)
+        {
+            var category = ProductCategoryManager.GetById(Convert.ToInt32(categoryId));
+            if (category == null)
+            {
+                category = new ProductCategory();
+            }
+
+            return PartialView("_CategoryAdd", category);
+        }
+        #endregion
+
+        #region CategoryAdd() Post
+        [HttpPost]
+        public ActionResult CategoryAdd(ProductCategory model)
+        {
+            if (model != null)
+            {
+                if (model.Id > 0)
+                {
+                    ProductCategoryManager.Update(model);
+                }
+                else
+                {
+                    ProductCategoryManager.Add(model);
+                }
+                return RedirectToAction("Categories");
+            }
+            else
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+        }
+        #endregion
+
+        #region CategoryDelete() Get
+        [HttpGet]
+        public ActionResult CategoryDelete(int? id)
+        {
+            if (!id.HasValue || id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ProductCategoryManager.Delete(id.Value);
+            return RedirectToAction("Categories");
         }
         #endregion
 

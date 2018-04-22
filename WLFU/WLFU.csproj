@@ -581,8 +581,8 @@
     <Content Include="Scripts\tinymce\langs\readme.md" />
     <Content Include="Views\Product\Create.cshtml" />
     <Content Include="Views\Product\Success.cshtml" />
-    <Content Include="Views\Product\Categories.cshtml" />
-    <Content Include="Views\Product\CategoryAdd.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
+    <Content Include="Views\Admin\_CategoryAdd.cshtml" />
     <Content Include="Views\Product\List.cshtml" />
     <Content Include="Views\Product\Details.cshtml" />
     <Content Include="Views\Product\Basket.cshtml" />

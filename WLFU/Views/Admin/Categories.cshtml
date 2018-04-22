@@ -66,6 +66,7 @@
 @section scripts{
     <script type="text/javascript">
         function ShowCategoryAddPV(catId) {
+            console.log('@Url.Action("CategoryAdd")');
             $.ajax({
                 type: "GET",
                 url: '@Url.Action("CategoryAdd")',
