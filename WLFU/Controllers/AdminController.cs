@@ -81,11 +81,11 @@ namespace JokerKS.WLFU.Controllers
         #endregion
 
         #region AuctionDetails() Get
-        public ActionResult AuctionDetails(int productId)
+        public ActionResult AuctionDetails(int auctionId)
         {
             AdminAuctionModel model = new AdminAuctionModel
             {
-                Auction = AuctionManager.GetById(productId, true)
+                Auction = AuctionManager.GetById(auctionId, true)
             };
 
             if (model.Auction != null)
@@ -123,7 +123,7 @@ namespace JokerKS.WLFU.Controllers
 
                 }
 
-                return RedirectToAction("Products");
+                return RedirectToAction("Auctions");
             }
             return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
         }
