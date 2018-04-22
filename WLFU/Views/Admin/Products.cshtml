@@ -32,35 +32,35 @@
         <th></th>
     </tr>
 
-@foreach (var product in Model) {
+@foreach (var product in Model)
+{
     <tr>
         <td>
             <a href="@Url.Action("ProductDetails", "Admin", new { productId = product.Id })">
-                @Html.DisplayFor(model => product.Name)
+                @Html.DisplayFor(item => product.Name)
             </a>
         </td>
         <td style="text-align: center;">
-            @Html.DisplayFor(modelItem => product.Price)
+            @Html.DisplayFor(item => product.Price)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => product.Category.Name)
+            @Html.DisplayFor(item => product.Category.Name)
         </td>
         <td style="text-align: center;">
-            @Html.DisplayFor(modelItem => product.IsPublished)
+            @Html.DisplayFor(item => product.IsPublished)
         </td>
         <td style="text-align: center;">
-            @Html.DisplayFor(modelItem => product.IsActive)
+            @Html.DisplayFor(item => product.IsActive)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => product.Designer.UserName)
+            @Html.DisplayFor(item => product.Designer.UserName)
         </td>
         <td style="text-align: center;">
-            @Html.DisplayFor(modelItem => product.AvailableAmount) / @Html.DisplayFor(modelItem => product.Amount)
+            @Html.DisplayFor(item => product.AvailableAmount) / @Html.DisplayFor(item => product.Amount)
         </td>
         <td>
-            @Html.ActionLink("Delete", "Delete", new { id = product.Id })
+            @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id })
         </td>
     </tr>
 }
-
 </table>

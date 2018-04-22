@@ -39,13 +39,30 @@ namespace JokerKS.WLFU.Entities.Auction
         #endregion
 
         #region GetList()
-        public static List<Auction> GetList(Pager pager = null, int? categoryId = null, bool includeImages = false)
+        public static List<Auction> GetList(IEnumerable<int> ids)
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    var query = db.Auctions.Include(x => x.Tags).Where(x => !x.IsClosed);
+                    return db.Auctions.Where(x => ids.Contains(x.Id)).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Auction>();
+            }
+        } 
+        #endregion
+
+        #region GetAvailableList()
+        public static List<Auction> GetAvailableList(Pager pager = null, int? categoryId = null, bool includeImages = false)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    var query = db.Auctions.Include(x => x.Tags).Where(x => !x.IsClosed && x.IsActive);
                     if (categoryId.HasValue && categoryId.Value > 0)
                     {
                         query = query.Where(x => x.CategoryId == categoryId.Value);
@@ -94,14 +111,19 @@ namespace JokerKS.WLFU.Entities.Auction
                 return new List<Auction>();
             }
         }
+        #endregion
 
-        public static List<Auction> GetList(IEnumerable<int> ids)
+        #region GetNotActiveList()
+        public static List<Auction> GetNotActiveList()
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    return db.Auctions.Where(x => ids.Contains(x.Id)).ToList();
+                    return db.Auctions.Where(x => !x.IsActive)
+                        .Include(x => x.Designer)
+                        .Include(x => x.Category)
+                        .OrderBy(x => x.DateModified).ToList();
                 }
             }
             catch (Exception)

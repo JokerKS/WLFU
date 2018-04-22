@@ -4,108 +4,57 @@
     ViewBag.Title = "Auctions";
 }
 
-<h2>Auctions</h2>
+<h2>Auctions management</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
-        <th>
+        <th style="min-width:220px;">
             @Html.DisplayNameFor(model => model.Name)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
+        <th style="text-align: center;">
+            @Html.DisplayNameFor(model => model.CurrentPrice)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.Category)
+        </th>
+        <th style="text-align: center;">
             @Html.DisplayNameFor(model => model.IsPublished)
         </th>
-        <th>
+        <th style="text-align: center;">
             @Html.DisplayNameFor(model => model.IsActive)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.IsClosed)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StartPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PriceIncrease)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.InstantSellingPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateStart)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateFinish)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DesignerId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.MainImageId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CategoryId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.CurrentPrice)
+            @Html.DisplayNameFor(model => model.Designer.UserName)
         </th>
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
+@foreach (var auction in Model)
+{
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Name)
+            <a href="@Url.Action("AuctionDetails", "Admin", new { auctionId = auction.Id })">
+                @Html.DisplayFor(item => auction.Name)
+            </a>
+        </td>
+        <td style="text-align: center;">
+            @Html.DisplayFor(item => auction.CurrentPrice)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
+            @Html.DisplayFor(item => auction.Category.Name)
+        </td>
+        <td style="text-align: center;">
+            @Html.DisplayFor(item => auction.IsPublished)
+        </td>
+        <td style="text-align: center;">
+            @Html.DisplayFor(item => auction.IsActive)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsPublished)
+            @Html.DisplayFor(item => auction.Designer.UserName)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.IsActive)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.IsClosed)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.StartPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PriceIncrease)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InstantSellingPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateStart)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateFinish)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DesignerId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.MainImageId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CurrentPrice)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @Html.ActionLink("Delete", "DeleteAuction", new { id = auction.Id })
         </td>
     </tr>
 }
-
 </table>

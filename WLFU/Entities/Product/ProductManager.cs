@@ -9,6 +9,35 @@ namespace JokerKS.WLFU.Entities.Product
 {
     public static class ProductManager
     {
+        #region GetById()
+        public static Product GetById(int id, bool includeImages = false)
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    if (includeImages)
+                    {
+                        return db.Products
+                            .Where(x => x.Id == id)
+                            .Include(x => x.Designer)
+                            .Include(x => x.MainImage)
+                            .Include(x => x.Images)
+                            .FirstOrDefault();
+                    }
+                    else
+                    {
+                        return db.Products.Find(id);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        #endregion
+
         #region GetList()
         public static List<Product> GetList(IEnumerable<int> ids)
         {
@@ -125,35 +154,6 @@ namespace JokerKS.WLFU.Entities.Product
             catch (Exception)
             {
                 return new List<Product>();
-            }
-        }
-        #endregion
-
-        #region GetById()
-        public static Product GetById(int id, bool includeImages = false)
-        {
-            try
-            {
-                using (var db = new AppContext())
-                {
-                    if (includeImages)
-                    {
-                        return db.Products
-                            .Where(x => x.Id == id)
-                            .Include(x => x.Designer)
-                            .Include(x => x.MainImage)
-                            .Include(x => x.Images)
-                            .FirstOrDefault();
-                    }
-                    else
-                    {
-                        return db.Products.Find(id);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
         #endregion

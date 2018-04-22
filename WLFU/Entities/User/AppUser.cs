@@ -17,6 +17,9 @@ namespace JokerKS.WLFU.Entities.User
         [DataType(DataType.Date)]
         public System.DateTime BirthDate { get; set; }
 
+        [Required]
+        public bool IsActive { get; set; }
+
         public List<Product.BasketProduct> BasketProducts { get; set; }
         public List<Order.Order> Orders { get; set; }
     }

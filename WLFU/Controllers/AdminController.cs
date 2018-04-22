@@ -1,6 +1,8 @@
 ﻿using JokerKS.WLFU.Entities;
+using JokerKS.WLFU.Entities.Auction;
 using JokerKS.WLFU.Entities.Notification;
 using JokerKS.WLFU.Entities.Product;
+using JokerKS.WLFU.Entities.User;
 using JokerKS.WLFU.Models;
 using System.Linq;
 using System.Net;
@@ -69,14 +71,70 @@ namespace JokerKS.WLFU.Controllers
         }
         #endregion
 
+        #region Auctions() Get
         public ActionResult Auctions()
         {
-            return View();
-        }
+            var auctions = AuctionManager.GetNotActiveList();
 
+            return View(auctions);
+        }
+        #endregion
+
+        #region AuctionDetails() Get
+        public ActionResult AuctionDetails(int productId)
+        {
+            AdminAuctionModel model = new AdminAuctionModel
+            {
+                Auction = AuctionManager.GetById(productId, true)
+            };
+
+            if (model.Auction != null)
+            {
+                model.Images = ImageManager.GetByIds(model.Auction.Images.Select(x => x.ImageId).ToList());
+
+                return View(model);
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.NotFound);
+        }
+        #endregion
+
+        #region AuctionDetails() Post
+        [HttpPost]
+        public ActionResult AuctionDetails(AdminAuctionModel model)
+        {
+            if (model != null && model.Auction != null)
+            {
+                var auction = AuctionManager.GetById(model.Auction.Id);
+                auction.IsActive = model.Auction.IsActive;
+
+                AuctionManager.Update(auction);
+
+                if (!model.Auction.IsActive)
+                {
+                    var notification = new Notification
+                    {
+                        UserId = auction.DesignerId,
+                        Message = model.Message,
+                        MessageType = "Auction.IsActive"
+                    };
+                    NotificationManager.Add(notification);
+
+                    // TODO: Відправка емейлу з повідомленням, що продукт не виставлений на продажу і чому
+
+                }
+
+                return RedirectToAction("Products");
+            }
+            return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        }
+        #endregion
+
+        #region Users() Get
         public ActionResult Users()
         {
-            return View();
-        }
+            var users = UserManager.GetList();
+            return View(users);
+        } 
+        #endregion
     }
 }

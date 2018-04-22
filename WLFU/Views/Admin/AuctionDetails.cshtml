@@ -1,10 +1,11 @@
-﻿@model JokerKS.WLFU.Models.AdminProductModel
+﻿@model JokerKS.WLFU.Models.AdminAuctionModel
+@using Microsoft.AspNet.Identity;
 
 @{
     ViewBag.Title = "Details";
 }
 
-<h2>Product Details</h2>
+<h2>Action Details</h2>
 
 <div class="product-details form-group">
     <div class="message-info" style="display:none">
@@ -13,8 +14,8 @@
     <div class="col-md-6">
         <a class="product-main-img" href="#">
             <div class="polaroid">
-                <p>@Model.Product.MainImage.Title</p>
-                <img src="@Url.Content("~/Images/Products/" + Model.Product.MainImage.Path)" />
+                <p>@Model.Auction.MainImage.Title</p>
+                <img src="@Url.Content("~/Images/Auctions/" + Model.Auction.MainImage.Path)" />
             </div>
         </a>
 
@@ -22,7 +23,7 @@
             @foreach (var image in Model.Images)
             {
                 <div>
-                    <img class="img-mini img-thumbnail" src="@Url.Content("~/Images/Products/" + image.Path)" alt="@Model.Product.Name" />
+                    <img class="img-mini img-thumbnail" src="@Url.Content("~/Images/Auctions/" + image.Path)" alt="@Model.Auction.Name" />
                 </div>
             }
         </div>
@@ -30,38 +31,35 @@
     </div>
     <div class="col-md-6">
         <h3>
-            @Html.DisplayFor(model => model.Product.Name)
+            @Html.DisplayFor(model => model.Auction.Name)
         </h3>
 
         <div>
-            @Html.DisplayNameFor(model => model.Product.Designer)
-            <a href="@Url.Action("Profile", "Account", new { userId = Model.Product.DesignerId })">
-                @Html.DisplayFor(model => model.Product.Designer.UserName)
+            @Html.DisplayNameFor(model => model.Auction.Designer)
+            <a href="@Url.Action("Profile", "Account", new { userId = Model.Auction.DesignerId })">
+                @Html.DisplayFor(model => model.Auction.Designer.UserName)
             </a>
 
-            @Html.DisplayNameFor(model => model.Product.Price)
-            @Html.DisplayFor(model => model.Product.Price) zł
-
-            @Html.DisplayNameFor(model => model.Product.Amount)
-            @Html.DisplayFor(model => model.Product.AvailableAmount)
+            @Html.DisplayNameFor(model => model.Auction.CurrentPrice)
+            @Html.DisplayFor(model => model.Auction.CurrentPrice) zł
         </div>
     </div>
     <div class="clearfix"></div>
 </div>
 <div>
-    @Html.DisplayNameFor(model => model.Product.Description)
-    @Html.Raw(Model.Product.Description)
+    @Html.DisplayNameFor(model => model.Auction.Description)
+    @Html.Raw(Model.Auction.Description)
 </div>
 <p>
-    @Html.ActionLink("Back to List", "Products")
+    @Html.ActionLink("Back to List", "List")
 </p>
 
-@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "ProductForm", @class = "form-horizontal", enctype = "multipart/form-data" }))
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "AuctionForm", @class = "form-horizontal", enctype = "multipart/form-data" }))
 {
     <div class="form-horizontal">
         <h3>The result of the check: </h3>
-        @Html.HiddenFor(model => model.Product.Id)
-        @Html.HiddenFor(model => model.Product.IsActive)
+        @Html.HiddenFor(model => model.Auction.Id)
+        @Html.HiddenFor(model => model.Auction.IsActive)
         <div class="form-group">
             @Html.LabelFor(model => model.Message, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -70,7 +68,7 @@
             </div>
         </div>
         <div class="form-group">
-            @Html.LabelFor(model => model.Product.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Auction.IsActive, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 <div class="switch">
                     <input type="checkbox" id="switch-1" class="switch-check">
@@ -132,34 +130,34 @@
 
 @section scripts{
     <script>
-        $().ready(function () {
-            $(".switch-check").on("change", function () {
-                $("#Product_IsActive").val($(this).is(':checked'));
+            $().ready(function () {
+                $(".switch-check").on("change", function () {
+                    $("#Auction_IsActive").val($(this).is(':checked'));
+                });
             });
-        });
     </script>
 
     <script src="~/Scripts/tinymce/tinymce.min.js"></script>
     <script>
-        $(document).ready(function(){
-            tinyMCE.init({
-                mode: "textareas",
-                height: 300,
-                theme: "modern",
-                menubar: false,
+            $(document).ready(function(){
+                tinyMCE.init({
+                    mode: "textareas",
+                    height: 300,
+                    theme: "modern",
+                    menubar: false,
 
-                plugins: [
-                    'lists textcolor',
-                ],
-                setup: function (editor) {
-                    editor.on('change', function () {
-                        tinyMCE.triggerSave();
-                        var content = tinyMCE.activeEditor.getContent();
-                        $("#" + editor.id).valid();
-                    });
-                },
-                toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+                    plugins: [
+                        'lists textcolor',
+                    ],
+                    setup: function (editor) {
+                        editor.on('change', function () {
+                            tinyMCE.triggerSave();
+                            var content = tinyMCE.activeEditor.getContent();
+                            $("#" + editor.id).valid();
+                        });
+                    },
+                    toolbar1: 'undo redo | insert | styleselect | bold italic underline | forecolor backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent',
+                });
             });
-        });
     </script>
 }

@@ -236,7 +236,7 @@ namespace JokeKS.WLFU.Controllers
                 }
             }
 
-            model.Auctions = AuctionManager.GetList(pager, categoryId, true);
+            model.Auctions = AuctionManager.GetAvailableList(pager, categoryId, true);
 
             return View(model);
         }

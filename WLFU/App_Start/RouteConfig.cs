@@ -10,6 +10,11 @@ namespace JokerKS.WLFU
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                "Admin",
+                "Admin/Products",
+                new { controller = "Admin", action = "Products" }
+            );
+            routes.MapRoute(
                 "Products",
                 "Products/{id}",
                 new { controller = "Product", action = "List", id = UrlParameter.Optional }
