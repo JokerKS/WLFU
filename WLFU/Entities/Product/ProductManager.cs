@@ -39,6 +39,21 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region GetList()
+        public static List<Product> GetList()
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.Products.OrderBy(x => x.Id).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
+
         public static List<Product> GetList(IEnumerable<int> ids)
         {
             try

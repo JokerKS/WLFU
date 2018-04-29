@@ -17,19 +17,24 @@ namespace JokerKS.WLFU.Controllers
         #region Products() Get
         public ActionResult Products()
         {
-            ViewBag.MenuItem = "Products";
-
-            var products = ProductManager.GetNotActiveList();
+            var products = ProductManager.GetList();
 
             return View(products);
+        }
+        #endregion
+
+        #region ProductsToCheck() Get
+        public ActionResult ProductsToCheck()
+        {
+            var products = ProductManager.GetNotActiveList();
+
+            return View("Products", products);
         }
         #endregion
 
         #region ProductDetails() Get
         public ActionResult ProductDetails(int productId)
         {
-            ViewBag.MenuItem = "Products";
-
             AdminProductModel model = new AdminProductModel
             {
                 Product = ProductManager.GetById(productId, true)
@@ -49,8 +54,6 @@ namespace JokerKS.WLFU.Controllers
         [HttpPost]
         public ActionResult ProductDetails(AdminProductModel model)
         {
-            ViewBag.MenuItem = "Products";
-
             if (model != null && model.Product != null)
             {
                 var product = ProductManager.GetById(model.Product.Id);
@@ -64,7 +67,8 @@ namespace JokerKS.WLFU.Controllers
                     {
                         UserId = product.DesignerId,
                         Message = model.Message,
-                        MessageType = "Product.IsActive"
+                        Action = "Product.IsActive",
+                        MessageType = (int)MessageType.Warning
                     };
                     NotificationManager.Add(notification);
 
@@ -81,8 +85,6 @@ namespace JokerKS.WLFU.Controllers
         #region Auctions() Get
         public ActionResult Auctions()
         {
-            ViewBag.MenuItem = "Auctions";
-
             var auctions = AuctionManager.GetNotActiveList();
 
             return View(auctions);
@@ -92,8 +94,6 @@ namespace JokerKS.WLFU.Controllers
         #region AuctionDetails() Get
         public ActionResult AuctionDetails(int auctionId)
         {
-            ViewBag.MenuItem = "Auctions";
-
             AdminAuctionModel model = new AdminAuctionModel
             {
                 Auction = AuctionManager.GetById(auctionId, true)
@@ -113,8 +113,6 @@ namespace JokerKS.WLFU.Controllers
         [HttpPost]
         public ActionResult AuctionDetails(AdminAuctionModel model)
         {
-            ViewBag.MenuItem = "Auctions";
-
             if (model != null && model.Auction != null)
             {
                 var auction = AuctionManager.GetById(model.Auction.Id);
@@ -128,7 +126,8 @@ namespace JokerKS.WLFU.Controllers
                     {
                         UserId = auction.DesignerId,
                         Message = model.Message,
-                        MessageType = "Auction.IsActive"
+                        Action = "Auction.IsActive",
+                        MessageType = (int)MessageType.Warning
                     };
                     NotificationManager.Add(notification);
 
@@ -146,8 +145,6 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Categories(ProductCategoryListModel model = null)
         {
-            ViewBag.MenuItem = "Categories";
-
             if (model == null)
             {
                 var pager = new Pager();
@@ -167,8 +164,6 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult CategoryAdd(string categoryId)
         {
-            ViewBag.MenuItem = "Categories";
-
             var category = ProductCategoryManager.GetById(Convert.ToInt32(categoryId));
             if (category == null)
             {
@@ -208,8 +203,6 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult CategoryDelete(int? id)
         {
-            ViewBag.MenuItem = "Categories";
-
             if (!id.HasValue || id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -222,8 +215,6 @@ namespace JokerKS.WLFU.Controllers
         #region Users() Get
         public ActionResult Users()
         {
-            ViewBag.MenuItem = "Users";
-
             var users = UserManager.GetList();
             return View(users);
         } 

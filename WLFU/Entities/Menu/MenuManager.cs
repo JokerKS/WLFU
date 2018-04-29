@@ -35,8 +35,8 @@ namespace JokerKS.WLFU.Entities.Menu
                         new MenuItem
                         {
                             Level = 2,
-                            Name = "All products",
-                            Action = "Products",
+                            Name = "Products To Check",
+                            Action = "ProductsToCheck",
                             Controller = "Admin",
                             Position = 2,
                         }
@@ -76,27 +76,7 @@ namespace JokerKS.WLFU.Entities.Menu
                     Name = "Categories",
                     Action = "Categories",
                     Controller = "Admin",
-                    HasChildren = true,
-                    Position = 1,
-                    Children = new List<MenuItem>
-                    {
-                        new MenuItem
-                        {
-                            Level = 2,
-                            Name = "Add category",
-                            Action = "Categories",
-                            Controller = "Admin",
-                            Position = 1,
-                        },
-                        new MenuItem
-                        {
-                            Level = 2,
-                            Name = "All categories",
-                            Action = "Categories",
-                            Controller = "Admin",
-                            Position = 2,
-                        }
-                    }
+                    Position = 3,
                 });
                 items.Add(new MenuItem
                 {
@@ -104,34 +84,10 @@ namespace JokerKS.WLFU.Entities.Menu
                     Name = "Users",
                     Action = "Users",
                     Controller = "Admin",
-                    HasChildren = true,
-                    Position = 1,
-                    Children = new List<MenuItem>
-                    {
-                        new MenuItem
-                        {
-                            Level = 2,
-                            Name = "Add user",
-                            Action = "Users",
-                            Controller = "Admin",
-                            Position = 1,
-                        },
-                        new MenuItem
-                        {
-                            Level = 2,
-                            Name = "All users",
-                            Action = "Users",
-                            Controller = "Admin",
-                            Position = 2,
-                        }
-                    }
+                    Position = 4,
                 });
 
-                foreach (var item in items)
-                {
-                    if (item.Action == action && item.Controller == controller)
-                        item.IsSelected = true;
-                }
+                FindSelected(items, action, controller);
 
                 return items;
             }
@@ -140,6 +96,29 @@ namespace JokerKS.WLFU.Entities.Menu
                 return new List<MenuItem>();
             }
         }
+        #endregion
+
+        #region FindSelected() private
+        private static void FindSelected(IEnumerable<MenuItem> items, string action, string controller)
+        {
+            bool selectedFound = false;
+            foreach (var item in items)
+            {
+                if (item.Action == action && item.Controller == controller)
+                {
+                    item.IsSelected = selectedFound = true;
+                    break;
+                }
+                else if (item.Children != null)
+                {
+                    FindSelected(item.Children, action, controller);
+                }
+                if (selectedFound)
+                {
+                    break;
+                }
+            }
+        } 
         #endregion
     }
 }

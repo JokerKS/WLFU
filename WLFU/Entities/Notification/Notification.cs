@@ -13,11 +13,20 @@ namespace JokerKS.WLFU.Entities.Notification
         public string UserId { get; set; }
         [AllowHtml]
         public string Message { get; set; }
+        [Required]
         [StringLength(100)]
-        public string MessageType { get; set; }
+        public string Action { get; set; }
+        public int MessageType { get; set; }
         public System.DateTime DateCreated { get; set; }
 
         [ForeignKey("UserId")]
         public AppUser User { get; set; }
+    }
+
+    public enum MessageType
+    {
+        Info,
+        Warning,
+        Success
     }
 }

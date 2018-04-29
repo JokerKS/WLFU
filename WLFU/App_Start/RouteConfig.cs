@@ -11,8 +11,8 @@ namespace JokerKS.WLFU
 
             routes.MapRoute(
                 "Admin",
-                "Admin/Products",
-                new { controller = "Admin", action = "Products" }
+                "Admin/ProductsToCheck",
+                new { controller = "Admin", action = "ProductsToCheck" }
             );
             routes.MapRoute(
                 "Products",

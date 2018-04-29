@@ -541,6 +541,10 @@
     <Compile Include="Migrations\201804221345363_Users_IsActive.Designer.cs">
       <DependentUpon>201804221345363_Users_IsActive.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804291401217_Notifications_Changes.cs" />
+    <Compile Include="Migrations\201804291401217_Notifications_Changes.Designer.cs">
+      <DependentUpon>201804291401217_Notifications_Changes.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AdminAuctionModel.cs" />
     <Compile Include="Models\BasketListModel.cs" />
@@ -598,11 +602,11 @@
     <Content Include="Views\Auction\Details.cshtml" />
     <Content Include="Views\Account\Profile.cshtml" />
     <Content Include="Views\Account\MyProfile.cshtml" />
-    <Content Include="Views\Admin\Products.cshtml" />
     <Content Include="Views\Admin\Auctions.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\Admin\ProductDetails.cshtml" />
     <Content Include="Views\Admin\AuctionDetails.cshtml" />
+    <Content Include="Views\Admin\Products.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -667,6 +671,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804221345363_Users_IsActive.resx">
       <DependentUpon>201804221345363_Users_IsActive.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804291401217_Notifications_Changes.resx">
+      <DependentUpon>201804291401217_Notifications_Changes.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
