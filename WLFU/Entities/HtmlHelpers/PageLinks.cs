@@ -20,17 +20,6 @@ namespace JokerKS.WLFU.Entities.HtmlHelpers
                 input.Attributes.Add("onclick", "$('"+ hiddenInputSelector + "').val("+ i +");this.form.submit();");
 
                 result.Append(input.ToString());
-
-                //TagBuilder tag = new TagBuilder("a");
-                //tag.MergeAttribute("href", pageUrl(i));
-                //tag.InnerHtml = i.ToString();
-                //if (i == pager.CurrentPage)
-                //{
-                //    tag.AddCssClass("selected");
-                //    tag.AddCssClass("btn-primary");
-                //}
-                //tag.AddCssClass("btn btn-default");
-                //result.Append(tag.ToString());
             }
             return MvcHtmlString.Create(result.ToString());
         }

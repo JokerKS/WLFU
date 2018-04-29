@@ -17,6 +17,8 @@ namespace JokerKS.WLFU.Controllers
         #region Products() Get
         public ActionResult Products()
         {
+            ViewBag.MenuItem = "Products";
+
             var products = ProductManager.GetNotActiveList();
 
             return View(products);
@@ -26,6 +28,8 @@ namespace JokerKS.WLFU.Controllers
         #region ProductDetails() Get
         public ActionResult ProductDetails(int productId)
         {
+            ViewBag.MenuItem = "Products";
+
             AdminProductModel model = new AdminProductModel
             {
                 Product = ProductManager.GetById(productId, true)
@@ -45,7 +49,9 @@ namespace JokerKS.WLFU.Controllers
         [HttpPost]
         public ActionResult ProductDetails(AdminProductModel model)
         {
-            if(model != null && model.Product != null)
+            ViewBag.MenuItem = "Products";
+
+            if (model != null && model.Product != null)
             {
                 var product = ProductManager.GetById(model.Product.Id);
                 product.IsActive = model.Product.IsActive;
@@ -75,6 +81,8 @@ namespace JokerKS.WLFU.Controllers
         #region Auctions() Get
         public ActionResult Auctions()
         {
+            ViewBag.MenuItem = "Auctions";
+
             var auctions = AuctionManager.GetNotActiveList();
 
             return View(auctions);
@@ -84,6 +92,8 @@ namespace JokerKS.WLFU.Controllers
         #region AuctionDetails() Get
         public ActionResult AuctionDetails(int auctionId)
         {
+            ViewBag.MenuItem = "Auctions";
+
             AdminAuctionModel model = new AdminAuctionModel
             {
                 Auction = AuctionManager.GetById(auctionId, true)
@@ -103,6 +113,8 @@ namespace JokerKS.WLFU.Controllers
         [HttpPost]
         public ActionResult AuctionDetails(AdminAuctionModel model)
         {
+            ViewBag.MenuItem = "Auctions";
+
             if (model != null && model.Auction != null)
             {
                 var auction = AuctionManager.GetById(model.Auction.Id);
@@ -134,6 +146,8 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult Categories(ProductCategoryListModel model = null)
         {
+            ViewBag.MenuItem = "Categories";
+
             if (model == null)
             {
                 var pager = new Pager();
@@ -153,6 +167,8 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult CategoryAdd(string categoryId)
         {
+            ViewBag.MenuItem = "Categories";
+
             var category = ProductCategoryManager.GetById(Convert.ToInt32(categoryId));
             if (category == null)
             {
@@ -167,6 +183,8 @@ namespace JokerKS.WLFU.Controllers
         [HttpPost]
         public ActionResult CategoryAdd(ProductCategory model)
         {
+            ViewBag.MenuItem = "Categories";
+
             if (model != null)
             {
                 if (model.Id > 0)
@@ -190,6 +208,8 @@ namespace JokerKS.WLFU.Controllers
         [HttpGet]
         public ActionResult CategoryDelete(int? id)
         {
+            ViewBag.MenuItem = "Categories";
+
             if (!id.HasValue || id == 0)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -202,6 +222,8 @@ namespace JokerKS.WLFU.Controllers
         #region Users() Get
         public ActionResult Users()
         {
+            ViewBag.MenuItem = "Users";
+
             var users = UserManager.GetList();
             return View(users);
         } 

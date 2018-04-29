@@ -1,4 +1,5 @@
 ﻿@using System.Web.Optimization
+@using JokerKS.WLFU.Entities.HtmlHelpers;
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +13,7 @@
     @Styles.Render("~/content/styles/css")
     @{
         string controller = ViewContext.RouteData.Values["controller"].ToString();
+        string action = ViewContext.RouteData.Values["action"].ToString();
     }
 </head>
 <body>
@@ -64,12 +66,7 @@
         @if (controller == "Admin")
         {
             <div class="admin-panel-menu col-md-2">
-                <ul class="nav nav-pills nav-stacked">
-                    <li class="active"><a href="@Url.Action("Products", "Admin")">Products</a></li>
-                    <li><a href="@Url.Action("Auctions", "Admin")">Auctions</a></li>
-                    <li><a href="@Url.Action("Categories", "Admin")">Categories</a></li>
-                    <li><a href="@Url.Action("Users", "Admin")">Users</a></li>
-                </ul>
+                @Html.AdminMenu(action, controller);
             </div>
             <div class="admin-panel-content col-md-10">
                 @RenderBody()

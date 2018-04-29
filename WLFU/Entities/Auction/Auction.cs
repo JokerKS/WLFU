@@ -27,16 +27,22 @@ namespace JokerKS.WLFU.Entities.Auction
         [DataType(DataType.MultilineText)]
         public string Description { get; set; }
         [Required]
+        [Display(Name = "Is published")]
         public bool IsPublished { get; set; }
         [Required]
+        [Display(Name = "Is active")]
         public bool IsActive { get; set; }
         [Required]
+        [Display(Name = "Is closed")]
         public bool IsClosed { get; set; }
 
         [Required]
+        [Display(Name = "Start price")]
         public decimal StartPrice { get; set; }
         [Required]
+        [Display(Name = "Price increase")]
         public decimal PriceIncrease { get; set; }
+        [Display(Name = "Instant selling price")]
         public decimal? InstantSellingPrice { get; set; }
 
         public DateTime? DateModified { get; set; }
@@ -44,6 +50,7 @@ namespace JokerKS.WLFU.Entities.Auction
         #region DateStart
         private DateTime? dateStart;
 
+        [Display(Name = "Start date")]
         public DateTime? DateStart
         {
             get
@@ -66,6 +73,7 @@ namespace JokerKS.WLFU.Entities.Auction
 
         [Required]
         [Sortable("Finish Date")]
+        [Display(Name = "Finish Date")]
         public DateTime DateFinish { get; set; }
 
         #region Designer
@@ -98,6 +106,7 @@ namespace JokerKS.WLFU.Entities.Auction
 
         [NotMapped]
         [Sortable("Price")]
+        [Display(Name = "Current price")]
         public decimal CurrentPrice
         {
             get

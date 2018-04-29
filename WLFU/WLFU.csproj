@@ -432,7 +432,10 @@
     <Compile Include="Entities\Helpers\Extensions.cs" />
     <Compile Include="Entities\Helpers\SortableAttribute.cs" />
     <Compile Include="Entities\Helpers\SortDirection.cs" />
-    <Compile Include="Entities\HtmlHelpers\HtmlHelpers.cs" />
+    <Compile Include="Entities\HtmlHelpers\AdminMenu.cs" />
+    <Compile Include="Entities\HtmlHelpers\PageLinks.cs" />
+    <Compile Include="Entities\Menu\MenuItem.cs" />
+    <Compile Include="Entities\Menu\MenuManager.cs" />
     <Compile Include="Entities\Notification\NotificationManager.cs" />
     <Compile Include="Entities\Notification\Notification.cs" />
     <Compile Include="Entities\User\AppRole.cs" />
