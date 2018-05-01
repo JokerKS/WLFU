@@ -39,13 +39,50 @@ namespace JokerKS.WLFU.Entities.Product
         #endregion
 
         #region GetList()
-        public static List<Product> GetList()
+        public static List<Product> GetList(Pager pager = null, bool? isActive = null)
         {
             try
             {
                 using (var db = new AppContext())
                 {
-                    return db.Products.OrderBy(x => x.Id).ToList();
+                    var query = db.Products.Include(x => x.Category).Include(x => x.Designer).Include(x => x.Tags).AsQueryable();
+
+                    if (isActive.HasValue)
+                    { 
+                        query = query.Where(x => x.IsActive == isActive);
+                    }
+
+                    var products = query.ToList().AsQueryable();
+                    if(pager != null)
+                    {
+                        if (!string.IsNullOrEmpty(pager.SearchExpression))
+                        {
+                            var search = pager.SearchExpression;
+                            var tagIds = TagManager.GetList().Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase)).Select(x => x.Id).ToList();
+
+                            products = products.Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                x.Tags.Where(z => tagIds.Contains(z.TagId)).Count() > 0);
+                        }
+
+                        if (!string.IsNullOrEmpty(pager.SortQuery))
+                        {
+                            products = products.OrderBy(pager.SortQuery);
+                        }
+                        else
+                        {
+                            products = products.OrderBy(x => x.Id);
+                        }
+
+                        pager.TotalCount = products.Count();
+
+                        if (pager.ItemsSkip > 0)
+                        {
+                            products = products.Skip(pager.ItemsSkip);
+                        }
+                        products = products.Take(pager.ItemsPerPage);
+                    }
+
+                    return products.ToList();
                 }
             }
             catch (Exception)

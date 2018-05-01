@@ -85,9 +85,18 @@ namespace JokerKS.WLFU.Controllers
         #region Auctions() Get
         public ActionResult Auctions()
         {
-            var auctions = AuctionManager.GetNotActiveList();
+            var auctions = AuctionManager.GetList();
 
             return View(auctions);
+        }
+        #endregion
+
+        #region AuctionsToCheck() Get
+        public ActionResult AuctionsToCheck()
+        {
+            var auctions = AuctionManager.GetNotActiveList();
+
+            return View("Auctions", auctions);
         }
         #endregion
 

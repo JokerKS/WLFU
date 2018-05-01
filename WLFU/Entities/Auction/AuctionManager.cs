@@ -39,6 +39,20 @@ namespace JokerKS.WLFU.Entities.Auction
         #endregion
 
         #region GetList()
+        public static List<Auction> GetList()
+        {
+            try
+            {
+                using (var db = new AppContext())
+                {
+                    return db.Auctions.OrderBy(x => x.Id).ToList();
+                }
+            }
+            catch (Exception)
+            {
+                return new List<Auction>();
+            }
+        }
         public static List<Auction> GetList(IEnumerable<int> ids)
         {
             try

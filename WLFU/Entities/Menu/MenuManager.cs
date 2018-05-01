@@ -63,8 +63,8 @@ namespace JokerKS.WLFU.Entities.Menu
                         new MenuItem
                         {
                             Level = 2,
-                            Name = "All auctions",
-                            Action = "Auctions",
+                            Name = "Auctions To Check",
+                            Action = "AuctionsToCheck",
                             Controller = "Admin",
                             Position = 2,
                         }
