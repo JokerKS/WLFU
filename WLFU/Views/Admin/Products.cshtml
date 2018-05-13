@@ -2,6 +2,7 @@
 @using MVCGrid.Web
 @{
     ViewBag.Title = "Products";
+    string action = ViewContext.RouteData.Values["action"].ToString();
 }
 
 <h2>Products management</h2>
@@ -23,4 +24,11 @@
     </div>
 </div>
 
-@Html.MVCGrid("AdminListOfProducts", new { active = "false" })
+@if (action == "ProductsToCheck")
+{
+    @Html.MVCGrid("AdminListOfProducts", new { active = "false" })
+}
+else
+{
+    @Html.MVCGrid("AdminListOfProducts")
+}
